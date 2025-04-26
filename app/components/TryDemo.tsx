@@ -16,6 +16,7 @@ export default function TryDemo() {
   const [style] = useState<keyof typeof videoFormats>('classic');
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [fullScript, setFullScript] = useState('');
+  const [visualActions, setVisualActions] = useState<string[]>([]);
   const [displayedScript, setDisplayedScript] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [step, setStep] = useState<'select' | 'script' | 'voice' | 'previewGen' | 'preview'>('select');
@@ -25,6 +26,7 @@ export default function TryDemo() {
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [dots, setDots] = useState('');
 
   useEffect(() => {
     if (loading) {
@@ -34,8 +36,6 @@ export default function TryDemo() {
       return () => clearInterval(dotsInterval);
     }
   }, [loading]);
-
-  const [dots, setDots] = useState('');
 
   async function generateScript() {
     if (selectedIdx === null) return;
@@ -58,6 +58,10 @@ export default function TryDemo() {
     setStep('script');
     setVoiceReady(false);
     setShowPreviewButton(false);
+
+    // 🛠️ NEW: Parse scenes from script
+    const parsedScenes = script.split(/\n\s*\n|\*\*/g).filter(Boolean).map(scene => scene.trim());
+    setVisualActions(parsedScenes);
   }
 
   async function generateVoice() {
@@ -82,14 +86,7 @@ export default function TryDemo() {
     setStep('previewGen');
     setTimeout(() => {
       setStep('preview');
-    }, 2000); // Longer delay to let spinner show clearly
-  }
-
-  function playAudio() {
-    if (audioUrl && audioRef.current) {
-      audioRef.current.src = audioUrl;
-      audioRef.current.play().catch(() => {});
-    }
+    }, 2000); // Spinner delay
   }
 
   useEffect(() => {
@@ -123,7 +120,7 @@ export default function TryDemo() {
         </p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left */}
+          {/* Left Side */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'select' && (
@@ -217,21 +214,10 @@ export default function TryDemo() {
                   )}
                 </>
               )}
-
-              {step === 'previewGen' && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
-                >
-                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
-                  Generating Preview...
-                </motion.div>
-              )}
             </div>
           </div>
 
-          {/* Right */}
+          {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div
@@ -255,18 +241,15 @@ export default function TryDemo() {
                   🎬 Preview Mode
                 </motion.div>
 
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, type: 'spring' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+                  className="relative z-10"
                 >
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
+                  <TikTokPhonePreview script={fullScript} visualActions={visualActions} audioUrl={audioUrl} />
                   <audio ref={audioRef} className="hidden" />
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/5 to-white/0 pointer-events-none animate-[pulse_2s_infinite]" />
                 </motion.div>
               </div>
             )}
@@ -277,7 +260,6 @@ export default function TryDemo() {
   );
 }
 
-// Reusable LoadingButton
 function LoadingButton({
   onClick,
   loading,
@@ -304,7 +286,7 @@ function LoadingButton({
       disabled={loading}
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
-      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
+      className={`w-full py-3 rounded-md font-semibold transition ${
         loading
           ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
           : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
