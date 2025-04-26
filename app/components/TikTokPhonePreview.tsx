@@ -2,18 +2,23 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 
+interface VisualAction {
+  type: string;
+  content: string;
+}
+
 interface TikTokPhonePreviewProps {
   script: string;
+  visualActions: VisualAction[];
   audioUrl: string;
 }
 
-export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePreviewProps) {
+export default function TikTokPhonePreview({ script, visualActions, audioUrl }: TikTokPhonePreviewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [showScript, setShowScript] = useState(false);
-  const [currentWords, setCurrentWords] = useState<string[]>([]);
-  const [wordIndex, setWordIndex] = useState(0);
+  const [showVisual, setShowVisual] = useState(false);
+  const [currentAction, setCurrentAction] = useState<VisualAction | null>(null);
+  const [actionIndex, setActionIndex] = useState(0);
 
   useEffect(() => {
     if (audioUrl && videoRef.current && audioRef.current) {
@@ -27,36 +32,28 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
 
       Promise.all([
         video.play().catch(() => {}),
-        audio.play().catch(() => {})
+        audio.play().catch(() => {}),
       ]).then(() => {
-        setShowScript(true);
-        setCurrentWords([]);
-        setWordIndex(0);
+        setShowVisual(true);
+        setCurrentAction(null);
+        setActionIndex(0);
       });
     }
   }, [audioUrl]);
 
   useEffect(() => {
-    if (showScript && script) {
-      const words = script.split(' ');
+    if (showVisual && visualActions.length > 0) {
       const interval = setInterval(() => {
-        setCurrentWords(prev => [...prev, words[wordIndex]]);
-        setWordIndex(prev => prev + 1);
-      }, 250); // speed of typing: adjust if you want faster/slower
-
-      if (wordIndex >= words.length) {
-        clearInterval(interval);
-      }
-
+        if (actionIndex < visualActions.length) {
+          setCurrentAction(visualActions[actionIndex]);
+          setActionIndex((prev) => prev + 1);
+        } else {
+          clearInterval(interval);
+        }
+      }, 2200); // Switch action every 2.2 seconds (you can adjust timing)
       return () => clearInterval(interval);
     }
-  }, [showScript, script, wordIndex]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [currentWords]);
+  }, [showVisual, visualActions, actionIndex]);
 
   return (
     <div className="relative w-[280px] md:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-2 border-[#333]">
@@ -69,17 +66,14 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
         muted
       />
       <audio ref={audioRef} className="hidden" />
-      
-      {/* Gradient */}
+
+      {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/* Animated Typing Text with Auto-Scroll */}
-      {showScript && (
-        <div
-          ref={scrollRef}
-          className="absolute bottom-0 w-full p-4 text-white text-sm leading-relaxed overflow-y-auto max-h-48"
-        >
-          {currentWords.join(' ')}
+      {/* Flashing Visual Actions */}
+      {currentAction && (
+        <div className="absolute bottom-6 w-full px-4 text-center text-white text-lg font-semibold animate-pulse">
+          {currentAction.content}
         </div>
       )}
     </div>
