@@ -1,0 +1,11 @@
+const CHUNK_PUBLIC_PATH = "server/app/api/generate-script/route.js";
+const runtime = require("../../../chunks/[turbopack]_runtime.js");
+runtime.loadChunk("server/chunks/node_modules_formdata-node_lib_esm_fileFromPath_6b0aa2d9.js");
+runtime.loadChunk("server/chunks/node_modules_next_49574ba7._.js");
+runtime.loadChunk("server/chunks/node_modules_openai_d9735192._.js");
+runtime.loadChunk("server/chunks/node_modules_tr46_816df9d9._.js");
+runtime.loadChunk("server/chunks/node_modules_c28e1a20._.js");
+runtime.loadChunk("server/chunks/[root of the server]__a7b1b6cb._.js");
+runtime.getOrInstantiateRuntimeModule("[project]/.next-internal/server/app/api/generate-script/route/actions.js [app-rsc] (server actions loader, ecmascript)", CHUNK_PUBLIC_PATH);
+runtime.getOrInstantiateRuntimeModule("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/app/api/generate-script/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)", CHUNK_PUBLIC_PATH);
+module.exports = runtime.getOrInstantiateRuntimeModule("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/app/api/generate-script/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)", CHUNK_PUBLIC_PATH).exports;
