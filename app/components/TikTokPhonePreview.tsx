@@ -11,9 +11,9 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [showScript, setShowScript] = useState(false);
   const [currentWords, setCurrentWords] = useState<string[]>([]);
   const [wordIndex, setWordIndex] = useState(0);
+  const [showScript, setShowScript] = useState(false);
 
   useEffect(() => {
     if (audioUrl && videoRef.current && audioRef.current) {
@@ -40,13 +40,13 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
     if (showScript && script) {
       const words = script.split(' ');
       const interval = setInterval(() => {
-        setCurrentWords(prev => [...prev, words[wordIndex]]);
-        setWordIndex(prev => prev + 1);
-      }, 200); // Typing speed inside the phone (can adjust here)
+        setCurrentWords((prev) => [...prev, words[wordIndex]]);
+        setWordIndex((prev) => prev + 1);
 
-      if (wordIndex >= script.split(' ').length) {
-        clearInterval(interval);
-      }
+        if (wordIndex >= words.length) {
+          clearInterval(interval);
+        }
+      }, 200); // Typing speed (you can adjust this)
 
       return () => clearInterval(interval);
     }
@@ -69,11 +69,11 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
         muted
       />
       <audio ref={audioRef} className="hidden" />
-      
-      {/* Gradient */}
+
+      {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/* Animated Typing Text with Auto-Scroll */}
+      {/* Scrolling Text */}
       {showScript && (
         <div
           ref={scrollRef}
