@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
+import TikTokPhonePreview from './TikTokPhonePreview';
 
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
-  const [topicKey, setTopicKey] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState('');
   const [displayedScript, setDisplayedScript] = useState('');
@@ -31,21 +30,14 @@ export default function TryDemo() {
     }
   }, [loading]);
 
-  function normalizeInput(input: string) {
-    const lower = input.toLowerCase();
-    if (lower.includes('fitness')) return 'fitness';
-    if (lower.includes('meal')) return 'mealprep';
-    if (lower.includes('mindset') || lower.includes('motivation')) return 'mindset';
-    return '';
-  }
-
   async function handleTopicSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const key = normalizeInput(selectedTopic);
-    if (key && topics[key]) {
-      setTopicKey(key);
-      setError('');
+    const topicKey = selectedTopic.toLowerCase().trim();
+    const topicData = (topics as any)[topicKey];
+
+    if (topicData) {
       setStep('format');
+      setError('');
     } else {
       setError('This topic is not available in the demo. Upgrade to unlock full access!');
     }
@@ -53,30 +45,37 @@ export default function TryDemo() {
 
   async function handleFormatSelect(format: string) {
     setSelectedFormat(format);
+    if (!selectedTopic) return;
+
+    const topicKey = selectedTopic.toLowerCase().trim();
     const script = (topics as any)[topicKey]?.[format];
+
     if (!script) {
       setError('This format is locked for this topic.');
       return;
     }
+
     setLoading(true);
     setTimeout(() => {
       setFullScript(script);
       setDisplayedScript('');
-      setLoading(false);
-      // Delay to avoid missing first word
+
+      // 👇 Add a short delay before typing begins
       setTimeout(() => {
         setTyping(true);
-        setStep('script');
-        setVoiceReady(false);
-        setShowPreviewButton(false);
-      }, 400);
+      }, 400); // 400ms pause before typing starts
+
+      setStep('script');
+      setVoiceReady(false);
+      setShowPreviewButton(false);
+      setLoading(false);
     }, 1000);
   }
 
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // Use real voices later
+      setAudioUrl('/voice-fitness-2.mp3'); // Dummy audio
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
@@ -95,15 +94,14 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const words = fullScript.split(' ');
       const interval = setInterval(() => {
-        setDisplayedScript((prev) => prev + (index > 0 ? ' ' : '') + words[index]);
+        setDisplayedScript((prev) => prev + fullScript[index]);
         index++;
-        if (index >= words.length) {
+        if (index >= fullScript.length) {
           clearInterval(interval);
           setTyping(false);
         }
-      }, 120); // Slower, smooth typing now
+      }, 40); // slower bounce typing speed
       return () => clearInterval(interval);
     }
   }, [typing, fullScript]);
@@ -121,7 +119,7 @@ export default function TryDemo() {
         <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left */}
+          {/* Left Side */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'topic' && (
@@ -234,7 +232,7 @@ export default function TryDemo() {
             </div>
           </div>
 
-          {/* Right */}
+          {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -275,9 +273,18 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 LoadingButton reusable
-function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
+// 🔥 Reusable Button
+function LoadingButton({
+  onClick,
+  loading,
+  children,
+}: {
+  onClick: () => void;
+  loading: boolean;
+  children: React.ReactNode;
+}) {
   const [dots, setDots] = useState('');
+
   useEffect(() => {
     if (loading) {
       const interval = setInterval(() => {
