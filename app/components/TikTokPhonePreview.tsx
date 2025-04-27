@@ -37,19 +37,21 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
   }, [audioUrl]);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+
     if (showScript && script.length > 0) {
       const words = script.split(' ');
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setCurrentWords(prev => [...prev, words[wordIndex]]);
         setWordIndex(prev => prev + 1);
-      }, 180); // Typing speed slower for better TikTok effect
+      }, 200); // ⬅️ Same smooth typing speed as TryDemo now
 
-      if (wordIndex >= words.length) {
+      if (wordIndex >= script.split(' ').length) {
         clearInterval(interval);
       }
-
-      return () => clearInterval(interval);
     }
+
+    return () => clearInterval(interval);
   }, [showScript, wordIndex, script]);
 
   useEffect(() => {
@@ -60,6 +62,7 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
 
   return (
     <div className="relative w-[280px] md:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-2 border-[#333] bg-black">
+      {/* Background Video */}
       <video
         ref={videoRef}
         src="/mock-clip-1.mp4"
@@ -68,12 +71,13 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
         loop
         muted
       />
+      {/* Background Audio */}
       <audio ref={audioRef} className="hidden" />
 
-      {/* Dark overlay */}
+      {/* Dark Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/* Typing animated text */}
+      {/* Animated Typing Text */}
       {showScript && (
         <div
           ref={scrollRef}
