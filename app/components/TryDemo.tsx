@@ -10,14 +10,13 @@ export default function TryDemo() {
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState<any[]>([]);
-  const [displayedScript, setDisplayedScript] = useState('');
+  const [displayedScript, setDisplayedScript] = useState<any[]>([]);
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -62,7 +61,7 @@ export default function TryDemo() {
 
     setTimeout(() => {
       setFullScript(scripts);
-      setDisplayedScript('');
+      setDisplayedScript([]);
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
@@ -96,30 +95,20 @@ export default function TryDemo() {
       let index = 0;
       const delayedStart = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedScript((prev) => {
-            const nextBlock = fullScript[index];
-            const formattedBlock = `${nextBlock.type.toUpperCase()}: ${nextBlock.text}\n\n`;
-            return prev + formattedBlock;
-          });
+          setDisplayedScript((prev) => [...prev, fullScript[index]]);
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 500); 
-      }, 400); 
+        }, 500);
+      }, 400);
 
       return () => {
         clearTimeout(delayedStart);
       };
     }
   }, [typing, fullScript]);
-
-  useEffect(() => {
-    if (textareaRef.current && typing) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
-    }
-  }, [displayedScript, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -128,6 +117,7 @@ export default function TryDemo() {
         <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
+          {/* Left Side */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'topic' && (
@@ -182,26 +172,27 @@ export default function TryDemo() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col"
+                  className="flex flex-col space-y-3"
                 >
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div className="relative">
-                    <textarea
-                      ref={textareaRef}
-                      readOnly
-                      value={displayedScript}
-                      placeholder="Your generated script will appear here…"
-                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
-                      style={{ minHeight: '460px', maxHeight: '520px' }}
-                    />
-                    {typing && (
-                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
-                    )}
+                  <div className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm min-h-[460px] max-h-[520px] overflow-y-auto space-y-3">
+                    {displayedScript.map((block, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ type: 'spring', duration: 0.5 }}
+                      >
+                        <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}: </span>
+                        <span>{block.text}</span>
+                      </motion.div>
+                    ))}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
+            {/* Buttons */}
             <div className="mt-6 space-y-4">
               {step === 'script' && (
                 <LoadingButton onClick={generateVoice} loading={loading}>
@@ -239,6 +230,7 @@ export default function TryDemo() {
             </div>
           </div>
 
+          {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -279,6 +271,7 @@ export default function TryDemo() {
   );
 }
 
+// 🔥 Reusable LoadingButton
 function LoadingButton({
   onClick,
   loading,
