@@ -10,7 +10,7 @@ export default function TryDemo() {
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState<any[]>([]);
-  const [displayedScript, setDisplayedScript] = useState<any[]>([]);
+  const [displayedScript, setDisplayedScript] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
@@ -18,8 +18,8 @@ export default function TryDemo() {
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null); // ✅ important missing part
   const [dots, setDots] = useState('');
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (loading) {
@@ -38,7 +38,7 @@ export default function TryDemo() {
     const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
 
     if (matchedTopic) {
-      setSelectedTopic(matchedTopic); 
+      setSelectedTopic(matchedTopic);
       setError('');
       setStep('format');
     } else {
@@ -62,7 +62,7 @@ export default function TryDemo() {
 
     setTimeout(() => {
       setFullScript(scripts);
-      setDisplayedScript([]);
+      setDisplayedScript('');
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
@@ -74,7 +74,7 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); 
+      setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
       setLoading(false);
 
@@ -96,7 +96,11 @@ export default function TryDemo() {
       let index = 0;
       const delayedStart = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedScript((prev) => [...prev, fullScript[index]]);
+          setDisplayedScript((prev) => {
+            const nextBlock = fullScript[index];
+            const formattedBlock = `${nextBlock.type.toUpperCase()}: ${nextBlock.text}\n\n`;
+            return prev + formattedBlock;
+          });
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
@@ -124,7 +128,6 @@ export default function TryDemo() {
         <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'topic' && (
@@ -186,7 +189,7 @@ export default function TryDemo() {
                     <textarea
                       ref={textareaRef}
                       readOnly
-                      value={displayedScript.map(block => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n')}
+                      value={displayedScript}
                       placeholder="Your generated script will appear here…"
                       className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
                       style={{ minHeight: '460px', maxHeight: '520px' }}
@@ -199,7 +202,6 @@ export default function TryDemo() {
               )}
             </AnimatePresence>
 
-            {/* Buttons */}
             <div className="mt-6 space-y-4">
               {step === 'script' && (
                 <LoadingButton onClick={generateVoice} loading={loading}>
@@ -237,7 +239,6 @@ export default function TryDemo() {
             </div>
           </div>
 
-          {/* Right */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -278,7 +279,6 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Loading Button
 function LoadingButton({
   onClick,
   loading,
