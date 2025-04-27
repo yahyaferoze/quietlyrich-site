@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface TikTokPhonePreviewProps {
   script: string;
@@ -29,30 +29,31 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
         video.play().catch(() => {}),
         audio.play().catch(() => {}),
       ]).then(() => {
-        setShowScript(true);
+        setShowScript(false);
         setCurrentWords([]);
         setWordIndex(0);
+
+        setTimeout(() => {
+          setShowScript(true); // slight delay so it looks clean
+        }, 400);
       });
     }
   }, [audioUrl]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-
     if (showScript && script.length > 0) {
       const words = script.split(' ');
-      interval = setInterval(() => {
-        setCurrentWords(prev => [...prev, words[wordIndex]]);
-        setWordIndex(prev => prev + 1);
-      }, 200); // ⬅️ Same smooth typing speed as TryDemo now
-
-      if (wordIndex >= script.split(' ').length) {
-        clearInterval(interval);
-      }
+      let index = 0;
+      const interval = setInterval(() => {
+        setCurrentWords((prev) => [...prev, words[index]]);
+        index++;
+        if (index >= words.length) {
+          clearInterval(interval);
+        }
+      }, 130); // Slow, readable typing speed
+      return () => clearInterval(interval);
     }
-
-    return () => clearInterval(interval);
-  }, [showScript, wordIndex, script]);
+  }, [showScript, script]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -62,7 +63,6 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
 
   return (
     <div className="relative w-[280px] md:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-2 border-[#333] bg-black">
-      {/* Background Video */}
       <video
         ref={videoRef}
         src="/mock-clip-1.mp4"
@@ -71,13 +71,12 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
         loop
         muted
       />
-      {/* Background Audio */}
       <audio ref={audioRef} className="hidden" />
 
-      {/* Dark Gradient Overlay */}
+      {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/* Animated Typing Text */}
+      {/* Typing animated text */}
       {showScript && (
         <div
           ref={scrollRef}
