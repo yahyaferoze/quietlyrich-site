@@ -11,7 +11,6 @@ export default function TryDemo() {
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState<string>('');
   const [displayedText, setDisplayedText] = useState('');
-  const [lastChar, setLastChar] = useState(''); // ✨ new: bounce effect for last letter
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
@@ -90,21 +89,22 @@ export default function TryDemo() {
     }, 2000);
   }
 
+  // --- ✨ Word-by-word typing effect ---
   useEffect(() => {
     if (typing && fullScript.length > 0) {
+      const words = fullScript.split(' ');
       let index = 0;
+
       const delayStart = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedText((prev) => prev + fullScript[index]);
-          setLastChar(fullScript[index]); // ✨ capture current char for animation
+          setDisplayedText(prev => (prev ? prev + ' ' + words[index] : words[index]));
           index++;
-          if (index >= fullScript.length) {
+          if (index >= words.length) {
             clearInterval(interval);
             setTyping(false);
-            setLastChar('');
           }
-        }, 25); // Typing speed (25ms per character)
-      }, 600); // 600ms delay before typing starts
+        }, 80); // speed per word
+      }, 600); // initial delay before starting typing
 
       return () => clearTimeout(delayStart);
     }
@@ -190,16 +190,8 @@ export default function TryDemo() {
                       className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
                       style={{ minHeight: '460px', maxHeight: '520px' }}
                     />
-                    {typing && lastChar && (
-                      <motion.div
-                        key={lastChar + Math.random()} // random to re-trigger
-                        initial={{ opacity: 0, scale: 0.6 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute bottom-4 right-4 text-[#C2886D] text-lg font-bold"
-                      >
-                        {lastChar}
-                      </motion.div>
+                    {typing && (
+                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
                     )}
                   </div>
                 </motion.div>
@@ -280,7 +272,7 @@ export default function TryDemo() {
   );
 }
 
-// Reusable Button
+// 🔥 Reusable Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
