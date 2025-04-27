@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { topics } from '../lib/scripts';
 import TikTokPhonePreview from './TikTokPhonePreview';
+import { topics } from '../lib/scripts'; // Your long scripts for each topic+format here
 
-export default function TryDemo() {
+export default function TryDemoPro() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
@@ -17,8 +17,8 @@ export default function TryDemo() {
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -34,7 +34,6 @@ export default function TryDemo() {
     e.preventDefault();
     const topicKey = selectedTopic.toLowerCase().trim();
     const topicData = (topics as any)[topicKey];
-
     if (topicData) {
       setStep('format');
       setError('');
@@ -46,50 +45,34 @@ export default function TryDemo() {
   async function handleFormatSelect(format: string) {
     setSelectedFormat(format);
     if (!selectedTopic) return;
-
     const topicKey = selectedTopic.toLowerCase().trim();
     const script = (topics as any)[topicKey]?.[format];
-
     if (!script) {
       setError('This format is locked for this topic.');
       return;
     }
-
     setLoading(true);
     setTimeout(() => {
       setFullScript(script);
       setDisplayedScript('');
-      setTyping(false);
-
-      setTimeout(() => {
-        setTyping(true); // 👈 300ms delay AFTER setting full script
-      }, 300);
-
+      setTyping(true);
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(false);
       setLoading(false);
-    }, 800); // shorter loading time for better flow
+    }, 800); // delay before typing starts (fix glitch)
   }
 
   async function generateVoice() {
-    if (!fullScript) return;
     setLoading(true);
-
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // Change to your generated voice later
+      setAudioUrl('/mock-voice.mp3'); // use different voices later if you want
       setVoiceReady(true);
       setLoading(false);
-
-      if (audioRef.current) {
-        audioRef.current.load(); // Refresh audio source
-        audioRef.current.play(); // 🔥 Auto play voice after loading
-      }
-
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
-    }, 1200);
+    }, 1000);
   }
 
   function generatePreview() {
@@ -102,14 +85,15 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
+      const words = fullScript.split(' ');
       const interval = setInterval(() => {
-        setDisplayedScript((prev) => prev + fullScript[index]);
+        setDisplayedScript((prev) => prev + (words[index] ? words[index] + ' ' : ''));
         index++;
-        if (index >= fullScript.length) {
+        if (index >= words.length) {
           clearInterval(interval);
           setTyping(false);
         }
-      }, 40); // perfect bounce typing speed
+      }, 90); // slower bounce typing
       return () => clearInterval(interval);
     }
   }, [typing, fullScript]);
@@ -124,12 +108,13 @@ export default function TryDemo() {
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
-        <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
+        <p className="text-gray-400 text-center mb-10">
+          Explore AI-generated TikTok funnels & voice-powered scripts.
+        </p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Left Side */}
           <div>
-            {/* Forms */}
             <AnimatePresence mode="wait">
               {step === 'topic' && (
                 <motion.form
@@ -205,12 +190,11 @@ export default function TryDemo() {
 
             {/* Buttons */}
             <div className="mt-6 space-y-4">
-              {step === 'script' && (
+              {step === 'script' && !typing && (
                 <LoadingButton onClick={generateVoice} loading={loading}>
                   🎙 Generate Voice
                 </LoadingButton>
               )}
-
               {step === 'voice' && voiceReady && !showPreviewButton && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -221,16 +205,25 @@ export default function TryDemo() {
                   ✅ Voice Ready!
                 </motion.div>
               )}
-
               {step === 'voice' && showPreviewButton && (
                 <LoadingButton onClick={generatePreview} loading={false}>
                   🎬 Generate Preview
                 </LoadingButton>
               )}
+              {step === 'previewGen' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
+                >
+                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
+                  Generating Preview...
+                </motion.div>
+              )}
             </div>
           </div>
 
-          {/* Right Side (Preview) */}
+          {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -240,8 +233,25 @@ export default function TryDemo() {
             )}
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
-                <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                <audio ref={audioRef} src={audioUrl} className="hidden" preload="auto" />
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
+                >
+                  🎬 Preview Mode
+                </motion.div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+                <motion.div
+                  key="phone"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, type: 'spring' }}
+                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+                >
+                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
+                  <audio ref={audioRef} className="hidden" />
+                </motion.div>
               </div>
             )}
           </div>
@@ -251,8 +261,16 @@ export default function TryDemo() {
   );
 }
 
-// Loading Button Component
-function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
+// 🔥 Reusable Button
+function LoadingButton({
+  onClick,
+  loading,
+  children,
+}: {
+  onClick: () => void;
+  loading: boolean;
+  children: React.ReactNode;
+}) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -270,11 +288,20 @@ function LoadingButton({ onClick, loading, children }: { onClick: () => void; lo
       disabled={loading}
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
-      className={`w-full py-3 rounded-md font-semibold transition ${
-        loading ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse' : 'bg-[#C2886D] text-black hover:shadow-md'
+      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
+        loading
+          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
+          : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
       }`}
     >
-      {loading ? <span className="text-black font-bold">Loading{dots}</span> : <span className="text-black font-bold">{children}</span>}
+      {loading ? (
+        <div className="flex items-center justify-center gap-2">
+          <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+          <span className="text-black font-bold">Loading{dots}</span>
+        </div>
+      ) : (
+        <span className="text-black font-bold">{children}</span>
+      )}
     </motion.button>
   );
 }
