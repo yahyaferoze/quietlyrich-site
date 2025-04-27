@@ -59,25 +59,33 @@ export default function TryDemo() {
     setTimeout(() => {
       setFullScript(script);
       setDisplayedScript('');
+      setTyping(false);
 
-      // 👇 Add a short delay before typing begins
       setTimeout(() => {
-        setTyping(true);
-      }, 400); // 400ms pause before typing starts
+        setTyping(true); // 👈 300ms delay AFTER setting full script
+      }, 300);
 
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(false);
       setLoading(false);
-    }, 1000);
+    }, 800); // shorter loading time for better flow
   }
 
   async function generateVoice() {
+    if (!fullScript) return;
     setLoading(true);
+
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // Dummy audio
+      setAudioUrl('/voice-fitness-2.mp3'); // Change to your generated voice later
       setVoiceReady(true);
       setLoading(false);
+
+      if (audioRef.current) {
+        audioRef.current.load(); // Refresh audio source
+        audioRef.current.play(); // 🔥 Auto play voice after loading
+      }
+
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
@@ -101,7 +109,7 @@ export default function TryDemo() {
           clearInterval(interval);
           setTyping(false);
         }
-      }, 40); // slower bounce typing speed
+      }, 40); // perfect bounce typing speed
       return () => clearInterval(interval);
     }
   }, [typing, fullScript]);
@@ -121,6 +129,7 @@ export default function TryDemo() {
         <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Left Side */}
           <div>
+            {/* Forms */}
             <AnimatePresence mode="wait">
               {step === 'topic' && (
                 <motion.form
@@ -218,21 +227,10 @@ export default function TryDemo() {
                   🎬 Generate Preview
                 </LoadingButton>
               )}
-
-              {step === 'previewGen' && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
-                >
-                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
-                  Generating Preview...
-                </motion.div>
-              )}
             </div>
           </div>
 
-          {/* Right Side */}
+          {/* Right Side (Preview) */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -240,30 +238,10 @@ export default function TryDemo() {
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
             )}
-
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
-                >
-                  🎬 Preview Mode
-                </motion.div>
-
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-
-                <motion.div
-                  key="phone"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, type: 'spring' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
-                >
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
-                </motion.div>
+                <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
+                <audio ref={audioRef} src={audioUrl} className="hidden" preload="auto" />
               </div>
             )}
           </div>
@@ -273,16 +251,8 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
-function LoadingButton({
-  onClick,
-  loading,
-  children,
-}: {
-  onClick: () => void;
-  loading: boolean;
-  children: React.ReactNode;
-}) {
+// Loading Button Component
+function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -300,20 +270,11 @@ function LoadingButton({
       disabled={loading}
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
-      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
-        loading
-          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
-          : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
+      className={`w-full py-3 rounded-md font-semibold transition ${
+        loading ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse' : 'bg-[#C2886D] text-black hover:shadow-md'
       }`}
     >
-      {loading ? (
-        <div className="flex items-center justify-center gap-2">
-          <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
-          <span className="text-black font-bold">Loading{dots}</span>
-        </div>
-      ) : (
-        <span className="text-black font-bold">{children}</span>
-      )}
+      {loading ? <span className="text-black font-bold">Loading{dots}</span> : <span className="text-black font-bold">{children}</span>}
     </motion.button>
   );
 }
