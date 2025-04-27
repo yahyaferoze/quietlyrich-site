@@ -17,7 +17,7 @@ export default function TryDemo() {
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const textareaRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function TryDemo() {
     const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
 
     if (matchedTopic) {
-      setSelectedTopic(matchedTopic); // ✅ Smart match
+      setSelectedTopic(matchedTopic);
       setError('');
       setStep('format');
     } else {
@@ -73,7 +73,7 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3');
+      setAudioUrl('/voice-fitness-2.mp3'); 
       setVoiceReady(true);
       setLoading(false);
 
@@ -101,8 +101,8 @@ export default function TryDemo() {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 500);
-      }, 400);
+        }, 500); 
+      }, 400); 
 
       return () => {
         clearTimeout(delayedStart);
@@ -111,8 +111,8 @@ export default function TryDemo() {
   }, [typing, fullScript]);
 
   useEffect(() => {
-    if (textareaRef.current && typing) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    if (scrollRef.current && typing) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [displayedScript, typing]);
 
@@ -181,22 +181,20 @@ export default function TryDemo() {
                   className="flex flex-col"
                 >
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div className="relative">
-                    <div
-                      ref={textareaRef as any}
-                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white text-sm min-h-[460px] max-h-[520px] overflow-y-auto space-y-3"
-                    >
-                      {displayedScript.map((block, index) => (
-                        <div key={index}>
-                          <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}: </span>
-                          <span>{block.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                    {typing && (
-                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
-                    )}
+                  <div
+                    ref={scrollRef}
+                    className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white text-sm min-h-[460px] max-h-[520px] overflow-y-auto space-y-3"
+                  >
+                    {displayedScript.map((block, index) => (
+                      <div key={index}>
+                        <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}:</span>{' '}
+                        <span>{block.text}</span>
+                      </div>
+                    ))}
                   </div>
+                  {typing && (
+                    <div className="mt-2 w-full h-1 bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse rounded-full" />
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
