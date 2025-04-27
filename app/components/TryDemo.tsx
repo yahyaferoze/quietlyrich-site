@@ -3,12 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
-import { topics } from '../lib/scripts';
+import { topics } from '../lib/scripts'; // ✅ Correct import
 
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
+  const [matchedTopicKey, setMatchedTopicKey] = useState('');
   const [fullScript, setFullScript] = useState('');
   const [displayedScript, setDisplayedScript] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
@@ -21,6 +22,7 @@ export default function TryDemo() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
 
+  // ✍️ Smooth loading dots
   useEffect(() => {
     if (loading) {
       const dotsInterval = setInterval(() => {
@@ -30,12 +32,17 @@ export default function TryDemo() {
     }
   }, [loading]);
 
+  // ✅ New: handle topic search with partial, lowercase matching
   async function handleTopicSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const topicKey = selectedTopic.toLowerCase().trim();
-    const topicData = (topics as any)[topicKey];
+    const input = selectedTopic.toLowerCase().trim();
 
-    if (topicData) {
+    const foundKey = Object.keys(topics).find((key) => 
+      key.toLowerCase().includes(input)
+    );
+
+    if (foundKey) {
+      setMatchedTopicKey(foundKey);
       setStep('format');
       setError('');
     } else {
@@ -43,18 +50,16 @@ export default function TryDemo() {
     }
   }
 
+  // ✅ Pick format after matched topic
   async function handleFormatSelect(format: string) {
     setSelectedFormat(format);
-    if (!selectedTopic) return;
+    if (!matchedTopicKey) return;
 
-    const topicKey = selectedTopic.toLowerCase().trim();
-    const script = (topics as any)[topicKey]?.[format];
-
+    const script = (topics as any)[matchedTopicKey]?.[format];
     if (!script) {
       setError('This format is locked for this topic.');
       return;
     }
-
     setLoading(true);
     setTimeout(() => {
       setFullScript(script);
@@ -70,10 +75,9 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // Mock voice
+      setAudioUrl('/voice-fitness-2.mp3'); 
       setVoiceReady(true);
       setLoading(false);
-
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
@@ -87,6 +91,7 @@ export default function TryDemo() {
     }, 2000);
   }
 
+  // ✅ Smooth slower typing
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
@@ -97,11 +102,12 @@ export default function TryDemo() {
           clearInterval(interval);
           setTyping(false);
         }
-      }, 55); // Slow, smooth typing
+      }, 80); // Slowed typing
       return () => clearInterval(interval);
     }
   }, [typing, fullScript]);
 
+  // ✅ Auto-scroll text area
   useEffect(() => {
     if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
@@ -124,13 +130,13 @@ export default function TryDemo() {
                   key="topic"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  exit={{ opacity: 0 }}
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
                   <input
                     type="text"
-                    placeholder="e.g. Fitness at Home"
+                    placeholder="e.g. fitness, meal prep, hustle"
                     value={selectedTopic}
                     onChange={(e) => setSelectedTopic(e.target.value)}
                     className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
@@ -197,7 +203,6 @@ export default function TryDemo() {
                   🎙 Generate Voice
                 </LoadingButton>
               )}
-
               {step === 'voice' && voiceReady && !showPreviewButton && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -208,13 +213,11 @@ export default function TryDemo() {
                   ✅ Voice Ready!
                 </motion.div>
               )}
-
               {step === 'voice' && showPreviewButton && (
                 <LoadingButton onClick={generatePreview} loading={false}>
                   🎬 Generate Preview
                 </LoadingButton>
               )}
-
               {step === 'previewGen' && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -236,7 +239,6 @@ export default function TryDemo() {
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
             )}
-
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
                 <motion.div
@@ -247,9 +249,7 @@ export default function TryDemo() {
                 >
                   🎬 Preview Mode
                 </motion.div>
-
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
@@ -269,16 +269,7 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
-function LoadingButton({
-  onClick,
-  loading,
-  children,
-}: {
-  onClick: () => void;
-  loading: boolean;
-  children: React.ReactNode;
-}) {
+function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode; }) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
