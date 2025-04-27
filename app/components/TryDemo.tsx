@@ -3,14 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
-import { topics } from '../lib/scripts'; // Your long scripts for each topic+format here
+import { topics } from '../lib/scripts';
 
-export default function TryDemoPro() {
+export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [fullScript, setFullScript] = useState('');
-  const [displayedScript, setDisplayedScript] = useState('');
+  const [fullScript, setFullScript] = useState<any[]>([]);
+  const [displayedScript, setDisplayedScript] = useState<any[]>([]);
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
@@ -33,46 +33,44 @@ export default function TryDemoPro() {
   async function handleTopicSubmit(e: React.FormEvent) {
     e.preventDefault();
     const topicKey = selectedTopic.toLowerCase().trim();
-    const topicData = (topics as any)[topicKey];
-    if (topicData) {
-      setStep('format');
+    if ((topics as any)[topicKey]) {
       setError('');
+      setStep('format');
     } else {
-      setError('This topic is not available in the demo. Upgrade to unlock full access!');
+      setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
     }
   }
 
   async function handleFormatSelect(format: string) {
     setSelectedFormat(format);
-    if (!selectedTopic) return;
     const topicKey = selectedTopic.toLowerCase().trim();
-    const script = (topics as any)[topicKey]?.[format];
-    if (!script) {
-      setError('This format is locked for this topic.');
+    const scripts = (topics as any)[topicKey]?.[format];
+    if (!scripts) {
+      setError('❌ This format is locked for this topic.');
       return;
     }
     setLoading(true);
     setTimeout(() => {
-      setFullScript(script);
-      setDisplayedScript('');
+      setFullScript(scripts);
+      setDisplayedScript([]);
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(false);
       setLoading(false);
-    }, 800); // delay before typing starts (fix glitch)
+    }, 700); // slight delay so first word types properly
   }
 
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/mock-voice.mp3'); // use different voices later if you want
+      setAudioUrl('/voice-fitness-2.mp3'); // Example placeholder
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
-    }, 1000);
+    }, 1200);
   }
 
   function generatePreview() {
@@ -85,32 +83,24 @@ export default function TryDemoPro() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const words = fullScript.split(' ');
-      const interval = setInterval(() => {
-        setDisplayedScript((prev) => prev + (words[index] ? words[index] + ' ' : ''));
-        index++;
-        if (index >= words.length) {
-          clearInterval(interval);
+      const typeNext = () => {
+        if (index < fullScript.length) {
+          setDisplayedScript((prev) => [...prev, fullScript[index]]);
+          index++;
+          setTimeout(typeNext, 500); // smooth bounce typing
+        } else {
           setTyping(false);
         }
-      }, 90); // slower bounce typing
-      return () => clearInterval(interval);
+      };
+      setTimeout(typeNext, 300); // tiny delay before starting typing
     }
   }, [typing, fullScript]);
-
-  useEffect(() => {
-    if (textareaRef.current && typing) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
-    }
-  }, [displayedScript, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
-        <p className="text-gray-400 text-center mb-10">
-          Explore AI-generated TikTok funnels & voice-powered scripts.
-        </p>
+        <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Left Side */}
@@ -175,14 +165,11 @@ export default function TryDemoPro() {
                     <textarea
                       ref={textareaRef}
                       readOnly
-                      value={displayedScript}
+                      value={displayedScript.map(item => `${item.type.toUpperCase()}: ${item.text}`).join('\n\n')}
                       placeholder="Your generated script will appear here…"
                       className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
-                      style={{ minHeight: '460px', maxHeight: '520px' }}
+                      style={{ minHeight: '480px', maxHeight: '520px' }}
                     />
-                    {typing && (
-                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
-                    )}
                   </div>
                 </motion.div>
               )}
@@ -190,11 +177,12 @@ export default function TryDemoPro() {
 
             {/* Buttons */}
             <div className="mt-6 space-y-4">
-              {step === 'script' && !typing && (
+              {step === 'script' && (
                 <LoadingButton onClick={generateVoice} loading={loading}>
                   🎙 Generate Voice
                 </LoadingButton>
               )}
+
               {step === 'voice' && voiceReady && !showPreviewButton && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -205,11 +193,13 @@ export default function TryDemoPro() {
                   ✅ Voice Ready!
                 </motion.div>
               )}
+
               {step === 'voice' && showPreviewButton && (
                 <LoadingButton onClick={generatePreview} loading={false}>
                   🎬 Generate Preview
                 </LoadingButton>
               )}
+
               {step === 'previewGen' && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -231,6 +221,7 @@ export default function TryDemoPro() {
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
             )}
+
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
                 <motion.div
@@ -241,7 +232,9 @@ export default function TryDemoPro() {
                 >
                   🎬 Preview Mode
                 </motion.div>
+
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
