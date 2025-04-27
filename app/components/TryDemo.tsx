@@ -9,24 +9,23 @@ export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [fullScript, setFullScript] = useState<any[]>([]);
-  const [displayedScript, setDisplayedScript] = useState<any[]>([]);
+  const [fullScript, setFullScript] = useState<string>('');
+  const [displayedText, setDisplayedText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const [dots, setDots] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null); // ✅ Fixed audioRef
+  const [dots, setDots] = useState('');
 
   useEffect(() => {
     if (loading) {
-      const interval = setInterval(() => {
+      const dotsInterval = setInterval(() => {
         setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
-      return () => clearInterval(interval);
+      return () => clearInterval(dotsInterval);
     }
   }, [loading]);
 
@@ -34,7 +33,6 @@ export default function TryDemo() {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
     const availableTopics = Object.keys(topics);
-
     const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
 
     if (matchedTopic) {
@@ -61,8 +59,9 @@ export default function TryDemo() {
     setLoading(true);
 
     setTimeout(() => {
-      setFullScript(scripts);
-      setDisplayedScript([]);
+      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
+      setFullScript(combined);
+      setDisplayedText('');
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
@@ -74,10 +73,9 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // Demo audio
+      setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
       setLoading(false);
-
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
@@ -88,31 +86,24 @@ export default function TryDemo() {
     setStep('previewGen');
     setTimeout(() => {
       setStep('preview');
-
-      // Auto-play the voice if available
-      if (audioRef.current) {
-        audioRef.current.play();
-      }
     }, 2000);
   }
 
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const delayedStart = setTimeout(() => {
+      const delayStart = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedScript((prev) => [...prev, fullScript[index]]);
+          setDisplayedText(prev => prev + fullScript[index]);
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 600); // slower typing for better reading
-      }, 600); // small delay before typing starts
+        }, 20); // Typing speed: lower is faster
+      }, 400);
 
-      return () => {
-        clearTimeout(delayedStart);
-      };
+      return () => clearTimeout(delayStart);
     }
   }, [typing, fullScript]);
 
@@ -120,7 +111,7 @@ export default function TryDemo() {
     if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
-  }, [displayedScript, typing]);
+  }, [displayedText, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -191,7 +182,7 @@ export default function TryDemo() {
                     <textarea
                       ref={textareaRef}
                       readOnly
-                      value={displayedScript.map(block => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n')}
+                      value={displayedText}
                       placeholder="Your generated script will appear here…"
                       className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
                       style={{ minHeight: '460px', maxHeight: '520px' }}
@@ -211,7 +202,6 @@ export default function TryDemo() {
                   🎙 Generate Voice
                 </LoadingButton>
               )}
-
               {step === 'voice' && voiceReady && !showPreviewButton && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -222,13 +212,11 @@ export default function TryDemo() {
                   ✅ Voice Ready!
                 </motion.div>
               )}
-
               {step === 'voice' && showPreviewButton && (
                 <LoadingButton onClick={generatePreview} loading={false}>
                   🎬 Generate Preview
                 </LoadingButton>
               )}
-
               {step === 'previewGen' && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -250,7 +238,6 @@ export default function TryDemo() {
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
             )}
-
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
                 <motion.div
@@ -271,8 +258,7 @@ export default function TryDemo() {
                   transition={{ duration: 0.8, type: 'spring' }}
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
+                  <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
                 </motion.div>
               </div>
             )}
@@ -283,16 +269,8 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
-function LoadingButton({
-  onClick,
-  loading,
-  children,
-}: {
-  onClick: () => void;
-  loading: boolean;
-  children: React.ReactNode;
-}) {
+// Reusable Button Component
+function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
