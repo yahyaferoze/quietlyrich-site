@@ -4,89 +4,99 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 
-const videoFormats = {
-  classic: [
-    { icon: '🎯', title: 'Hook Video', desc: 'Grab attention instantly with a question, fact, or bold claim.' },
-    { icon: '💡', title: 'Value Drop', desc: 'Deliver something useful, educational or surprising.' },
-    { icon: '🚀', title: 'Call to Action (Pro)', desc: 'Locked. Upgrade to Pro to unlock.' },
-  ],
+// --- Topic Definitions ---
+const topics = {
+  fitness: {
+    name: "🏋️‍♂️ Fitness Motivation",
+    scripts: [
+      "Imagine transforming your body in just 15 minutes a day! 🏃‍♂️✨ Stick around, because I'm about to show you 3 simple moves you can do right at home — no equipment needed!",
+      "Tired of feeling stuck with your workouts? 😩 There's ONE small change you can make today that’ll completely shift your fitness journey. Stick around, I’ll show you how!"
+    ],
+  },
+  business: {
+    name: "💼 Small Business Growth",
+    scripts: [
+      "STOP wasting money on ads that don’t convert! 🚫💸 I'm about to reveal a secret marketing hack used by businesses making 6-figures a month. Ready?",
+      "Ever wonder why some small businesses explode overnight? 🤔💥 It comes down to one strategy — and I’m giving it to you today. Watch closely!"
+    ],
+  },
+  travel: {
+    name: "🌍 Travel Hacks",
+    scripts: [
+      "Want to fly first class for economy prices? ✈️💺 Stay tuned because I’m dropping the best-kept travel secrets airlines don’t want you to know!",
+      "This ONE website saved me over £500 on my last holiday 🏖️🛫 — and no, it’s not what you think. Watch ‘til the end to find out!"
+    ],
+  },
 };
 
-// Fake scripts and audios
-const fakeScripts = [
-  `*[Opening Scene: Energetic music plays]*
-**[Visual: Person smiling at camera holding phone]**
-**Person:** "Did you know there's a secret that could save you hundreds each month?💸"
-**[Flash text]: "STOP overpaying NOW!"`,
-  
-  `*[Scene: Bright sunny park]*
-**[Visual: Person laughing with friends]**
-**Person:** "This one simple mindset shift changed everything for me! ☀️✨"
-**[Flash text]: "It's easier than you think!"`
-];
-
-const fakeAudios = [
-  '/mock-voice-1.mp3', // First format voice file
-  '/mock-voice-2.mp3', // Second format voice file
+const formats = [
+  { icon: '🎯', title: 'Hook Video', desc: 'Grab attention instantly with a question, fact, or bold claim.' },
+  { icon: '💡', title: 'Value Drop', desc: 'Deliver something useful, educational or surprising.' },
+  { icon: '🚀', title: 'Call to Action', desc: 'Encourage viewers to act (Locked - Go Pro)', locked: true },
 ];
 
 export default function TryDemo() {
-  const [style] = useState<keyof typeof videoFormats>('classic');
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<keyof typeof topics | null>(null);
+  const [selectedFormat, setSelectedFormat] = useState<number | null>(null);
   const [fullScript, setFullScript] = useState('');
   const [displayedScript, setDisplayedScript] = useState('');
-  const [audioUrl, setAudioUrl] = useState('');
-  const [step, setStep] = useState<'select' | 'script' | 'voice' | 'previewGen' | 'preview'>('select');
+  const [audioUrl, setAudioUrl] = useState('/mock-voice.mp3'); // Mocked voice
+  const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const [dots, setDots] = useState('');
 
   useEffect(() => {
     if (loading) {
-      const dotsInterval = setInterval(() => {
+      const interval = setInterval(() => {
         setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
-      return () => clearInterval(dotsInterval);
+      return () => clearInterval(interval);
     }
   }, [loading]);
 
-  function handleSelectFormat(i: number) {
-    if (i === 2) {
-      alert('🚀 This format is locked! Upgrade to Pro to unlock.');
+  function selectTopic(topic: keyof typeof topics) {
+    setSelectedTopic(topic);
+    setStep('format');
+  }
+
+  function selectFormat(index: number) {
+    if (formats[index].locked) {
+      alert('This format is only available with Pro Access!');
       return;
     }
-    setSelectedIdx(i);
+    setSelectedFormat(index);
+    generateScript(index);
   }
 
-  async function generateScript() {
-    if (selectedIdx === null) return;
+  async function generateScript(formatIdx: number) {
+    if (selectedTopic === null) return;
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading
-
-    setFullScript(fakeScripts[selectedIdx]);
-    setDisplayedScript('');
-    setLoading(false);
-    setTyping(true);
-    setStep('script');
-    setVoiceReady(false);
-    setShowPreviewButton(false);
-  }
-
-  async function generateVoice() {
-    if (selectedIdx === null) return;
-    setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading
-
-    setAudioUrl(fakeAudios[selectedIdx]);
-    setLoading(false);
-    setVoiceReady(true);
-
+    const script = topics[selectedTopic].scripts[formatIdx];
     setTimeout(() => {
-      setShowPreviewButton(true);
+      setFullScript(script);
+      setDisplayedScript('');
+      setLoading(false);
+      setTyping(true);
+      setStep('script');
+      setVoiceReady(false);
+      setShowPreviewButton(false);
+    }, 1000);
+  }
+
+  function generateVoice() {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setVoiceReady(true);
+      setTimeout(() => {
+        setShowPreviewButton(true);
+      }, 1000);
     }, 1500);
   }
 
@@ -94,7 +104,7 @@ export default function TryDemo() {
     setStep('previewGen');
     setTimeout(() => {
       setStep('preview');
-    }, 2000);
+    }, 1500);
   }
 
   useEffect(() => {
@@ -131,45 +141,54 @@ export default function TryDemo() {
           {/* Left */}
           <div>
             <AnimatePresence mode="wait">
-              {step === 'select' && (
-                <motion.div
-                  key="formats"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
-                >
-                  <h3 className="text-xl font-semibold mb-1">🛠 Choose Your Funnel Format</h3>
-                  <p className="text-gray-400 text-sm mb-4">Each format mimics a proven viral TikTok structure.</p>
-                  {videoFormats[style].map((step, i) => (
-                    <div
-                      key={i}
-                      onClick={() => handleSelectFormat(i)}
-                      className={`flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition ${
-                        selectedIdx === i
-                          ? 'border-[#C2886D] bg-[#1a1a1a]'
-                          : 'border-[#444] bg-[#111] hover:border-gray-500'
-                      }`}
-                    >
-                      <div>
-                        <div className="text-xl">{step.icon}</div>
-                        <div className="font-medium">{step.title}</div>
-                        <div className="text-gray-400 text-xs">{step.desc}</div>
+              {step === 'topic' && (
+                <motion.div key="topics" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <h3 className="text-xl font-semibold mb-2">🎯 Pick a Topic</h3>
+                  <div className="space-y-4">
+                    {Object.entries(topics).map(([key, value]) => (
+                      <div key={key}
+                        onClick={() => selectTopic(key as keyof typeof topics)}
+                        className="p-4 bg-[#111] rounded-lg border border-[#444] hover:border-[#C2886D] cursor-pointer"
+                      >
+                        <div className="font-bold">{value.name}</div>
                       </div>
-                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </motion.div>
               )}
 
-              {step !== 'select' && (
-                <motion.div
-                  key="script-box"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col"
-                >
+              {step === 'format' && (
+                <motion.div key="formats" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <h3 className="text-xl font-semibold mb-2 mt-6">🛠 Choose Your Funnel Format</h3>
+                  <div className="space-y-4">
+                    {formats.map((format, i) => (
+                      <div key={i}
+                        onClick={() => selectFormat(i)}
+                        className={`flex justify-between items-center p-4 rounded-lg border h-24 cursor-pointer transition ${
+                          format.locked
+                            ? 'border-[#555] bg-[#222] hover:bg-[#1a1a1a]'
+                            : 'border-[#444] bg-[#111] hover:border-[#C2886D]'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-xl">{format.icon}</div>
+                          <div className="font-medium">{format.title}</div>
+                          <div className="text-gray-400 text-xs">{format.desc}</div>
+                        </div>
+                        {!format.locked && (
+                          <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
+                        )}
+                        {format.locked && (
+                          <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">🔒 Go Pro</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 'script' && (
+                <motion.div key="script-box" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
                   <div className="relative">
                     <textarea
@@ -190,13 +209,13 @@ export default function TryDemo() {
 
             {/* Buttons */}
             <div className="mt-6 space-y-4">
-              {step === 'select' && (
-                <LoadingButton onClick={generateScript} loading={loading}>
-                  📝 Generate Script
+              {step === 'script' && (
+                <LoadingButton onClick={generateVoice} loading={loading}>
+                  🎙 Generate Voice
                 </LoadingButton>
               )}
 
-              {step === 'voice' && !typing && (
+              {step === 'voice' && (
                 <>
                   {!voiceReady && (
                     <LoadingButton onClick={generateVoice} loading={loading}>
@@ -204,17 +223,12 @@ export default function TryDemo() {
                     </LoadingButton>
                   )}
                   {voiceReady && !showPreviewButton && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.6 }}
-                      className="text-green-400 text-center mt-2"
-                    >
-                      ✅ Voice Ready!
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <div className="text-green-400 text-center mt-2">✅ Voice Ready!</div>
                     </motion.div>
                   )}
                   {showPreviewButton && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                       <LoadingButton onClick={generatePreview} loading={false}>
                         🎬 Generate Preview
                       </LoadingButton>
@@ -222,58 +236,27 @@ export default function TryDemo() {
                   )}
                 </>
               )}
-
-              {step === 'previewGen' && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
-                >
-                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
-                  Generating Preview...
-                </motion.div>
-              )}
             </div>
           </div>
 
           {/* Right */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
-            {step === 'previewGen' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center"
-              >
-                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
-                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
+            {(step === 'previewGen' || step === 'preview') && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+                {step === 'previewGen' && (
+                  <>
+                    <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
+                    <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
+                  </>
+                )}
+                {step === 'preview' && (
+                  <div className="relative flex flex-col items-center -mt-4">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+                    <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
+                    <audio ref={audioRef} className="hidden" />
+                  </div>
+                )}
               </motion.div>
-            )}
-
-            {step === 'preview' && (
-              <div className="relative flex flex-col items-center -mt-4">
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
-                >
-                  🎬 Preview Mode
-                </motion.div>
-
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-
-                <motion.div
-                  key="phone"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, type: 'spring' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
-                >
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/5 to-white/0 pointer-events-none animate-[pulse_2s_infinite]" />
-                </motion.div>
-              </div>
             )}
           </div>
         </div>
@@ -282,16 +265,8 @@ export default function TryDemo() {
   );
 }
 
-// Reusable LoadingButton
-function LoadingButton({
-  onClick,
-  loading,
-  children,
-}: {
-  onClick: () => void;
-  loading: boolean;
-  children: React.ReactNode;
-}) {
+// --- LoadingButton ---
+function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
