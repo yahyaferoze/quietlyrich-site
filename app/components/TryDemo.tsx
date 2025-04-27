@@ -17,8 +17,8 @@ export default function TryDemo() {
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const audioRef = useRef<HTMLAudioElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null); // ✅ important missing part
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -30,26 +30,36 @@ export default function TryDemo() {
     }
   }, [loading]);
 
-  async function handleTopicSubmit(e: React.FormEvent) {
+  const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const topicKey = selectedTopic.toLowerCase().trim();
-    if ((topics as any)[topicKey]) {
+    const topicInput = selectedTopic.toLowerCase().trim();
+    const availableTopics = Object.keys(topics);
+
+    const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
+
+    if (matchedTopic) {
+      setSelectedTopic(matchedTopic); 
       setError('');
       setStep('format');
     } else {
       setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
     }
-  }
+  };
 
-  async function handleFormatSelect(format: string) {
+  const handleFormatSelect = async (format: string) => {
     setSelectedFormat(format);
+    if (!selectedTopic) return;
+
     const topicKey = selectedTopic.toLowerCase().trim();
     const scripts = (topics as any)[topicKey]?.[format];
+
     if (!scripts) {
       setError('❌ This format is locked for this topic.');
       return;
     }
+
     setLoading(true);
+
     setTimeout(() => {
       setFullScript(scripts);
       setDisplayedScript([]);
@@ -58,15 +68,16 @@ export default function TryDemo() {
       setVoiceReady(false);
       setShowPreviewButton(false);
       setLoading(false);
-    }, 700); // slight delay so first word types properly
-  }
+    }, 800);
+  };
 
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // Example placeholder
+      setAudioUrl('/voice-fitness-2.mp3'); 
       setVoiceReady(true);
       setLoading(false);
+
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
@@ -83,18 +94,28 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const typeNext = () => {
-        if (index < fullScript.length) {
+      const delayedStart = setTimeout(() => {
+        const interval = setInterval(() => {
           setDisplayedScript((prev) => [...prev, fullScript[index]]);
           index++;
-          setTimeout(typeNext, 500); // smooth bounce typing
-        } else {
-          setTyping(false);
-        }
+          if (index >= fullScript.length) {
+            clearInterval(interval);
+            setTyping(false);
+          }
+        }, 500); 
+      }, 400); 
+
+      return () => {
+        clearTimeout(delayedStart);
       };
-      setTimeout(typeNext, 300); // tiny delay before starting typing
     }
   }, [typing, fullScript]);
+
+  useEffect(() => {
+    if (textareaRef.current && typing) {
+      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    }
+  }, [displayedScript, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -103,7 +124,7 @@ export default function TryDemo() {
         <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left Side */}
+          {/* Left */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'topic' && (
@@ -118,7 +139,7 @@ export default function TryDemo() {
                   <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
                   <input
                     type="text"
-                    placeholder="e.g. Fitness at Home"
+                    placeholder="e.g. Fitness, Skin care, Focus, Budget Eating..."
                     value={selectedTopic}
                     onChange={(e) => setSelectedTopic(e.target.value)}
                     className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
@@ -165,11 +186,14 @@ export default function TryDemo() {
                     <textarea
                       ref={textareaRef}
                       readOnly
-                      value={displayedScript.map(item => `${item.type.toUpperCase()}: ${item.text}`).join('\n\n')}
+                      value={displayedScript.map(block => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n')}
                       placeholder="Your generated script will appear here…"
                       className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
-                      style={{ minHeight: '480px', maxHeight: '520px' }}
+                      style={{ minHeight: '460px', maxHeight: '520px' }}
                     />
+                    {typing && (
+                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -213,7 +237,7 @@ export default function TryDemo() {
             </div>
           </div>
 
-          {/* Right Side */}
+          {/* Right */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -254,7 +278,7 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
+// 🔥 Reusable Loading Button
 function LoadingButton({
   onClick,
   loading,
