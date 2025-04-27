@@ -4,47 +4,97 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 
-// Hardcoded fake scripts
-const fakeScripts = [
-  `🎬 [Scene: Bright background, person smiling]\n\n🗣 "Want a quick hack to boost your mornings? Stick around..."`,
-  
-  `🎬 [Scene: Fast shots of daily moments]\n\n🗣 "Feeling stressed? Here's a 10-second reset that can change everything. Let's dive in!"`,
-];
-
 const videoFormats = {
   classic: [
-    { icon: '🎯', title: 'Hook Video', desc: 'Grab attention instantly.', locked: false },
-    { icon: '💡', title: 'Value Drop', desc: 'Deliver surprising value.', locked: false },
-    { icon: '🚀', title: 'Call to Action', desc: 'Prompt followers (Locked)', locked: true },
+    { icon: '🎯', title: 'Hook Video', desc: 'Grab attention instantly with a question, fact, or bold claim.' },
+    { icon: '💡', title: 'Value Drop', desc: 'Deliver something useful, educational or surprising.' },
+    { icon: '🚀', title: 'Call to Action (Pro)', desc: 'Locked. Upgrade to Pro to unlock.' },
   ],
 };
+
+// Fake scripts and audios
+const fakeScripts = [
+  `*[Opening Scene: Energetic music plays]*
+**[Visual: Person smiling at camera holding phone]**
+**Person:** "Did you know there's a secret that could save you hundreds each month?💸"
+**[Flash text]: "STOP overpaying NOW!"`,
+  
+  `*[Scene: Bright sunny park]*
+**[Visual: Person laughing with friends]**
+**Person:** "This one simple mindset shift changed everything for me! ☀️✨"
+**[Flash text]: "It's easier than you think!"`
+];
+
+const fakeAudios = [
+  '/mock-voice-1.mp3', // First format voice file
+  '/mock-voice-2.mp3', // Second format voice file
+];
 
 export default function TryDemo() {
   const [style] = useState<keyof typeof videoFormats>('classic');
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [fullScript, setFullScript] = useState('');
   const [displayedScript, setDisplayedScript] = useState('');
-  const [step, setStep] = useState<'select' | 'script' | 'previewGen' | 'preview'>('select');
+  const [audioUrl, setAudioUrl] = useState('');
+  const [step, setStep] = useState<'select' | 'script' | 'voice' | 'previewGen' | 'preview'>('select');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
+  const [voiceReady, setVoiceReady] = useState(false);
+  const [showPreviewButton, setShowPreviewButton] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [dots, setDots] = useState('');
 
-  function handleFormatSelect(i: number) {
-    const format = videoFormats[style][i];
-    if (format.locked) return; // stop if locked
+  useEffect(() => {
+    if (loading) {
+      const dotsInterval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+      }, 400);
+      return () => clearInterval(dotsInterval);
+    }
+  }, [loading]);
+
+  function handleSelectFormat(i: number) {
+    if (i === 2) {
+      alert('🚀 This format is locked! Upgrade to Pro to unlock.');
+      return;
+    }
     setSelectedIdx(i);
-    setFullScript(fakeScripts[i]);
+  }
+
+  async function generateScript() {
+    if (selectedIdx === null) return;
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading
+
+    setFullScript(fakeScripts[selectedIdx]);
     setDisplayedScript('');
+    setLoading(false);
     setTyping(true);
     setStep('script');
+    setVoiceReady(false);
+    setShowPreviewButton(false);
+  }
+
+  async function generateVoice() {
+    if (selectedIdx === null) return;
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading
+
+    setAudioUrl(fakeAudios[selectedIdx]);
+    setLoading(false);
+    setVoiceReady(true);
+
+    setTimeout(() => {
+      setShowPreviewButton(true);
+    }, 1500);
   }
 
   function generatePreview() {
     setStep('previewGen');
     setTimeout(() => {
       setStep('preview');
-    }, 1500);
+    }, 2000);
   }
 
   useEffect(() => {
@@ -56,8 +106,9 @@ export default function TryDemo() {
         if (index >= fullScript.length) {
           clearInterval(interval);
           setTyping(false);
+          setStep('voice');
         }
-      }, 30);
+      }, 40);
       return () => clearInterval(interval);
     }
   }, [typing, fullScript]);
@@ -89,39 +140,31 @@ export default function TryDemo() {
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-semibold mb-1">🛠 Choose Your Funnel Format</h3>
-                  <p className="text-gray-400 text-sm mb-4">Each format mimics a viral TikTok structure.</p>
-                  {videoFormats[style].map((format, i) => (
+                  <p className="text-gray-400 text-sm mb-4">Each format mimics a proven viral TikTok structure.</p>
+                  {videoFormats[style].map((step, i) => (
                     <div
                       key={i}
-                      onClick={() => handleFormatSelect(i)}
+                      onClick={() => handleSelectFormat(i)}
                       className={`flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition ${
-                        format.locked
-                          ? 'border-gray-700 bg-[#222] opacity-50 cursor-not-allowed'
+                        selectedIdx === i
+                          ? 'border-[#C2886D] bg-[#1a1a1a]'
                           : 'border-[#444] bg-[#111] hover:border-gray-500'
                       }`}
                     >
                       <div>
-                        <div className="text-xl">{format.icon}</div>
-                        <div className="font-medium">{format.title}</div>
-                        <div className="text-gray-400 text-xs">{format.desc}</div>
+                        <div className="text-xl">{step.icon}</div>
+                        <div className="font-medium">{step.title}</div>
+                        <div className="text-gray-400 text-xs">{step.desc}</div>
                       </div>
-                      {format.locked ? (
-                        <button className="bg-gray-700 text-gray-400 px-3 py-1 rounded-md text-sm cursor-not-allowed">
-                          Go Pro →
-                        </button>
-                      ) : (
-                        <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">
-                          Use →
-                        </button>
-                      )}
+                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
                     </div>
                   ))}
                 </motion.div>
               )}
 
-              {step === 'script' && selectedIdx !== null && (
+              {step !== 'select' && (
                 <motion.div
-                  key="script"
+                  key="script-box"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
@@ -141,17 +184,56 @@ export default function TryDemo() {
                       <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
                     )}
                   </div>
-
-                  {!typing && (
-                    <div className="mt-6 space-y-4">
-                      <LoadingButton onClick={generatePreview} loading={false}>
-                        🎬 Generate Preview
-                      </LoadingButton>
-                    </div>
-                  )}
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Buttons */}
+            <div className="mt-6 space-y-4">
+              {step === 'select' && (
+                <LoadingButton onClick={generateScript} loading={loading}>
+                  📝 Generate Script
+                </LoadingButton>
+              )}
+
+              {step === 'voice' && !typing && (
+                <>
+                  {!voiceReady && (
+                    <LoadingButton onClick={generateVoice} loading={loading}>
+                      🎙 Generate Voice
+                    </LoadingButton>
+                  )}
+                  {voiceReady && !showPreviewButton && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6 }}
+                      className="text-green-400 text-center mt-2"
+                    >
+                      ✅ Voice Ready!
+                    </motion.div>
+                  )}
+                  {showPreviewButton && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+                      <LoadingButton onClick={generatePreview} loading={false}>
+                        🎬 Generate Preview
+                      </LoadingButton>
+                    </motion.div>
+                  )}
+                </>
+              )}
+
+              {step === 'previewGen' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
+                >
+                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
+                  Generating Preview...
+                </motion.div>
+              )}
+            </div>
           </div>
 
           {/* Right */}
@@ -187,8 +269,9 @@ export default function TryDemo() {
                   transition={{ duration: 0.8, type: 'spring' }}
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
-                  <TikTokPhonePreview script={fullScript} audioUrl={''} />
+                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
                   <audio ref={audioRef} className="hidden" />
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/5 to-white/0 pointer-events-none animate-[pulse_2s_infinite]" />
                 </motion.div>
               </div>
             )}
@@ -199,7 +282,7 @@ export default function TryDemo() {
   );
 }
 
-// Loading Button
+// Reusable LoadingButton
 function LoadingButton({
   onClick,
   loading,
@@ -209,22 +292,33 @@ function LoadingButton({
   loading: boolean;
   children: React.ReactNode;
 }) {
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+      }, 400);
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   return (
     <motion.button
       onClick={onClick}
       disabled={loading}
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
-      className={`w-full py-3 rounded-md font-semibold transition ${
+      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
         loading
-          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse'
+          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
           : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
       }`}
     >
       {loading ? (
         <div className="flex items-center justify-center gap-2">
           <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
-          <span className="text-black font-bold">Loading...</span>
+          <span className="text-black font-bold">Generating{dots}</span>
         </div>
       ) : (
         <span className="text-black font-bold">{children}</span>
