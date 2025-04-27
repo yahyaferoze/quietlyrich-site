@@ -9,16 +9,17 @@ export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [fullScript, setFullScript] = useState<string[]>([]);
-  const [displayedWords, setDisplayedWords] = useState<string[]>([]);
+  const [fullScript, setFullScript] = useState<string>('');
+  const [displayedText, setDisplayedText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const textareaRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (loading) {
@@ -59,10 +60,9 @@ export default function TryDemo() {
     setLoading(true);
 
     setTimeout(() => {
-      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join(' ');
-      const wordsArray = combined.split(' ');
-      setFullScript(wordsArray);
-      setDisplayedWords([]);
+      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
+      setFullScript(combined);
+      setDisplayedText('');
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
@@ -93,18 +93,18 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const delayedStart = setTimeout(() => {
+      const delayBeforeTyping = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedWords((prev) => [...prev, fullScript[index]]);
+          setDisplayedText((prev) => prev + fullScript[index]);
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 100); // typing speed: 1 word every 100ms
-      }, 600); // start delay (600ms)
+        }, 20); // typing speed per letter
+      }, 500); // delay before typing starts
 
-      return () => clearTimeout(delayedStart);
+      return () => clearTimeout(delayBeforeTyping);
     }
   }, [typing, fullScript]);
 
@@ -112,7 +112,7 @@ export default function TryDemo() {
     if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
-  }, [displayedWords, typing]);
+  }, [displayedText, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -179,21 +179,18 @@ export default function TryDemo() {
                   className="flex flex-col"
                 >
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div
-                    ref={textareaRef}
-                    className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto min-h-[460px] max-h-[520px] space-y-2"
-                  >
-                    {displayedWords.map((word, idx) => (
-                      <motion.span
-                        key={idx}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25, type: 'spring', bounce: 0.4 }}
-                        className="inline-block mr-1"
-                      >
-                        {word}
-                      </motion.span>
-                    ))}
+                  <div className="relative">
+                    <textarea
+                      ref={textareaRef}
+                      readOnly
+                      value={displayedText}
+                      placeholder="Your generated script will appear here…"
+                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
+                      style={{ minHeight: '460px', maxHeight: '520px' }}
+                    />
+                    {typing && (
+                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -263,6 +260,7 @@ export default function TryDemo() {
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
                   <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
+                  <audio ref={audioRef} className="hidden" />
                 </motion.div>
               </div>
             )}
@@ -273,7 +271,7 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
+// Reusable Button Component
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
