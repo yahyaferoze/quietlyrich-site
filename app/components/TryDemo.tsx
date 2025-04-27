@@ -9,23 +9,23 @@ export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [fullScript, setFullScript] = useState<any[]>([]);
-  const [displayedScript, setDisplayedScript] = useState<any[]>([]);
+  const [fullScript, setFullScript] = useState<string>('');
+  const [displayedText, setDisplayedText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
 
   useEffect(() => {
     if (loading) {
-      const interval = setInterval(() => {
+      const dotsInterval = setInterval(() => {
         setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
-      return () => clearInterval(interval);
+      return () => clearInterval(dotsInterval);
     }
   }, [loading]);
 
@@ -33,7 +33,6 @@ export default function TryDemo() {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
     const availableTopics = Object.keys(topics);
-
     const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
 
     if (matchedTopic) {
@@ -60,8 +59,9 @@ export default function TryDemo() {
     setLoading(true);
 
     setTimeout(() => {
-      setFullScript(scripts);
-      setDisplayedScript([]);
+      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
+      setFullScript(combined);
+      setDisplayedText('');
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
@@ -73,10 +73,9 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); 
+      setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
       setLoading(false);
-
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1500);
@@ -93,28 +92,26 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const delayedStart = setTimeout(() => {
+      const delayStart = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedScript((prev) => [...prev, fullScript[index]]);
+          setDisplayedText(prev => prev + fullScript[index]);
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 500); 
-      }, 400); 
+        }, 20); // Typing speed: lower is faster
+      }, 400);
 
-      return () => {
-        clearTimeout(delayedStart);
-      };
+      return () => clearTimeout(delayStart);
     }
   }, [typing, fullScript]);
 
   useEffect(() => {
-    if (scrollRef.current && typing) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (textareaRef.current && typing) {
+      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
-  }, [displayedScript, typing]);
+  }, [displayedText, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -181,20 +178,19 @@ export default function TryDemo() {
                   className="flex flex-col"
                 >
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div
-                    ref={scrollRef}
-                    className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white text-sm min-h-[460px] max-h-[520px] overflow-y-auto space-y-3"
-                  >
-                    {displayedScript.map((block, index) => (
-                      <div key={index}>
-                        <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}:</span>{' '}
-                        <span>{block.text}</span>
-                      </div>
-                    ))}
+                  <div className="relative">
+                    <textarea
+                      ref={textareaRef}
+                      readOnly
+                      value={displayedText}
+                      placeholder="Your generated script will appear here…"
+                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
+                      style={{ minHeight: '460px', maxHeight: '520px' }}
+                    />
+                    {typing && (
+                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                    )}
                   </div>
-                  {typing && (
-                    <div className="mt-2 w-full h-1 bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse rounded-full" />
-                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -206,7 +202,6 @@ export default function TryDemo() {
                   🎙 Generate Voice
                 </LoadingButton>
               )}
-
               {step === 'voice' && voiceReady && !showPreviewButton && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -217,13 +212,11 @@ export default function TryDemo() {
                   ✅ Voice Ready!
                 </motion.div>
               )}
-
               {step === 'voice' && showPreviewButton && (
                 <LoadingButton onClick={generatePreview} loading={false}>
                   🎬 Generate Preview
                 </LoadingButton>
               )}
-
               {step === 'previewGen' && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -245,7 +238,6 @@ export default function TryDemo() {
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
             )}
-
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
                 <motion.div
@@ -266,7 +258,7 @@ export default function TryDemo() {
                   transition={{ duration: 0.8, type: 'spring' }}
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
+                  <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
                 </motion.div>
               </div>
             )}
@@ -277,16 +269,8 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
-function LoadingButton({
-  onClick,
-  loading,
-  children,
-}: {
-  onClick: () => void;
-  loading: boolean;
-  children: React.ReactNode;
-}) {
+// Reusable Button Component
+function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
