@@ -9,35 +9,32 @@ export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [fullScript, setFullScript] = useState<any[]>([]);
+  const [fullScript, setFullScript] = useState<string>('');
   const [displayedText, setDisplayedText] = useState('');
-  const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [typing, setTyping] = useState(false);
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [dots, setDots] = useState('');
 
-  // Loading dots animation
   useEffect(() => {
     if (loading) {
-      const interval = setInterval(() => {
-        setDots(prev => (prev.length < 3 ? prev + '.' : ''));
+      const dotsInterval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
-      return () => clearInterval(interval);
+      return () => clearInterval(dotsInterval);
     }
   }, [loading]);
 
-  const handleTopicSubmit = (e: React.FormEvent) => {
+  const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
     const availableTopics = Object.keys(topics);
     const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
+
     if (matchedTopic) {
       setSelectedTopic(matchedTopic);
       setError('');
@@ -47,21 +44,24 @@ export default function TryDemo() {
     }
   };
 
-  const handleFormatSelect = (format: string) => {
+  const handleFormatSelect = async (format: string) => {
     setSelectedFormat(format);
     if (!selectedTopic) return;
+
     const topicKey = selectedTopic.toLowerCase().trim();
     const scripts = (topics as any)[topicKey]?.[format];
+
     if (!scripts) {
       setError('❌ This format is locked for this topic.');
       return;
     }
+
     setLoading(true);
+
     setTimeout(() => {
-      setFullScript(scripts);
+      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
+      setFullScript(combined);
       setDisplayedText('');
-      setCurrentBlockIndex(0);
-      setCurrentWordIndex(0);
       setTyping(true);
       setStep('script');
       setVoiceReady(false);
@@ -73,7 +73,7 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); 
+      setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
@@ -89,38 +89,29 @@ export default function TryDemo() {
     }, 2000);
   }
 
-  // Typing logic
   useEffect(() => {
-    if (!typing || fullScript.length === 0) return;
+    if (typing && fullScript.length > 0) {
+      let index = 0;
+      const delayStart = setTimeout(() => {
+        const interval = setInterval(() => {
+          setDisplayedText(prev => prev + fullScript[index]);
+          index++;
+          if (index >= fullScript.length) {
+            clearInterval(interval);
+            setTyping(false);
+          }
+        }, 20); // Typing speed: lower is faster
+      }, 400);
 
-    const startTyping = () => {
-      const currentBlock = fullScript[currentBlockIndex];
-      if (!currentBlock) {
-        setTyping(false);
-        return;
-      }
+      return () => clearTimeout(delayStart);
+    }
+  }, [typing, fullScript]);
 
-      const words = currentBlock.text.split(' ');
-      if (currentWordIndex < words.length) {
-        setDisplayedText(prev => prev + (currentWordIndex === 0 ? `\n\n${currentBlock.type.toUpperCase()}: ` : ' ') + words[currentWordIndex]);
-        setCurrentWordIndex(prev => prev + 1);
-      } else {
-        setCurrentBlockIndex(prev => prev + 1);
-        setCurrentWordIndex(0);
-      }
-    };
-
-    const typingInterval = setInterval(startTyping, 150); // slower typing
-
-    return () => clearInterval(typingInterval);
-  }, [typing, currentBlockIndex, currentWordIndex, fullScript]);
-
-  // Auto scroll the textarea
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
-  }, [displayedText]);
+  }, [displayedText, typing]);
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -191,7 +182,7 @@ export default function TryDemo() {
                     <textarea
                       ref={textareaRef}
                       readOnly
-                      value={displayedText.trim()}
+                      value={displayedText}
                       placeholder="Your generated script will appear here…"
                       className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
                       style={{ minHeight: '460px', maxHeight: '520px' }}
@@ -212,7 +203,12 @@ export default function TryDemo() {
                 </LoadingButton>
               )}
               {step === 'voice' && voiceReady && !showPreviewButton && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }} className="text-green-400 text-center mt-2">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-green-400 text-center mt-2"
+                >
                   ✅ Voice Ready!
                 </motion.div>
               )}
@@ -222,7 +218,11 @@ export default function TryDemo() {
                 </LoadingButton>
               )}
               {step === 'previewGen' && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center items-center text-[#C2886D] font-semibold mt-4">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
+                >
                   <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
                   Generating Preview...
                 </motion.div>
@@ -232,15 +232,33 @@ export default function TryDemo() {
 
           {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
+            {step === 'previewGen' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
+              </motion.div>
+            )}
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
-                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide">
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
+                >
                   🎬 Preview Mode
                 </motion.div>
+
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-                <motion.div key="phone" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, type: 'spring' }} className="relative z-10 shadow-xl shadow-[#C2886D]/10">
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
+
+                <motion.div
+                  key="phone"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, type: 'spring' }}
+                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+                >
+                  <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
                 </motion.div>
               </div>
             )}
@@ -251,23 +269,31 @@ export default function TryDemo() {
   );
 }
 
-// Loading Button
-function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode; }) {
+// Reusable Button Component
+function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
+
   useEffect(() => {
     if (loading) {
       const interval = setInterval(() => {
-        setDots(prev => (prev.length < 3 ? prev + '.' : ''));
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
       return () => clearInterval(interval);
     }
   }, [loading]);
+
   return (
-    <motion.button onClick={onClick} disabled={loading} whileTap={{ scale: 0.94 }} whileHover={{ scale: 1.03 }} className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
-      loading
-        ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
-        : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
-    }`}>
+    <motion.button
+      onClick={onClick}
+      disabled={loading}
+      whileTap={{ scale: 0.94 }}
+      whileHover={{ scale: 1.03 }}
+      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
+        loading
+          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
+          : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
+      }`}
+    >
       {loading ? (
         <div className="flex items-center justify-center gap-2">
           <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
