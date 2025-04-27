@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TikTokPhonePreviewProps {
   script: string;
@@ -13,7 +13,6 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentWords, setCurrentWords] = useState<string[]>([]);
   const [wordIndex, setWordIndex] = useState(0);
-  const [showScript, setShowScript] = useState(false);
 
   useEffect(() => {
     if (audioUrl && videoRef.current && audioRef.current) {
@@ -27,9 +26,8 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
 
       Promise.all([
         video.play().catch(() => {}),
-        audio.play().catch(() => {}),
+        audio.play().catch(() => {})
       ]).then(() => {
-        setShowScript(true);
         setCurrentWords([]);
         setWordIndex(0);
       });
@@ -37,18 +35,22 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
   }, [audioUrl]);
 
   useEffect(() => {
-    if (showScript && script) {
+    if (script.length > 0) {
       const words = script.split(' ');
       const interval = setInterval(() => {
-        if (wordIndex < words.length) {
-          setCurrentWords(prev => [...prev, words[wordIndex]]);
-          setWordIndex(prev => prev + 1);
-        }
-      }, 180); // Typing speed
+        setCurrentWords(prev => {
+          if (prev.length < words.length) {
+            return [...prev, words[prev.length]];
+          } else {
+            clearInterval(interval);
+            return prev;
+          }
+        });
+      }, 150); // typing speed (adjust if you want faster/slower)
 
       return () => clearInterval(interval);
     }
-  }, [showScript, script, wordIndex]);
+  }, [script]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -68,18 +70,31 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       />
       <audio ref={audioRef} className="hidden" />
 
-      {/* Dark Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/* Typing Script */}
-      {showScript && (
-        <div
-          ref={scrollRef}
-          className="absolute bottom-0 w-full p-4 text-white text-sm leading-relaxed overflow-y-auto max-h-48"
-        >
-          {currentWords.join(' ')}
-        </div>
-      )}
+      {/* Typing Text */}
+      <div
+        ref={scrollRef}
+        className="absolute bottom-0 w-full p-4 text-white text-sm leading-relaxed overflow-y-auto max-h-48"
+      >
+        {currentWords.map((word, idx) => (
+          <span key={idx} className="inline-block animate-fadeIn">
+            {word}{' '}
+          </span>
+        ))}
+      </div>
+
+      {/* Fade animation keyframes */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          0% { opacity: 0; transform: translateY(4px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease forwards;
+        }
+      `}</style>
     </div>
   );
 }
