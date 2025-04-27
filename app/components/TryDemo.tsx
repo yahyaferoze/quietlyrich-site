@@ -17,8 +17,7 @@ export default function TryDemo() {
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const textareaRef = useRef<HTMLDivElement>(null);
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export default function TryDemo() {
     const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
 
     if (matchedTopic) {
-      setSelectedTopic(matchedTopic);
+      setSelectedTopic(matchedTopic); // ✅ Smart match
       setError('');
       setStep('format');
     } else {
@@ -74,7 +73,7 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3'); // demo voice
+      setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
       setLoading(false);
 
@@ -104,7 +103,10 @@ export default function TryDemo() {
           }
         }, 500);
       }, 400);
-      return () => clearTimeout(delayedStart);
+
+      return () => {
+        clearTimeout(delayedStart);
+      };
     }
   }, [typing, fullScript]);
 
@@ -121,7 +123,7 @@ export default function TryDemo() {
         <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left */}
+          {/* Left Side */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'topic' && (
@@ -136,7 +138,7 @@ export default function TryDemo() {
                   <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
                   <input
                     type="text"
-                    placeholder="e.g. Fitness, Skincare, Focus, Budget Eating..."
+                    placeholder="e.g. Fitness, Skin care, Focus, Budget Eating..."
                     value={selectedTopic}
                     onChange={(e) => setSelectedTopic(e.target.value)}
                     className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
@@ -176,30 +178,23 @@ export default function TryDemo() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col space-y-3"
+                  className="flex flex-col"
                 >
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm min-h-[460px] max-h-[520px] overflow-y-auto space-y-3">
-
-                    {typing ? (
-                      displayedScript.map((block, index) => (
+                  <div className="relative">
+                    <div
+                      ref={textareaRef as any}
+                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white text-sm min-h-[460px] max-h-[520px] overflow-y-auto space-y-3"
+                    >
+                      {displayedScript.map((block, index) => (
                         <div key={index}>
                           <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}: </span>
                           <span>{block.text}</span>
                         </div>
-                      ))
-                    ) : (
-                      displayedScript.map((block, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ type: 'spring', duration: 0.5, delay: index * 0.03 }}
-                        >
-                          <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}: </span>
-                          <span>{block.text}</span>
-                        </motion.div>
-                      ))
+                      ))}
+                    </div>
+                    {typing && (
+                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
                     )}
                   </div>
                 </motion.div>
@@ -244,7 +239,7 @@ export default function TryDemo() {
             </div>
           </div>
 
-          {/* Right */}
+          {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
@@ -274,7 +269,6 @@ export default function TryDemo() {
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
                   <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
                 </motion.div>
               </div>
             )}
@@ -286,7 +280,15 @@ export default function TryDemo() {
 }
 
 // 🔥 Reusable Button
-function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
+function LoadingButton({
+  onClick,
+  loading,
+  children,
+}: {
+  onClick: () => void;
+  loading: boolean;
+  children: React.ReactNode;
+}) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
