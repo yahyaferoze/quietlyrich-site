@@ -27,7 +27,7 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
 
       Promise.all([
         video.play().catch(() => {}),
-        audio.play().catch(() => {})
+        audio.play().catch(() => {}),
       ]).then(() => {
         setShowScript(true);
         setCurrentWords([]);
@@ -40,13 +40,11 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
     if (showScript && script) {
       const words = script.split(' ');
       const interval = setInterval(() => {
-        setCurrentWords((prev) => [...prev, words[wordIndex]]);
-        setWordIndex((prev) => prev + 1);
-
-        if (wordIndex >= words.length) {
-          clearInterval(interval);
+        if (wordIndex < words.length) {
+          setCurrentWords(prev => [...prev, words[wordIndex]]);
+          setWordIndex(prev => prev + 1);
         }
-      }, 200); // Typing speed (you can adjust this)
+      }, 180); // Typing speed
 
       return () => clearInterval(interval);
     }
@@ -70,10 +68,10 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       />
       <audio ref={audioRef} className="hidden" />
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      {/* Dark Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-      {/* Scrolling Text */}
+      {/* Typing Script */}
       {showScript && (
         <div
           ref={scrollRef}
