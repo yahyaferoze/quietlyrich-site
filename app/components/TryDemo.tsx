@@ -4,123 +4,113 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 
-const topics = {
+const demoTopics = ['Fitness Motivation', 'Mindset Growth', 'Online Business'];
+
+const demoScripts: Record<string, Record<string, string>> = {
   'Fitness Motivation': {
-    'Hook Video': [
-      "🏋️‍♂️ Ready to transform your life in just 30 days? Start today with one push-up. Tomorrow? Two. It’s not about intensity, it's about consistency!",
-      "💥 Want to break your limits? It all starts with the decision to try. One rep, one set, one day at a time."
-    ],
-    'Value Drop': [
-      "💡 Top Tip: To build real muscle, focus on progressive overload — increase the weight or reps every week, even if it's just a little!",
-      "💡 Want faster results? Prioritize compound movements like squats, deadlifts, and push-ups — they train multiple muscles at once!"
-    ],
+    'Hook Video': "Stop scrolling! 🛑 Want a 5-minute workout that burns fat faster than running? 🔥 Stay tuned!",
+    'Value Drop': "Ready to transform your life in just 30 days? Start today with one push-up. Tomorrow? Two. It's not about intensity, it's about consistency!",
   },
   'Mindset Growth': {
-    'Hook Video': [
-      "🧠 90% of success is built on habits you don’t even notice. If you win your morning, you win your day.",
-      "🔥 They told you it’s impossible. Prove them wrong — quietly, consistently, daily."
-    ],
-    'Value Drop': [
-      "💡 Mind Trick: Visualize your future self every morning — it's scientifically proven to boost motivation and action-taking.",
-      "💡 Quick Tip: 5 minutes of gratitude journaling rewires your brain for positivity and resilience."
-    ],
+    'Hook Video': "Your brain is lying to you. 🧠 You CAN change. Let me show you how in 15 seconds.",
+    'Value Drop': "Success isn't about talent. It's about habits. 💡 Build the right ones and you’ll be unstoppable.",
   },
   'Online Business': {
-    'Hook Video': [
-      "💻 Why work 40 years for a boss when you can build your dream life online in 2-5 years?",
-      "🤑 The laptop lifestyle isn’t a myth — it’s a method. Start small, stay consistent, scale smart."
-    ],
-    'Value Drop': [
-      "💡 Secret: Most online entrepreneurs fail because they chase money, not mastery. Build skills first, profits follow.",
-      "💡 Want more leads? Focus on storytelling, not selling. Stories create emotional trust — the #1 sales driver."
-    ],
+    'Hook Video': "Most millionaires started with THIS side hustle. 💻 Want to know which one? Stay tuned!",
+    'Value Drop': "Here’s a secret: You don’t need followers to make money online. 📲 You need systems. Let’s break it down.",
   },
-} as const;
+};
 
-type Topic = keyof typeof topics;
-type Format = keyof (typeof topics)[Topic];
+const videoFormats = {
+  classic: [
+    { icon: '🎯', title: 'Hook Video', desc: 'Grab attention instantly with a question, fact, or bold claim.' },
+    { icon: '💡', title: 'Value Drop', desc: 'Deliver something useful, educational or surprising.' },
+    { icon: '🚀', title: 'Call to Action', desc: 'Get viewers to follow, click, or take action.', locked: true },
+  ],
+};
 
 export default function TryDemo() {
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  const [selectedFormat, setSelectedFormat] = useState<Format | null>(null);
-  const [scriptIndex, setScriptIndex] = useState(0);
+  const [topicInput, setTopicInput] = useState('');
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [style] = useState<keyof typeof videoFormats>('classic');
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [fullScript, setFullScript] = useState('');
   const [displayedScript, setDisplayedScript] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
-  const [step, setStep] = useState<'select-topic' | 'select-format' | 'script' | 'voice' | 'previewGen' | 'preview'>('select-topic');
+  const [step, setStep] = useState<'topic' | 'select' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [dots, setDots] = useState('');
 
   useEffect(() => {
     if (loading) {
       const interval = setInterval(() => {
-        setDots(prev => (prev.length < 3 ? prev + '.' : ''));
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
       return () => clearInterval(interval);
     }
   }, [loading]);
 
-  function handleTopicSelect(topic: Topic) {
-    setSelectedTopic(topic);
-    setStep('select-format');
+  const [dots, setDots] = useState('');
+
+  function handleTopicSubmit() {
+    if (demoTopics.includes(topicInput.trim())) {
+      setSelectedTopic(topicInput.trim());
+      setStep('select');
+    } else {
+      alert('🚀 This topic is available in the full version! Start Free Trial to unlock custom content.');
+    }
   }
 
-  function handleFormatSelect(format: Format) {
-    setSelectedFormat(format);
-  }
-
-  async function generateScript() {
-    if (!selectedTopic || !selectedFormat) return;
+  function generateScript() {
+    if (selectedIdx === null || !selectedTopic) return;
     setLoading(true);
     setDisplayedScript('');
+    const stepData = videoFormats[style][selectedIdx];
+    const script = demoScripts[selectedTopic]?.[stepData.title] || '';
     setTimeout(() => {
-      const scripts = topics[selectedTopic][selectedFormat];
-      const script = scripts[scriptIndex % scripts.length];
       setFullScript(script);
-      setScriptIndex(prev => prev + 1);
-      setLoading(false);
       setTyping(true);
+      setLoading(false);
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(false);
     }, 1000);
   }
 
-  async function generateVoice() {
+  function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/mock-voice.mp3'); // Static demo voice for now
+      setAudioUrl('/mock-voice.mp3');
       setLoading(false);
       setVoiceReady(true);
       setTimeout(() => {
         setShowPreviewButton(true);
       }, 1000);
-    }, 1000);
+    }, 1500);
   }
 
   function generatePreview() {
     setStep('previewGen');
     setTimeout(() => {
       setStep('preview');
-    }, 2000);
+    }, 1500);
   }
 
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
       const interval = setInterval(() => {
-        setDisplayedScript(prev => prev + fullScript[index]);
+        setDisplayedScript((prev) => prev + fullScript[index]);
         index++;
         if (index >= fullScript.length) {
           clearInterval(interval);
           setTyping(false);
         }
-      }, 50); // Typing speed
+      }, 30);
       return () => clearInterval(interval);
     }
   }, [typing, fullScript]);
@@ -140,68 +130,78 @@ export default function TryDemo() {
         </p>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left side */}
+          {/* Left */}
           <div>
             <AnimatePresence mode="wait">
-              {step === 'select-topic' && (
+              {step === 'topic' && (
                 <motion.div
-                  key="topics"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  key="topic"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="space-y-4"
                 >
-                  <h3 className="text-xl font-semibold mb-1">🎯 Choose a Topic</h3>
-                  <p className="text-gray-400 text-sm mb-4">Select the topic you want to generate a TikTok video for.</p>
-                  {Object.keys(topics).map((topic, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => handleTopicSelect(topic as Topic)}
-                      className="flex justify-between items-center p-3 rounded-lg border h-20 cursor-pointer transition border-[#444] bg-[#111] hover:border-gray-500"
-                    >
-                      <div className="font-medium">{topic}</div>
-                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Select →</button>
-                    </div>
-                  ))}
+                  <h3 className="text-xl font-semibold mb-2">📚 Choose a Topic</h3>
+                  <input
+                    type="text"
+                    value={topicInput}
+                    onChange={(e) => setTopicInput(e.target.value)}
+                    placeholder="e.g. Fitness Motivation"
+                    className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
+                  />
+                  <LoadingButton onClick={handleTopicSubmit} loading={false}>
+                    ➡️ Next
+                  </LoadingButton>
                 </motion.div>
               )}
 
-              {step === 'select-format' && selectedTopic && (
+              {step === 'select' && (
                 <motion.div
                   key="formats"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="space-y-4"
                 >
-                  <h3 className="text-xl font-semibold mb-1">🎬 Choose Your Funnel Format</h3>
-                  <p className="text-gray-400 text-sm mb-4">Pick the TikTok style you want.</p>
-                  {Object.keys(topics[selectedTopic]).map((format, idx) => (
+                  <h3 className="text-xl font-semibold mb-2">🛠 Choose Your Funnel Format</h3>
+                  <p className="text-gray-400 text-sm mb-4">Each format mimics a proven viral TikTok structure.</p>
+                  {videoFormats[style].map((step, i) => (
                     <div
-                      key={idx}
-                      onClick={() => handleFormatSelect(format as Format)}
-                      className="flex justify-between items-center p-3 rounded-lg border h-20 cursor-pointer transition border-[#444] bg-[#111] hover:border-gray-500"
+                      key={i}
+                      onClick={() => !step.locked && setSelectedIdx(i)}
+                      className={`flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition ${
+                        selectedIdx === i
+                          ? 'border-[#C2886D] bg-[#1a1a1a]'
+                          : step.locked
+                          ? 'border-[#555] bg-[#111] opacity-50'
+                          : 'border-[#444] bg-[#111] hover:border-gray-500'
+                      }`}
                     >
-                      <div className="font-medium">{format}</div>
-                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
+                      <div>
+                        <div className="text-xl">{step.icon}</div>
+                        <div className="font-medium">{step.title}</div>
+                        <div className="text-gray-400 text-xs">{step.desc}</div>
+                      </div>
+                      {step.locked ? (
+                        <div className="text-xs text-gray-400">Go Pro 🔒</div>
+                      ) : (
+                        <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
+                      )}
                     </div>
                   ))}
-
-                  {selectedFormat && (
-                    <div className="mt-6">
-                      <LoadingButton onClick={generateScript} loading={loading}>
-                        📝 Generate Script
-                      </LoadingButton>
-                    </div>
+                  {selectedIdx !== null && (
+                    <LoadingButton onClick={generateScript} loading={loading}>
+                      📝 Generate Script
+                    </LoadingButton>
                   )}
                 </motion.div>
               )}
 
-              {['script', 'voice', 'previewGen', 'preview'].includes(step) && (
+              {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
                 <motion.div
                   key="script-box"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="flex flex-col"
                 >
@@ -216,44 +216,39 @@ export default function TryDemo() {
                       style={{ minHeight: '460px', maxHeight: '520px' }}
                     />
                   </div>
+
+                  <div className="mt-6 space-y-4">
+                    {step === 'script' && !typing && !voiceReady && (
+                      <LoadingButton onClick={generateVoice} loading={loading}>
+                        🎙 Generate Voice
+                      </LoadingButton>
+                    )}
+                    {step === 'script' && voiceReady && !showPreviewButton && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.6 }}
+                        className="text-green-400 text-center mt-2"
+                      >
+                        ✅ Voice Ready!
+                      </motion.div>
+                    )}
+                    {showPreviewButton && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+                        <LoadingButton onClick={generatePreview} loading={false}>
+                          🎬 Generate Preview
+                        </LoadingButton>
+                      </motion.div>
+                    )}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/* Buttons */}
-            <div className="mt-6 space-y-4">
-              {step === 'voice' && !typing && (
-                <>
-                  {!voiceReady && (
-                    <LoadingButton onClick={generateVoice} loading={loading}>
-                      🎙 Generate Voice
-                    </LoadingButton>
-                  )}
-                  {voiceReady && !showPreviewButton && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.6 }}
-                      className="text-green-400 text-center mt-2"
-                    >
-                      ✅ Voice Ready!
-                    </motion.div>
-                  )}
-                  {showPreviewButton && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-                      <LoadingButton onClick={generatePreview} loading={false}>
-                        🎬 Generate Preview
-                      </LoadingButton>
-                    </motion.div>
-                  )}
-                </>
-              )}
-            </div>
           </div>
 
-          {/* Right side */}
+          {/* Right */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
-            {step === 'previewGen' && (
+            {(step === 'previewGen' || step === 'preview') && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -265,27 +260,15 @@ export default function TryDemo() {
             )}
 
             {step === 'preview' && (
-              <div className="relative flex flex-col items-center -mt-4">
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
-                >
-                  🎬 Preview Mode
-                </motion.div>
-
-                <motion.div
-                  key="phone"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, type: 'spring' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
-                >
-                  <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
-                </motion.div>
-              </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, type: 'spring' }}
+                className="relative z-10 shadow-xl"
+              >
+                <TikTokPhonePreview script={fullScript} audioUrl={audioUrl} />
+                <audio ref={audioRef} className="hidden" />
+              </motion.div>
             )}
           </div>
         </div>
@@ -294,19 +277,38 @@ export default function TryDemo() {
   );
 }
 
-// Loading Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+      }, 400);
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   return (
     <motion.button
       onClick={onClick}
       disabled={loading}
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.03 }}
-      className={`w-full py-3 rounded-md font-semibold transition ${
-        loading ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse' : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
+      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
+        loading
+          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
+          : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
       }`}
     >
-      {loading ? 'Loading...' : children}
+      {loading ? (
+        <div className="flex items-center justify-center gap-2">
+          <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+          <span className="text-black font-bold">Generating{dots}</span>
+        </div>
+      ) : (
+        <span className="text-black font-bold">{children}</span>
+      )}
     </motion.button>
   );
 }
