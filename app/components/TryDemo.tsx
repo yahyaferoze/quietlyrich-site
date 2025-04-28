@@ -5,9 +5,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 
-// 🛠 Small cleaning function for voice generation later
-function cleanUpScript(text: string) {
-  return text.replace(/\s+/g, ' ').trim(); // Very basic cleanup for now
+// 🧹 Clean-up function to fix basic mistakes after typing
+function simpleCleanUpScript(text: string) {
+  return text
+    .replace(/undefined/g, '')
+    .replace(/\s\s+/g, ' ')
+    .replace(/SCCNE:/g, 'SCENE:')
+    .replace(/ONSREEN:/g, 'ONSCREEN:')
+    .replace(/VOICEOVER:/g, 'VOICEOVER:')
+    .replace(/ +([,.])/g, '$1')
+    .trim();
 }
 
 export default function TryDemo() {
@@ -25,7 +32,6 @@ export default function TryDemo() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
 
-  // Animated dots during loading
   useEffect(() => {
     if (loading) {
       const dotsInterval = setInterval(() => {
@@ -78,11 +84,6 @@ export default function TryDemo() {
 
   async function generateVoice() {
     setLoading(true);
-
-    // 🛠️ Clean the script quietly (but don't touch textarea)
-    const cleanedScript = cleanUpScript(displayedText);
-    console.log("Ready to send to voice:", cleanedScript);
-
     setTimeout(() => {
       setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
@@ -100,7 +101,6 @@ export default function TryDemo() {
     }, 2000);
   }
 
-  // ✨ Typing animation with delay
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
@@ -111,15 +111,16 @@ export default function TryDemo() {
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
+            // 🧹 After typing finishes, clean it up
+            setDisplayedText((prev) => simpleCleanUpScript(prev));
           }
         }, 20); // Typing speed
-      }, 500); // Initial delay before typing starts
+      }, 400); // Initial start delay
 
       return () => clearTimeout(delayStart);
     }
   }, [typing, fullScript]);
 
-  // Auto scroll textarea while typing
   useEffect(() => {
     if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
