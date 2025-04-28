@@ -99,10 +99,9 @@ export default function TryDemo() {
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
-            correctAndFormatScript(); // 🔥 Fix after typing finishes
           }
-        }, 35); // Slower typing speed
-      }, 500); // Initial delay before typing
+        }, 40); // ✏️ slower typing speed now (smooth natural)
+      }, 500); // 🕰️ slight delay before typing starts
 
       return () => clearTimeout(delayStart);
     }
@@ -113,26 +112,6 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
-
-  // 🔥 Fix typos + format nicely
-  function correctAndFormatScript() {
-    let corrected = displayedText
-      .replace(/VOICEOVER/g, 'VOICEOVER')
-      .replace(/VOIIEOVER/g, 'VOICEOVER')
-      .replace(/OIIEOVER/g, 'VOICEOVER')
-      .replace(/ONSCEEN/g, 'ONSCREEN')
-      .replace(/ONSSCREEN/g, 'ONSCREEN')
-      .replace(/SCENE/g, 'SCENE')
-      .replace(/SCCNE/g, 'SCENE')
-      .replace(/CTA/g, 'CTA')
-      .replace(/\.\./g, '.')
-      .replace(/undefined/g, '');
-
-    // Properly add line breaks between each block
-    corrected = corrected.replace(/(VOICEOVER:|ONSCREEN:|SCENE:|CTA:)/g, '\n\n$1');
-
-    setDisplayedText(corrected.trim());
-  }
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
