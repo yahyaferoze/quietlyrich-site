@@ -9,6 +9,7 @@ export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
+  const [selectedVoice, setSelectedVoice] = useState<'male' | 'female'>('male'); // 🆕
   const [fullScript, setFullScript] = useState<string>('');
   const [displayedText, setDisplayedText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
@@ -73,7 +74,13 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3');
+      // 🎙 Pick different voice audio based on selected voice
+      if (selectedVoice === 'male') {
+        setAudioUrl('/voice-male.mp3');
+      } else {
+        setAudioUrl('/voice-female.mp3');
+      }
+
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
@@ -97,15 +104,11 @@ export default function TryDemo() {
         async function typeScript() {
           while (index < fullScript.length) {
             setDisplayedText(prev => prev + fullScript[index]);
-            
-            // Check if this point ends with a block break (e.g., two newlines)
-            if (
-              fullScript[index] === '\n' &&
-              fullScript[index + 1] === '\n'
-            ) {
-              await new Promise(resolve => setTimeout(resolve, 300)); // Pause 300ms
+
+            if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
+              await new Promise(resolve => setTimeout(resolve, 300)); // Delay on line breaks
             } else {
-              await new Promise(resolve => setTimeout(resolve, 18)); // Normal typing speed
+              await new Promise(resolve => setTimeout(resolve, 18)); // Normal typing
             }
 
             index++;
@@ -114,7 +117,7 @@ export default function TryDemo() {
         }
 
         typeScript();
-      }, 700); // Delay before typing starts (500ms)
+      }, 700);
 
       return () => clearTimeout(delayedStart);
     }
@@ -204,6 +207,21 @@ export default function TryDemo() {
                       <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
                     )}
                   </div>
+
+                  {/* 🆕 Voice Selection */}
+                  {step === 'script' && (
+                    <div className="mt-6">
+                      <label className="block mb-1 text-sm font-medium">🎤 Choose a Voice</label>
+                      <select
+                        value={selectedVoice}
+                        onChange={(e) => setSelectedVoice(e.target.value as 'male' | 'female')}
+                        className="w-full bg-[#111] border border-[#C2886D] p-2 rounded-md text-white text-sm"
+                      >
+                        <option value="male">Deep Male Voice</option>
+                        <option value="female">Natural Female Voice</option>
+                      </select>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -282,7 +300,7 @@ export default function TryDemo() {
   );
 }
 
-// Reusable Button Component
+// Loading Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
