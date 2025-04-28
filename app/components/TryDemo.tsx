@@ -24,7 +24,7 @@ export default function TryDemo() {
     if (loading) {
       const dotsInterval = setInterval(() => {
         setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
-      }, 400);
+      }, 600);
       return () => clearInterval(dotsInterval);
     }
   }, [loading]);
@@ -92,18 +92,31 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const delayStart = setTimeout(() => {
-        const interval = setInterval(() => {
-          setDisplayedText(prev => prev + fullScript[index]);
-          index++;
-          if (index >= fullScript.length) {
-            clearInterval(interval);
-            setTyping(false);
-          }
-        }, 40); // ✏️ slower typing speed now (smooth natural)
-      }, 500); // 🕰️ slight delay before typing starts
 
-      return () => clearTimeout(delayStart);
+      const delayedStart = setTimeout(() => {
+        async function typeScript() {
+          while (index < fullScript.length) {
+            setDisplayedText(prev => prev + fullScript[index]);
+            
+            // Check if this point ends with a block break (e.g., two newlines)
+            if (
+              fullScript[index] === '\n' &&
+              fullScript[index + 1] === '\n'
+            ) {
+              await new Promise(resolve => setTimeout(resolve, 300)); // Pause 300ms
+            } else {
+              await new Promise(resolve => setTimeout(resolve, 18)); // Normal typing speed
+            }
+
+            index++;
+          }
+          setTyping(false);
+        }
+
+        typeScript();
+      }, 700); // Delay before typing starts (500ms)
+
+      return () => clearTimeout(delayedStart);
     }
   }, [typing, fullScript]);
 
@@ -269,7 +282,7 @@ export default function TryDemo() {
   );
 }
 
-// Reusable Button
+// Reusable Button Component
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
