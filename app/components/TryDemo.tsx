@@ -5,6 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 
+// 🛠 Small cleaning function for voice generation later
+function cleanUpScript(text: string) {
+  return text.replace(/\s+/g, ' ').trim(); // Very basic cleanup for now
+}
+
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -20,6 +25,7 @@ export default function TryDemo() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
 
+  // Animated dots during loading
   useEffect(() => {
     if (loading) {
       const dotsInterval = setInterval(() => {
@@ -72,6 +78,11 @@ export default function TryDemo() {
 
   async function generateVoice() {
     setLoading(true);
+
+    // 🛠️ Clean the script quietly (but don't touch textarea)
+    const cleanedScript = cleanUpScript(displayedText);
+    console.log("Ready to send to voice:", cleanedScript);
+
     setTimeout(() => {
       setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
@@ -89,6 +100,7 @@ export default function TryDemo() {
     }, 2000);
   }
 
+  // ✨ Typing animation with delay
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
@@ -99,16 +111,15 @@ export default function TryDemo() {
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
-  
-            // ✅ Now clean up the fully typed text safely
-            setDisplayedText(prev => cleanUpScript(prev));
           }
         }, 20); // Typing speed
-      }, 400); // Initial delay
-  
+      }, 500); // Initial delay before typing starts
+
       return () => clearTimeout(delayStart);
     }
   }, [typing, fullScript]);
+
+  // Auto scroll textarea while typing
   useEffect(() => {
     if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
@@ -271,25 +282,7 @@ export default function TryDemo() {
   );
 }
 
-// ✅ Script Cleaner
-function cleanUpScript(text: string): string {
-  let cleaned = text;
-
-  // Remove undefined
-  cleaned = cleaned.replace(/undefined/g, '');
-
-  // Fix double/triple spaces
-  cleaned = cleaned.replace(/\s\s+/g, ' ');
-
-  // Capitalize after VOICEOVER:, SCENE:, ONSCREEN:, CTA:
-  cleaned = cleaned.replace(/(VOICEOVER:|SCENE:|ONSCREEN:|CTA:)\s*(.)/g, (_, prefix, letter) => {
-    return prefix + ' ' + letter.toUpperCase();
-  });
-
-  return cleaned.trim();
-}
-
-// 🔥 Reusable Button
+// 🔥 Reusable Loading Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
