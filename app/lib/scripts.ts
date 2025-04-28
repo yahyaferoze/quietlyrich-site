@@ -1,16 +1,16 @@
 export const topics = {
     "fitness at home": {
       "Hook Video": [
-        { type: 'voiceover', text: "Tired of spending hours at the gym with little to show for it? 🏋️‍♂️" },
-        { type: 'onscreen', text: "Home Workout Revolution 💥" },
-        { type: 'voiceover', text: "What if you could torch fat, build muscle, and transform... without leaving your living room? 🏡" },
-        { type: 'scene', text: "Fast cuts: Push-ups on carpet, jump squats next to sofa, climbers in cozy living room." },
-        { type: 'voiceover', text: "20 minutes a day. No equipment. Just results." },
-        { type: 'onscreen', text: "No Gym? No Problem. ✅" },
-        { type: 'voiceover', text: "Fitness isn’t about fancy gear — it’s about commitment. 💥" },
-        { type: 'scene', text: "Sweaty man laughing, giving high-five to toddler after home workout." },
-        { type: 'voiceover', text: "Ready to build your dream body? Let's get started! 🚀" },
-        { type: 'cta', text: "Follow for daily home fitness routines!" },
+        { type: '  voiceover', text: "  Tired of spending hours at the gym with little to show for it? 🏋️‍♂️" },
+        { type: 'onscreen', text: "  Home Workout Revolution 💥" },
+        { type: 'voiceover', text: "  What if you could torch fat, build muscle, and transform... without leaving your living room? 🏡" },
+        { type: 'scene', text: "  Fast cuts: Push-ups on carpet, jump squats next to sofa, climbers in cozy living room." },
+        { type: 'voiceover', text: "  20 minutes a day. No equipment. Just results." },
+        { type: 'onscreen', text: "  No Gym? No Problem. ✅" },
+        { type: 'voiceover', text: "  Fitness isn’t about fancy gear — it’s about commitment. 💥" },
+        { type: 'scene', text: "  Sweaty man laughing, giving high-five to toddler after home workout." },
+        { type: 'voiceover', text: "  Ready to build your dream body? Let's get started! 🚀" },
+        { type: 'cta', text: "  Follow for daily home fitness routines!" },
       ],
       "Value Drop": [
         { type: 'voiceover', text: "Struggling to stay consistent with fitness? Here's why home workouts change the game. 🧠" },
