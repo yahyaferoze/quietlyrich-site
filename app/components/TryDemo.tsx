@@ -9,7 +9,7 @@ export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [fullScript, setFullScript] = useState<string[]>([]);
+  const [fullScript, setFullScript] = useState<string>('');
   const [displayedText, setDisplayedText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function TryDemo() {
     setLoading(true);
 
     setTimeout(() => {
-      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`);
+      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
       setFullScript(combined);
       setDisplayedText('');
       setTyping(true);
@@ -89,49 +89,22 @@ export default function TryDemo() {
     }, 2000);
   }
 
-  function fixScriptTypos(script: string) {
-    return script
-      .replace(/O?VICEOVER:/g, 'VOICEOVER:')
-      .replace(/VOIIEOVER:/g, 'VOICEOVER:')
-      .replace(/SCCNE:/g, 'SCENE:')
-      .replace(/SCNENE:/g, 'SCENE:')
-      .replace(/ONSCREEEN:/g, 'ONSCREEN:')
-      .replace(/CTA:/g, 'CTA:')
-      .replace(/undefined/g, '')
-      .replace(/\s{2,}/g, ' ')
-      .trim();
-  }
-
   useEffect(() => {
     if (typing && fullScript.length > 0) {
-      let blockIndex = 0;
-
-      const typeBlock = (blockText: string) => {
-        let charIndex = 0;
+      let index = 0;
+      const delayStart = setTimeout(() => {
         const interval = setInterval(() => {
-          setDisplayedText(prev => prev + blockText[charIndex]);
-          charIndex++;
-          if (charIndex >= blockText.length) {
+          setDisplayedText(prev => prev + fullScript[index]);
+          index++;
+          if (index >= fullScript.length) {
             clearInterval(interval);
-            setTimeout(() => {
-              blockIndex++;
-              if (blockIndex < fullScript.length) {
-                setDisplayedText(prev => prev + '\n\n'); // Gap between blocks
-                typeBlock(fullScript[blockIndex]);
-              } else {
-                setTyping(false);
-                setDisplayedText(prev => fixScriptTypos(prev)); // Autocorrect after all blocks
-              }
-            }, 600); // Delay between lines
+            setTyping(false);
+            correctAndFormatScript(); // 🔥 Fix after typing finishes
           }
-        }, 35); // Typing speed per character (slower now)
-      };
+        }, 35); // Slower typing speed
+      }, 500); // Initial delay before typing
 
-      const delayedStart = setTimeout(() => {
-        typeBlock(fullScript[blockIndex]);
-      }, 700); // Delay before starting
-
-      return () => clearTimeout(delayedStart);
+      return () => clearTimeout(delayStart);
     }
   }, [typing, fullScript]);
 
@@ -140,6 +113,26 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
+
+  // 🔥 Fix typos + format nicely
+  function correctAndFormatScript() {
+    let corrected = displayedText
+      .replace(/VOICEOVER/g, 'VOICEOVER')
+      .replace(/VOIIEOVER/g, 'VOICEOVER')
+      .replace(/OIIEOVER/g, 'VOICEOVER')
+      .replace(/ONSCEEN/g, 'ONSCREEN')
+      .replace(/ONSSCREEN/g, 'ONSCREEN')
+      .replace(/SCENE/g, 'SCENE')
+      .replace(/SCCNE/g, 'SCENE')
+      .replace(/CTA/g, 'CTA')
+      .replace(/\.\./g, '.')
+      .replace(/undefined/g, '');
+
+    // Properly add line breaks between each block
+    corrected = corrected.replace(/(VOICEOVER:|ONSCREEN:|SCENE:|CTA:)/g, '\n\n$1');
+
+    setDisplayedText(corrected.trim());
+  }
 
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
@@ -297,7 +290,7 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Button
+// Reusable Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
