@@ -255,8 +255,16 @@ export default function TryDemo() {
                     </Transition>
                   </div>
                 </Listbox>
+
+                {/* 🌟 Glow Upgrade Message */}
+                <div className="glow-text">
+                  🚀 More premium voices & custom voice cloning available on upgrade!
+                </div>
               </div>
             )}
+            <div className="mt-2 text-xs text-center text-gray-400">
+  Want your own cloned voice? <span className="text-[#C2886D] font-semibold">Upgrade now!</span>
+</div>
 
             {/* Buttons */}
             <div className="mt-6 space-y-4">

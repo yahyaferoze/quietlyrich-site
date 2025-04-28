@@ -41,3 +41,31 @@ html {
 button {
   @apply transition-all duration-300;
 }
+/* Glowing text effect */
+@keyframes shine {
+  0% {
+    background-position: -500px 0;
+  }
+  100% {
+    background-position: 500px 0;
+  }
+}
+
+.glow-text {
+  background: linear-gradient(
+    90deg,
+    #c2886d,
+    #ffffff,
+    #c2886d
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shine 3s linear infinite;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  display: block;
+  margin-top: 0.75rem;
+}
