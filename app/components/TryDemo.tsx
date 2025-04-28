@@ -19,14 +19,13 @@ export default function TryDemo() {
   const [error, setError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
-  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (loading) {
-      const interval = setInterval(() => {
+      const dotsInterval = setInterval(() => {
         setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
-      return () => clearInterval(interval);
+      return () => clearInterval(dotsInterval);
     }
   }, [loading]);
 
@@ -101,8 +100,8 @@ export default function TryDemo() {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 40); // 40ms = slower smooth typing
-      }, 1000); // 1000ms = 1 second delay before typing starts
+        }, 60); // Slower typing = more accurate (60ms per letter)
+      }, 1000); // 1 second delay before starting
 
       return () => clearTimeout(delayBeforeTyping);
     }
@@ -232,7 +231,38 @@ export default function TryDemo() {
           </div>
 
           {/* Right Side */}
-          {/* TikTokPhonePreview here */}
+          <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
+            {step === 'previewGen' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
+              </motion.div>
+            )}
+            {step === 'preview' && (
+              <div className="relative flex flex-col items-center -mt-4">
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
+                >
+                  🎬 Preview Mode
+                </motion.div>
+
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+
+                <motion.div
+                  key="phone"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, type: 'spring' }}
+                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+                >
+                  <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
+                </motion.div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
