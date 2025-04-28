@@ -5,7 +5,7 @@ export const topics = {
         { type: ' onscreen', text: "  Home Workout Revolution 💥" },
         { type: ' voiceover', text: "  What if you could torch fat, build muscle, and transform... without leaving your living room? 🏡" },
         { type: ' scene', text: "  Fast cuts: Push-ups on carpet, jump squats next to sofa, climbers in cozy living room." },
-        { type: ' voiceover', text: "  20 minutes a day. No equipment. Just results." },
+        { type: ' voiceover', text: "  20 minutes a day. No equipment.  Just results . " },
         { type: ' onscreen', text: "  No Gym? No Problem. ✅" },
         { type: ' voiceover', text: "  Fitness isn’t about fancy gear — it’s about commitment. 💥" },
         { type: ' scene', text: "  Sweaty man laughing, giving high-five to toddler after home workout." },
@@ -13,7 +13,7 @@ export const topics = {
         { type: ' cta', text: "  Follow for daily home fitness routines!" },
       ],
       "Value Drop": [
-        { type: ' voiceover', text: " Struggling to stay consistent with fitness? Here's why home workouts change the game. 🧠" },
+        { type: '  voiceover', text: " Struggling to stay consistent with fitness? Here's why home workouts change the game. 🧠" },
         { type: ' onscreen', text: " No Commute. No Excuses. 🏡" },
         { type: ' voiceover', text: " Studies show 20-minute bodyweight sessions burn just as much fat as an hour at the gym. 🔥" },
         { type: ' scene', text: " Split-screen: One side lifting heavy at gym, other doing fast home bodyweight drills." },
