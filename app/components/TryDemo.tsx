@@ -120,8 +120,8 @@ export default function TryDemo() {
             setTyping(false);
             setDisplayedText((final) => advancedCleanUpScript(final)); // Apply advanced clean-up after typing finishes
           }
-        }, 22); // Typing speed
-      }, 400); // Delay before starting typing
+        }, 40); // Typing speed
+      }, 600); // Delay before starting typing
 
       return () => clearTimeout(delayedStart);
     }
