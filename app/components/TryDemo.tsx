@@ -23,10 +23,10 @@ export default function TryDemo() {
 
   useEffect(() => {
     if (loading) {
-      const dotsInterval = setInterval(() => {
+      const interval = setInterval(() => {
         setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
       }, 400);
-      return () => clearInterval(dotsInterval);
+      return () => clearInterval(interval);
     }
   }, [loading]);
 
@@ -101,8 +101,8 @@ export default function TryDemo() {
             clearInterval(interval);
             setTyping(false);
           }
-        }, 20); // typing speed per letter
-      }, 500); // delay before typing starts
+        }, 40); // 40ms = slower smooth typing
+      }, 1000); // 1000ms = 1 second delay before typing starts
 
       return () => clearTimeout(delayBeforeTyping);
     }
@@ -232,46 +232,14 @@ export default function TryDemo() {
           </div>
 
           {/* Right Side */}
-          <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
-            {step === 'previewGen' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
-                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
-                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
-              </motion.div>
-            )}
-            {step === 'preview' && (
-              <div className="relative flex flex-col items-center -mt-4">
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
-                >
-                  🎬 Preview Mode
-                </motion.div>
-
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-
-                <motion.div
-                  key="phone"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, type: 'spring' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
-                >
-                  <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
-                  <audio ref={audioRef} className="hidden" />
-                </motion.div>
-              </div>
-            )}
-          </div>
+          {/* TikTokPhonePreview here */}
         </div>
       </div>
     </section>
   );
 }
 
-// Reusable Button Component
+// 🔥 Reusable Loading Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
