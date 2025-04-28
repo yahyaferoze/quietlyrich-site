@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
+import { Listbox, Transition } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [selectedVoice, setSelectedVoice] = useState<'male' | 'female'>('male'); // 🆕
   const [fullScript, setFullScript] = useState<string>('');
   const [displayedText, setDisplayedText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
@@ -18,8 +19,14 @@ export default function TryDemo() {
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(false);
   const [error, setError] = useState('');
+  const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
+
+  const voices = [
+    { id: 1, name: 'Deep Male Voice' },
+    { id: 2, name: 'Natural Female Voice' },
+  ];
 
   useEffect(() => {
     if (loading) {
@@ -74,13 +81,7 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      // 🎙 Pick different voice audio based on selected voice
-      if (selectedVoice === 'male') {
-        setAudioUrl('/voice-male.mp3');
-      } else {
-        setAudioUrl('/voice-female.mp3');
-      }
-
+      setAudioUrl('/voice-fitness-2.mp3');
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
@@ -99,26 +100,21 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-
       const delayedStart = setTimeout(() => {
         async function typeScript() {
           while (index < fullScript.length) {
             setDisplayedText(prev => prev + fullScript[index]);
-
             if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
-              await new Promise(resolve => setTimeout(resolve, 300)); // Delay on line breaks
+              await new Promise(resolve => setTimeout(resolve, 300));
             } else {
-              await new Promise(resolve => setTimeout(resolve, 18)); // Normal typing
+              await new Promise(resolve => setTimeout(resolve, 18));
             }
-
             index++;
           }
           setTyping(false);
         }
-
         typeScript();
       }, 700);
-
       return () => clearTimeout(delayedStart);
     }
   }, [typing, fullScript]);
@@ -207,24 +203,60 @@ export default function TryDemo() {
                       <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
                     )}
                   </div>
-
-                  {/* 🆕 Voice Selection */}
-                  {step === 'script' && (
-                    <div className="mt-6">
-                      <label className="block mb-1 text-sm font-medium">🎤 Choose a Voice</label>
-                      <select
-                        value={selectedVoice}
-                        onChange={(e) => setSelectedVoice(e.target.value as 'male' | 'female')}
-                        className="w-full bg-[#111] border border-[#C2886D] p-2 rounded-md text-white text-sm"
-                      >
-                        <option value="male">Deep Male Voice</option>
-                        <option value="female">Natural Female Voice</option>
-                      </select>
-                    </div>
-                  )}
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Voice Selector */}
+            {step === 'script' && (
+              <div className="mt-6">
+                <Listbox value={selectedVoice} onChange={setSelectedVoice}>
+                  <div className="relative">
+                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">🎤 Choose a Voice</Listbox.Label>
+                    <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-[#111] py-3 pl-4 pr-10 text-left border border-[#C2886D] text-white focus:outline-none focus:ring-2 focus:ring-[#C2886D] focus:border-[#C2886D] transition">
+                      <span className="block truncate">{selectedVoice}</span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                        <ChevronUpDownIcon className="h-5 w-5 text-[#C2886D]" aria-hidden="true" />
+                      </span>
+                    </Listbox.Button>
+
+                    <Transition
+                      as={Fragment}
+                      leave="transition ease-in duration-100"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded-md bg-[#111] py-1 text-base shadow-lg ring-1 ring-[#C2886D] focus:outline-none sm:text-sm z-50">
+                        {voices.map((voice) => (
+                          <Listbox.Option
+                            key={voice.id}
+                            className={({ active }) =>
+                              `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                active ? 'bg-[#C2886D] text-black' : 'text-white'
+                              }`
+                            }
+                            value={voice.name}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                  {voice.name}
+                                </span>
+                                {selected ? (
+                                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <CheckIcon className="h-5 w-5 text-black" aria-hidden="true" />
+                                  </span>
+                                ) : null}
+                              </>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </Transition>
+                  </div>
+                </Listbox>
+              </div>
+            )}
 
             {/* Buttons */}
             <div className="mt-6 space-y-4">
@@ -300,7 +332,7 @@ export default function TryDemo() {
   );
 }
 
-// Loading Button
+// Reusable Button Component
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
