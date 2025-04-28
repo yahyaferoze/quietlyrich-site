@@ -13,8 +13,8 @@ export const topics = {
         { type: ' cta', text: "  Follow for daily home fitness routines!" },
       ],
       "Value Drop": [
-        { type: '  voiceover', text: " Struggling to stay consistent with fitness? Here's why home workouts change the game. 🧠" },
-        { type: ' onscreen', text: " No Commute. No Excuses. 🏡" },
+        { type: '  voiceover ', text: " Struggling to stay consistent with fitness? Here's why home workouts change the game. 🧠" },
+        { type: '  onscreen', text: " No Commute. No Excuses. 🏡" },
         { type: ' voiceover', text: " Studies show 20-minute bodyweight sessions burn just as much fat as an hour at the gym. 🔥" },
         { type: ' scene', text: " Split-screen: One side lifting heavy at gym, other doing fast home bodyweight drills." },
         { type: ' voiceover', text: " Consistency is king. When it's easier, you'll show up more. 👑" },
@@ -28,8 +28,8 @@ export const topics = {
   
     "skin care for men": {
       "Hook Video": [
-        { type: ' voiceover', text: " Think skincare is just for women? Think again, king. 👑" },
-        { type: ' onscreen', text: " Men’s Skincare Revolution 🧴" },
+        { type: '   voiceover', text: " Think skincare is just for women? Think again, king. 👑" },
+        { type: '  onscreen', text: " Men’s Skincare Revolution 🧴" },
         { type: ' voiceover', text: " Confidence starts with clear, healthy skin. ✨" },
         { type: ' scene', text: " Man examining his face in the mirror under bright morning light." },
         { type: ' voiceover', text: " Harsh soaps wreck your face. Gentle, daily care builds it stronger." },
@@ -40,7 +40,7 @@ export const topics = {
         { type: ' cta', text: " Follow for no-BS skincare tips for men!" },
       ],
       "Value Drop": [
-        { type: ' voiceover', text: "Want better skin but overwhelmed by routines? Here’s the 60-second fix. ⏱" },
+        { type: '  voiceover', text: "Want better skin but overwhelmed by routines? Here’s the 60-second fix. ⏱" },
         { type: ' onscreen', text: "The 3-Step Gamechanger Routine ✅" },
         { type: ' voiceover', text: "Step 1: Cleanse daily with a gentle face wash. No exceptions. 🧼" },
         { type: ' scene', text: "Slow-mo: man splashing cold water on face, smiling naturally." },
