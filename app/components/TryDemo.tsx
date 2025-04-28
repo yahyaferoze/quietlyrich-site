@@ -5,18 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 
-// 🧹 Clean-up function to fix basic mistakes after typing
-function simpleCleanUpScript(text: string) {
-  return text
-    .replace(/undefined/g, '')
-    .replace(/\s\s+/g, ' ')
-    .replace(/SCCNE:/g, 'SCENE:')
-    .replace(/ONSREEN:/g, 'ONSCREEN:')
-    .replace(/VOICEOVER:/g, 'VOICEOVER:')
-    .replace(/ +([,.])/g, '$1')
-    .trim();
-}
-
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -31,6 +19,25 @@ export default function TryDemo() {
   const [error, setError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
+
+  // Advanced Clean Up
+  function advancedCleanUpScript(text: string) {
+    return text
+      .replace(/undefined/g, '')
+      .replace(/\s\s+/g, ' ')
+      .replace(/SCCNE:/gi, 'SCENE:')
+      .replace(/SCNE:/gi, 'SCENE:')
+      .replace(/ONSREEN:/gi, 'ONSCREEN:')
+      .replace(/ONSCEEN:/gi, 'ONSCREEN:')
+      .replace(/VOIIEOVER:/gi, 'VOICEOVER:')
+      .replace(/VOICE0VER:/gi, 'VOICEOVER:')
+      .replace(/V0ICEOVER:/gi, 'VOICEOVER:')
+      .replace(/cllmbers/gi, 'climbers')
+      .replace(/Readyo build/gi, 'Ready to build')
+      .replace(/Ready o build/gi, 'Ready to build')
+      .replace(/ +([,.])/g, '$1')
+      .trim();
+  }
 
   useEffect(() => {
     if (loading) {
@@ -85,7 +92,7 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3');
+      setAudioUrl('/voice-fitness-2.mp3'); // Fake voice for now
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
@@ -104,20 +111,19 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const delayStart = setTimeout(() => {
+      const delayedStart = setTimeout(() => {
         const interval = setInterval(() => {
           setDisplayedText((prev) => prev + fullScript[index]);
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
-            // 🧹 After typing finishes, clean it up
-            setDisplayedText((prev) => simpleCleanUpScript(prev));
+            setDisplayedText((final) => advancedCleanUpScript(final)); // Apply advanced clean-up after typing finishes
           }
-        }, 20); // Typing speed
-      }, 400); // Initial start delay
+        }, 22); // Typing speed
+      }, 400); // Delay before starting typing
 
-      return () => clearTimeout(delayStart);
+      return () => clearTimeout(delayedStart);
     }
   }, [typing, fullScript]);
 
@@ -283,7 +289,7 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Loading Button
+// Reusable Loading Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
