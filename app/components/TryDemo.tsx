@@ -92,21 +92,23 @@ export default function TryDemo() {
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
-      const delayBeforeTyping = setTimeout(() => {
+      const delayStart = setTimeout(() => {
         const interval = setInterval(() => {
           setDisplayedText((prev) => prev + fullScript[index]);
           index++;
           if (index >= fullScript.length) {
             clearInterval(interval);
             setTyping(false);
+  
+            // ✅ Now clean up the fully typed text safely
+            setDisplayedText(prev => cleanUpScript(prev));
           }
-        }, 60); // Slower typing = more accurate (60ms per letter)
-      }, 1000); // 1 second delay before starting
-
-      return () => clearTimeout(delayBeforeTyping);
+        }, 20); // Typing speed
+      }, 400); // Initial delay
+  
+      return () => clearTimeout(delayStart);
     }
   }, [typing, fullScript]);
-
   useEffect(() => {
     if (textareaRef.current && typing) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
@@ -269,7 +271,25 @@ export default function TryDemo() {
   );
 }
 
-// 🔥 Reusable Loading Button
+// ✅ Script Cleaner
+function cleanUpScript(text: string): string {
+  let cleaned = text;
+
+  // Remove undefined
+  cleaned = cleaned.replace(/undefined/g, '');
+
+  // Fix double/triple spaces
+  cleaned = cleaned.replace(/\s\s+/g, ' ');
+
+  // Capitalize after VOICEOVER:, SCENE:, ONSCREEN:, CTA:
+  cleaned = cleaned.replace(/(VOICEOVER:|SCENE:|ONSCREEN:|CTA:)\s*(.)/g, (_, prefix, letter) => {
+    return prefix + ' ' + letter.toUpperCase();
+  });
+
+  return cleaned.trim();
+}
+
+// 🔥 Reusable Button
 function LoadingButton({ onClick, loading, children }: { onClick: () => void; loading: boolean; children: React.ReactNode }) {
   const [dots, setDots] = useState('');
 
