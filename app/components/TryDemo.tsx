@@ -81,33 +81,23 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
+      let file = '/voice-fitness-2.mp3'; // default fallback
+
       if (selectedTopic.toLowerCase() === 'fitness at home') {
         if (selectedFormat === 'Hook Video') {
-          if (selectedVoice === 'Deep Male Voice') {
-            setAudioUrl('/fitnessmale.mp3');
-          } else if (selectedVoice === 'Natural Female Voice') {
-            setAudioUrl('/fitnessfemale.mp3');
-          } else {
-            setAudioUrl('/fitnessmale.mp3');
-          }
+          file = selectedVoice === 'Deep Male Voice' ? '/fitnessmale.mp3' : '/fitnessfemale.mp3';
         } else if (selectedFormat === 'Value Drop') {
-          if (selectedVoice === 'Deep Male Voice') {
-            setAudioUrl('/fitnessmalevd.mp3');
-          } else if (selectedVoice === 'Natural Female Voice') {
-            setAudioUrl('/fitnessfemalevd.mp3');
-          } else {
-            setAudioUrl('/fitnessmalevd.mp3');
-          }
+          file = selectedVoice === 'Deep Male Voice' ? '/fitnessmalevd.mp3' : '/fitnessfemalevd.mp3';
         }
-      } else {
-        setAudioUrl('/voice-fitness-2.mp3'); // fallback if no match
       }
+
+      setAudioUrl(file);
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
         setShowPreviewButton(true);
-      }, 1500);
-    }, 1200);
+      }, 1200);
+    }, 1000);
   }
 
   function generatePreview() {
@@ -283,8 +273,8 @@ export default function TryDemo() {
               </div>
             )}
             <div className="mt-2 text-xs text-center text-gray-400">
-  Want your own cloned voice? <span className="text-[#C2886D] font-semibold">Upgrade now!</span>
-</div>
+              Want your own cloned voice? <span className="text-[#C2886D] font-semibold">Upgrade now!</span>
+            </div>
 
             {/* Buttons */}
             <div className="mt-6 space-y-4">
