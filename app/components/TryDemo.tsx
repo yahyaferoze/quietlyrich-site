@@ -81,7 +81,27 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      setAudioUrl('/voice-fitness-2.mp3');
+      if (selectedTopic.toLowerCase() === 'fitness at home') {
+        if (selectedFormat === 'Hook Video') {
+          if (selectedVoice === 'Deep Male Voice') {
+            setAudioUrl('/fitnessmale.mp3');
+          } else if (selectedVoice === 'Natural Female Voice') {
+            setAudioUrl('/fitnessfemale.mp3');
+          } else {
+            setAudioUrl('/fitnessmale.mp3');
+          }
+        } else if (selectedFormat === 'Value Drop') {
+          if (selectedVoice === 'Deep Male Voice') {
+            setAudioUrl('/fitnessmalevd.mp3');
+          } else if (selectedVoice === 'Natural Female Voice') {
+            setAudioUrl('/fitnessfemalevd.mp3');
+          } else {
+            setAudioUrl('/fitnessmalevd.mp3');
+          }
+        }
+      } else {
+        setAudioUrl('/voice-fitness-2.mp3'); // fallback if no match
+      }
       setVoiceReady(true);
       setLoading(false);
       setTimeout(() => {
