@@ -94,9 +94,7 @@ export default function TryDemo() {
       setAudioUrl(file);
       setVoiceReady(true);
       setLoading(false);
-      setTimeout(() => {
-        setShowPreviewButton(true);
-      }, 1200);
+      setStep('voice');
     }, 1000);
   }
 
@@ -283,12 +281,12 @@ export default function TryDemo() {
                   🎙 Generate Voice
                 </LoadingButton>
               )}
-              {step === 'voice' && voiceReady && !showPreviewButton && (
+              {step === 'voice' && voiceReady && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6 }}
-                  className="text-green-400 text-center mt-2"
+                  className="text-green-400 text-center mt-4"
                 >
                   ✅ Voice Ready!
                 </motion.div>
