@@ -13,6 +13,7 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showScript, setShowScript] = useState(false);
+  const [isDone, setIsDone] = useState(false);
 
   useEffect(() => {
     if (audioUrl && videoRef.current && audioRef.current) {
@@ -30,6 +31,7 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       ]).then(() => {
         setShowScript(true);
         setCurrentIndex(0);
+        setIsDone(false);
       });
     }
   }, [audioUrl]);
@@ -40,11 +42,12 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
         setCurrentIndex(prev => {
           if (prev >= script.length - 1) {
             clearInterval(interval);
+            setIsDone(true);
             return prev;
           }
           return prev + 1;
         });
-      }, 2000); // Switch to next line every 2 seconds
+      }, 2000);
 
       return () => clearInterval(interval);
     }
@@ -55,6 +58,22 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [currentIndex]);
+
+  const replay = () => {
+    setCurrentIndex(0);
+    setShowScript(false);
+    setIsDone(false);
+
+    if (videoRef.current && audioRef.current) {
+      videoRef.current.currentTime = 0;
+      audioRef.current.currentTime = 0;
+
+      videoRef.current.play().catch(() => {});
+      audioRef.current.play().catch(() => {});
+
+      setShowScript(true);
+    }
+  };
 
   return (
     <div className="relative w-[280px] md:w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-2 border-[#333] bg-black">
@@ -68,18 +87,25 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       />
       <audio ref={audioRef} className="hidden" />
 
-      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/* Script Display */}
       <div ref={scrollRef} className="absolute bottom-0 w-full p-4 text-white text-sm leading-relaxed overflow-y-auto max-h-48">
         {script.slice(0, currentIndex + 1).map((block, idx) => (
-          <div key={idx} className="mb-2">
+          <div key={idx} className={`mb-2 ${idx === currentIndex ? 'text-[#C2886D]' : ''}`}>
             <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}:</span>{' '}
             <span>{block.text}</span>
           </div>
         ))}
       </div>
+
+      {isDone && (
+        <button
+          onClick={replay}
+          className="absolute bottom-4 right-4 text-xs px-3 py-1 bg-[#C2886D] text-black rounded-md font-semibold hover:bg-[#b3745b] transition z-20"
+        >
+          🔁 Replay
+        </button>
+      )}
     </div>
   );
 }

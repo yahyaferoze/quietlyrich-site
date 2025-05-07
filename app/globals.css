@@ -2,12 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==== Root Theming ==== */
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --accent: #c2886d;
+  --accent-hover: #b3745b;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --border: #444;
 }
 
-/* Light mode (optional) */
+/* Optional Light Mode Support */
 @media (prefers-color-scheme: light) {
   :root {
     --background: #ffffff;
@@ -15,17 +21,51 @@
   }
 }
 
-body {
-  @apply bg-background text-foreground;
-  font-family: 'Inter', system-ui, Arial, sans-serif;
-}
-
-/* Smooth scrolling */
+/* ==== Base Elements ==== */
 html {
   scroll-behavior: smooth;
 }
 
-/* Flash pulse */
+body {
+  @apply bg-background text-foreground;
+  font-family: 'Inter', system-ui, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==== Buttons ==== */
+button {
+  @apply transition-all duration-300 ease-in-out;
+  border-radius: 0.375rem; /* rounded-md */
+  font-weight: 600;
+}
+
+/* ==== Glowing Text Effect ==== */
+@keyframes shine {
+  0% {
+    background-position: -500px 0;
+  }
+  100% {
+    background-position: 500px 0;
+  }
+}
+
+.glow-text {
+  background: linear-gradient(90deg, var(--accent), #ffffff, var(--accent));
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shine 3s linear infinite;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  display: block;
+  margin-top: 0.75rem;
+}
+
+/* ==== Pulse Glow Utility ==== */
 @keyframes pulseGlow {
   0%, 100% {
     opacity: 0.7;
@@ -37,35 +77,24 @@ html {
   }
 }
 
-/* Extra: make smooth button transitions */
-button {
-  @apply transition-all duration-300;
-}
-/* Glowing text effect */
-@keyframes shine {
-  0% {
-    background-position: -500px 0;
-  }
-  100% {
-    background-position: 500px 0;
-  }
+.pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
-.glow-text {
-  background: linear-gradient(
-    90deg,
-    #c2886d,
-    #ffffff,
-    #c2886d
-  );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: shine 3s linear infinite;
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-align: center;
-  display: block;
-  margin-top: 0.75rem;
+/* ==== Utility: Shadow Soft Edge ==== */
+.soft-shadow {
+  box-shadow: 0 4px 30px rgba(194, 136, 109, 0.12);
+}
+
+/* ==== Utility: Branded Border ==== */
+.border-accent {
+  border-color: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+.bg-accent-hover:hover {
+  background-color: var(--accent-hover);
 }
