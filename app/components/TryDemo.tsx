@@ -27,6 +27,7 @@ export default function TryDemo() {
     { id: 1, name: 'Deep Male Voice' },
     { id: 2, name: 'Natural Female Voice' },
   ];
+
   useEffect(() => {
     if (loading) {
       const dotsInterval = setInterval(() => {
@@ -97,7 +98,6 @@ export default function TryDemo() {
     }, 1000);
   }
 
-  // ✅ Strategic upgrade: save brand kit before preview
   function generatePreview() {
     const brandKit = {
       topic: selectedTopic,
@@ -142,89 +142,98 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
+
   return (
-    <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
-        <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
+    <section className="py-12 bg-black text-white min-h-screen overflow-hidden">      <div className="max-w-7xl mx-auto px-4">
+    <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
+    <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
 
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left Side */}
-          <div>
-            <AnimatePresence mode="wait">
-              {step === 'topic' && (
-                <motion.form
-                  onSubmit={handleTopicSubmit}
-                  key="topic"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
+    <div className="grid md:grid-cols-2 gap-12 items-start">
+      {/* Left Side */}
+      <div>
+        <AnimatePresence mode="wait">
+          {step === 'topic' && (
+            <motion.form
+              onSubmit={handleTopicSubmit}
+              key="topic"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-4"
+            >
+              {/* ✅ Step Header */}
+              <span className="text-sm text-gray-500 mb-1 block">Step 1 of 5: Choose Your Topic</span>
+              <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
+              <input
+                type="text"
+                placeholder="e.g. Fitness, Skin care, Focus, Budget Eating..."
+                value={selectedTopic}
+                onChange={(e) => setSelectedTopic(e.target.value)}
+                className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
+              />
+              {error && <div className="text-red-400 text-sm">{error}</div>}
+              <LoadingButton onClick={() => {}} loading={loading}>
+                Search Topics
+              </LoadingButton>
+            </motion.form>
+          )}
+
+          {step === 'format' && (
+            <motion.div
+              key="formats"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4"
+            >
+              {/* ✅ Step Header */}
+              <span className="text-sm text-gray-500 mb-1 block">Step 2 of 5: Choose a Funnel Format</span>
+              <h3 className="text-xl font-semibold mb-1">🛠 Choose Your Funnel Format</h3>
+              {['Hook Video', 'Value Drop'].map((format) => (
+                <div
+                  key={format}
+                  onClick={() => handleFormatSelect(format)}
+                  className="flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition border-[#444] bg-[#111] hover:border-[#C2886D]"
                 >
-                  <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
-                  <input
-                    type="text"
-                    placeholder="e.g. Fitness, Skin care, Focus, Budget Eating..."
-                    value={selectedTopic}
-                    onChange={(e) => setSelectedTopic(e.target.value)}
-                    className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
-                  />
-                  {error && <div className="text-red-400 text-sm">{error}</div>}
-                  <LoadingButton onClick={() => {}} loading={loading}>
-                    Search Topics
-                  </LoadingButton>
-                </motion.form>
-              )}
+                  <div className="font-medium">{format}</div>
+                  <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
+                </div>
+              ))}
+            </motion.div>
+          )}
 
-              {step === 'format' && (
-                <motion.div
-                  key="formats"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-4"
-                >
-                  <h3 className="text-xl font-semibold mb-1">🛠 Choose Your Funnel Format</h3>
-                  {['Hook Video', 'Value Drop'].map((format) => (
-                    <div
-                      key={format}
-                      onClick={() => handleFormatSelect(format)}
-                      className="flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition border-[#444] bg-[#111] hover:border-[#C2886D]"
-                    >
-                      <div className="font-medium">{format}</div>
-                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
-                    </div>
-                  ))}
-                </motion.div>
+          {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
+            <motion.div
+              key="script-box"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex flex-col"
+            >
+              {/* ✅ Conditional Step Header for Script */}
+              {step === 'script' && (
+                <span className="text-sm text-gray-500 mb-1 block">Step 3 of 5: Generating Script</span>
               )}
+              <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
+              <div className="relative">
+                <textarea
+                  ref={textareaRef}
+                  readOnly
+                  value={displayedText}
+                  placeholder="Your generated script will appear here…"
+                  className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
+                  style={{ minHeight: '460px', maxHeight: '520px' }}
+                />
+                {typing && (
+                  <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
-                <motion.div
-                  key="script-box"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col"
-                >
-                  <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div className="relative">
-                    <textarea
-                      ref={textareaRef}
-                      readOnly
-                      value={displayedText}
-                      placeholder="Your generated script will appear here…"
-                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
-                      style={{ minHeight: '460px', maxHeight: '520px' }}
-                    />
-                    {typing && (
-                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {step === 'script' && (
+                {/* Voice Selector */}
+                {step === 'script' && (
               <div className="mt-6">
                 <Listbox value={selectedVoice} onChange={setSelectedVoice}>
                   <div className="relative">
@@ -327,6 +336,7 @@ export default function TryDemo() {
               </div>
             )}
           </div>
+
                     {/* Right Side */}
                     <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
@@ -337,6 +347,8 @@ export default function TryDemo() {
             )}
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
+                {/* ✅ Step 5 header */}
+                <span className="text-sm text-gray-500 mb-1 block">Step 5 of 5: Preview Your Brand Kit</span>
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -356,12 +368,13 @@ export default function TryDemo() {
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
                   <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
+
                   {audioUrl && (
-  <div className="mt-6 text-center">
-    <p className="text-sm text-[#C2886D] font-semibold mb-2">🔊 Play Voice Preview</p>
-    <audio controls src={audioUrl} className="w-full max-w-xs mx-auto rounded-lg" />
-  </div>
-)}
+                    <div className="mt-6 text-center">
+                      <p className="text-sm text-[#C2886D] font-semibold mb-2">🔊 Play Voice Preview</p>
+                      <audio controls src={audioUrl} className="w-full max-w-xs mx-auto rounded-lg" />
+                    </div>
+                  )}
                 </motion.div>
               </div>
             )}
@@ -416,3 +429,4 @@ function LoadingButton({
     </motion.button>
   );
 }
+
