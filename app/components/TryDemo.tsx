@@ -92,6 +92,7 @@ export default function TryDemo() {
       setLoading(false);
     }, 800);
   };
+
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
@@ -128,7 +129,6 @@ export default function TryDemo() {
       setStep('preview');
     }, 2000);
   }
-
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
@@ -156,6 +156,8 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
+
+  // ✅ Reusable Button Component
   function LoadingButton({
     onClick,
     loading,
@@ -166,7 +168,7 @@ export default function TryDemo() {
     children: React.ReactNode;
   }) {
     const [dots, setDots] = useState('');
-  
+
     useEffect(() => {
       if (loading) {
         const interval = setInterval(() => {
@@ -175,7 +177,7 @@ export default function TryDemo() {
         return () => clearInterval(interval);
       }
     }, [loading]);
-  
+
     return (
       <motion.button
         onClick={onClick}
@@ -201,11 +203,13 @@ export default function TryDemo() {
   }
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 md:px-12">
         <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
-        <p className="text-gray-400 text-center mb-10">Explore AI-generated TikTok funnels & voice-powered scripts.</p>
+        <p className="text-gray-400 text-center mb-10">
+          Explore AI-generated TikTok funnels & voice-powered scripts.
+        </p>
 
-        <div className="grid md:grid-cols-2 gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
           {/* Left Side */}
           <div>
             <AnimatePresence mode="wait">
@@ -386,8 +390,7 @@ export default function TryDemo() {
                 </motion.div>
               )}
             </div>
-                        {/* Final CTA after preview */}
-                        {step === 'preview' && (
+            {step === 'preview' && (
               <div className="flex flex-col items-center mt-6 space-y-6">
                 <a href="/demo-output">
                   <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b] transition">
@@ -462,6 +465,7 @@ export default function TryDemo() {
     </section>
   );
 }
+
 // ✅ Reusable Button Component
 function LoadingButton({
   onClick,
