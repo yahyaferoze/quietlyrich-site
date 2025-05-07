@@ -356,6 +356,12 @@ export default function TryDemo() {
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
                   <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
+                  {audioUrl && (
+  <div className="mt-6 text-center">
+    <p className="text-sm text-[#C2886D] font-semibold mb-2">🔊 Play Voice Preview</p>
+    <audio controls src={audioUrl} className="w-full max-w-xs mx-auto rounded-lg" />
+  </div>
+)}
                 </motion.div>
               </div>
             )}
