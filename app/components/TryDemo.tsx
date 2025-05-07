@@ -28,6 +28,22 @@ export default function TryDemo() {
     { id: 2, name: 'Natural Female Voice' },
   ];
 
+  const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
+    const lines = script.split('\n').filter(line => line.trim() !== '');
+    const blocks: { type: string; text: string }[] = [];
+
+    lines.forEach(line => {
+      const splitIndex = line.indexOf(':');
+      if (splitIndex !== -1) {
+        const type = line.substring(0, splitIndex).trim();
+        const text = line.substring(splitIndex + 1).trim();
+        blocks.push({ type, text });
+      }
+    });
+
+    return blocks;
+  };
+
   useEffect(() => {
     if (loading) {
       const dotsInterval = setInterval(() => {
@@ -162,6 +178,9 @@ export default function TryDemo() {
                 >
                   <span className="text-sm text-gray-500 mb-1 block">Step 1 of 5: Choose Your Topic</span>
                   <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
+                  <p className="text-xs text-gray-400 italic mb-2">
+                    What niche do you want to dominate today?
+                  </p>
                   <input
                     type="text"
                     placeholder="e.g. Fitness, Skin care, Focus, Budget Eating..."
@@ -201,8 +220,7 @@ export default function TryDemo() {
                   ))}
                 </motion.div>
               )}
-
-              {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
+                            {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
                 <motion.div
                   key="script-box"
                   initial={{ opacity: 0, y: 20 }}
@@ -385,7 +403,6 @@ export default function TryDemo() {
     </section>
   );
 }
-
 // ✅ Reusable Button Component
 function LoadingButton({
   onClick,
