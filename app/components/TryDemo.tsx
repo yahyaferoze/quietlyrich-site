@@ -43,7 +43,6 @@ export default function TryDemo() {
 
     return blocks;
   };
-
   useEffect(() => {
     if (loading) {
       const dotsInterval = setInterval(() => {
@@ -52,6 +51,7 @@ export default function TryDemo() {
       return () => clearInterval(dotsInterval);
     }
   }, [loading]);
+
   const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
@@ -92,7 +92,6 @@ export default function TryDemo() {
       setLoading(false);
     }, 800);
   };
-
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
@@ -157,6 +156,49 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
+  function LoadingButton({
+    onClick,
+    loading,
+    children,
+  }: {
+    onClick: () => void;
+    loading: boolean;
+    children: React.ReactNode;
+  }) {
+    const [dots, setDots] = useState('');
+  
+    useEffect(() => {
+      if (loading) {
+        const interval = setInterval(() => {
+          setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+        }, 400);
+        return () => clearInterval(interval);
+      }
+    }, [loading]);
+  
+    return (
+      <motion.button
+        onClick={onClick}
+        disabled={loading}
+        whileTap={{ scale: 0.94 }}
+        whileHover={{ scale: 1.03 }}
+        className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
+          loading
+            ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
+            : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
+        }`}
+      >
+        {loading ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+            <span className="text-black font-bold">Loading{dots}</span>
+          </div>
+        ) : (
+          <span className="text-black font-bold">{children}</span>
+        )}
+      </motion.button>
+    );
+  }
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
@@ -311,8 +353,8 @@ export default function TryDemo() {
             <div className="mt-2 text-xs text-center text-gray-400">
               Want your own cloned voice? <span className="text-[#C2886D] font-semibold">Upgrade now!</span>
             </div>
-                        {/* Buttons */}
-                        <div className="mt-6 space-y-4">
+
+            <div className="mt-6 space-y-4">
               {step === 'script' && (
                 <LoadingButton onClick={generateVoice} loading={loading}>
                   🎙 Generate Voice
@@ -344,15 +386,29 @@ export default function TryDemo() {
                 </motion.div>
               )}
             </div>
-
-            {/* Final CTA */}
-            {step === 'preview' && (
-              <div className="flex justify-center mt-6">
+                        {/* Final CTA after preview */}
+                        {step === 'preview' && (
+              <div className="flex flex-col items-center mt-6 space-y-6">
                 <a href="/demo-output">
-                  <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b]">
+                  <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b] transition">
                     🎉 See Your Full Brand Kit →
                   </button>
                 </a>
+
+                {/* ✅ Conversion Prompt #2: Post-Preview Emotional Trigger */}
+                <div className="bg-[#111] border border-[#C2886D] p-4 rounded-md text-center max-w-md">
+                  <p className="text-sm text-[#C2886D] font-semibold mb-2">
+                    ❤️ Inspired by your preview?
+                  </p>
+                  <p className="text-xs text-gray-300 mb-4">
+                    Upgrade to unlock unlimited topics, formats, and AI voiceovers. Own your niche with content that never sleeps.
+                  </p>
+                  <a href="/upgrade">
+                    <button className="bg-[#C2886D] text-black font-bold px-4 py-2 rounded-md hover:bg-[#b3745b] transition">
+                      🚀 Upgrade & Unlock More
+                    </button>
+                  </a>
+                </div>
               </div>
             )}
           </div>
@@ -365,6 +421,7 @@ export default function TryDemo() {
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
             )}
+
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
                 <span className="text-sm text-gray-500 mb-1 block">Step 5 of 5: Preview Your Brand Kit</span>
@@ -377,8 +434,10 @@ export default function TryDemo() {
                   🎬 Preview Mode — See your brand come to life
                 </motion.div>
 
+                {/* Background pulse aura */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
+                {/* TikTok preview with parsed script blocks */}
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
@@ -386,7 +445,7 @@ export default function TryDemo() {
                   transition={{ duration: 0.8, type: 'spring' }}
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
-                  <TikTokPhonePreview script={[]} audioUrl={audioUrl} />
+                  <TikTokPhonePreview script={parseScriptToBlocks(fullScript)} audioUrl={audioUrl} />
 
                   {audioUrl && (
                     <div className="mt-6 text-center">
