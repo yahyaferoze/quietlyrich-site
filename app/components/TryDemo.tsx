@@ -36,7 +36,6 @@ export default function TryDemo() {
       return () => clearInterval(dotsInterval);
     }
   }, [loading]);
-
   const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
@@ -77,6 +76,7 @@ export default function TryDemo() {
       setLoading(false);
     }, 800);
   };
+
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
@@ -141,7 +141,6 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
-
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
@@ -174,9 +173,6 @@ export default function TryDemo() {
                   <LoadingButton onClick={() => {}} loading={loading}>
                     Search Topics
                   </LoadingButton>
-                  <p className="text-xs text-gray-400 mt-1 italic">
-                    Let’s find your niche. Your faceless brand starts here.
-                  </p>
                 </motion.form>
               )}
 
@@ -190,6 +186,9 @@ export default function TryDemo() {
                 >
                   <span className="text-sm text-gray-500 mb-1 block">Step 2 of 5: Choose a Funnel Format</span>
                   <h3 className="text-xl font-semibold mb-1">🛠 Choose Your Funnel Format</h3>
+                  <p className="text-xs text-gray-400 italic mb-2">
+                    Your format shapes how the message flows. Choose wisely — first impressions count.
+                  </p>
                   {['Hook Video', 'Value Drop'].map((format) => (
                     <div
                       key={format}
@@ -200,12 +199,10 @@ export default function TryDemo() {
                       <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
                     </div>
                   ))}
-                  <p className="text-xs text-gray-400 mt-2 italic text-center">
-                    Choose a format built to hook, engage, and convert cold viewers into obsessed followers.
-                  </p>
                 </motion.div>
               )}
-                            {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
+
+              {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
                 <motion.div
                   key="script-box"
                   initial={{ opacity: 0, y: 20 }}
@@ -214,7 +211,12 @@ export default function TryDemo() {
                   className="flex flex-col"
                 >
                   {step === 'script' && (
-                    <span className="text-sm text-gray-500 mb-1 block">Step 3 of 5: Generating Script</span>
+                    <>
+                      <span className="text-sm text-gray-500 mb-1 block">Step 3 of 5: Review Your Script</span>
+                      <p className="text-xs text-gray-400 italic mb-2">
+                        Here's your story. Watch it unfold like magic — and make your audience stop scrolling.
+                      </p>
+                    </>
                   )}
                   <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
                   <div className="relative">
@@ -230,9 +232,6 @@ export default function TryDemo() {
                       <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
                     )}
                   </div>
-                  <p className="text-xs text-gray-400 mt-2 italic text-center">
-                    QuietlyRich is writing in your brand's voice — with emotional pacing and viral structure.
-                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -241,9 +240,7 @@ export default function TryDemo() {
               <div className="mt-6">
                 <Listbox value={selectedVoice} onChange={setSelectedVoice}>
                   <div className="relative">
-                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">
-                      🎤 Choose a Voice
-                    </Listbox.Label>
+                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">🎤 Choose a Voice</Listbox.Label>
                     <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-[#111] py-3 pl-4 pr-10 text-left border border-[#C2886D] text-white focus:outline-none focus:ring-2 focus:ring-[#C2886D] focus:border-[#C2886D] transition">
                       <span className="block truncate">{selectedVoice}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -290,14 +287,48 @@ export default function TryDemo() {
                 <div className="glow-text mt-2">
                   🚀 More premium voices & custom voice cloning available on upgrade!
                 </div>
-
-                <p className="text-xs text-gray-400 mt-2 italic text-center">
-                  Select a voice that matches your brand tone — or upgrade to clone your own.
-                </p>
               </div>
             )}
-                        {/* ✅ Final CTA */}
-                        {step === 'preview' && (
+
+            <div className="mt-2 text-xs text-center text-gray-400">
+              Want your own cloned voice? <span className="text-[#C2886D] font-semibold">Upgrade now!</span>
+            </div>
+                        {/* Buttons */}
+                        <div className="mt-6 space-y-4">
+              {step === 'script' && (
+                <LoadingButton onClick={generateVoice} loading={loading}>
+                  🎙 Generate Voice
+                </LoadingButton>
+              )}
+              {step === 'voice' && voiceReady && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-green-400 text-center mt-4"
+                >
+                  ✅ Voice Ready!
+                </motion.div>
+              )}
+              {step === 'voice' && showPreviewButton && (
+                <LoadingButton onClick={generatePreview} loading={false}>
+                  🎬 Generate Preview
+                </LoadingButton>
+              )}
+              {step === 'previewGen' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
+                >
+                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
+                  Generating Preview...
+                </motion.div>
+              )}
+            </div>
+
+            {/* Final CTA */}
+            {step === 'preview' && (
               <div className="flex justify-center mt-6">
                 <a href="/demo-output">
                   <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b]">
@@ -323,15 +354,10 @@ export default function TryDemo() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="mb-2 text-sm text-[#C2886D] font-semibold tracking-wide"
+                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
                 >
-                  🎬 Preview Mode
+                  🎬 Preview Mode — See your brand come to life
                 </motion.div>
-
-                {/* ✅ Emotional Microcopy */}
-                <p className="text-xs text-gray-400 italic mb-4 text-center">
-                  This is what your audience will see — short-form content with a long-term impact.
-                </p>
 
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
