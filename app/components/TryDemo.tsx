@@ -79,7 +79,6 @@ export default function TryDemo() {
       );
     }
   };
-
   const handleFormatSelect = async (format: string) => {
     setSelectedFormat(format);
     if (!selectedTopic) return;
@@ -164,7 +163,6 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
-
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
@@ -177,9 +175,10 @@ export default function TryDemo() {
         <p className="text-gray-400 text-center mb-10">
           Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
         </p>
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+
+        <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
           {/* Left Side */}
-          <div>
+          <div className="w-full lg:w-1/2">
             <AnimatePresence mode="wait">
               {step === 'topic' && (
                 <motion.form
@@ -198,8 +197,7 @@ export default function TryDemo() {
                   </h3>
                   <p className="text-xs text-gray-400 italic mb-2">
                     For example:{' '}
-                    <span className="text-[#C2886D]">Why rich people stay quiet</span>
-                    ,{' '}
+                    <span className="text-[#C2886D]">Why rich people stay quiet</span>,{' '}
                     <span className="text-[#C2886D]">Budget eating</span>,{' '}
                     <span className="text-[#C2886D]">Focus tips</span>...
                   </p>
@@ -254,8 +252,7 @@ export default function TryDemo() {
                   ))}
                 </motion.div>
               )}
-
-              {(step === 'script' ||
+                            {(step === 'script' ||
                 step === 'voice' ||
                 step === 'previewGen' ||
                 step === 'preview') && (
@@ -392,7 +389,7 @@ export default function TryDemo() {
                 </motion.div>
               )}
 
-              {step === 'preview' && (
+{step === 'preview' && (
                 <div className="flex flex-col items-center mt-6 space-y-6">
                   <a href="/demo-output">
                     <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b] transition">
@@ -443,7 +440,11 @@ export default function TryDemo() {
                 >
                   🎬 Your Brand, In Motion
                 </motion.div>
+
+                {/* Glowing Pulse Aura */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+
+                {/* TikTok Preview */}
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
@@ -458,6 +459,7 @@ export default function TryDemo() {
                   <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
                     Made with Quietly Rich
                   </div>
+
                   {audioUrl && (
                     <div className="mt-6 text-center">
                       <p className="text-sm text-[#C2886D] font-semibold mb-2">
