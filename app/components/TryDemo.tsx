@@ -6,7 +6,7 @@ import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-
+import ProgressBar from '../components/ProgressBar';
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -43,14 +43,20 @@ export default function TryDemo() {
 
     return blocks;
   };
-  useEffect(() => {
-    if (loading) {
-      const dotsInterval = setInterval(() => {
-        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
-      }, 600);
-      return () => clearInterval(dotsInterval);
-    }
-  }, [loading]);
+
+  const voiceMap: Record<string, Record<string, Record<string, string>>> = {
+    'fitness at home': {
+      'Hook Video': {
+        'Deep Male Voice': '/fitnessmale.mp3',
+        'Natural Female Voice': '/fitnessfemale.mp3',
+      },
+      'Value Drop': {
+        'Deep Male Voice': '/fitnessmalevd.mp3',
+        'Natural Female Voice': '/fitnessfemalevd.mp3',
+      },
+    },
+    // Add other topics & formats as needed
+  };
 
   const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +72,6 @@ export default function TryDemo() {
       setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
     }
   };
-
   const handleFormatSelect = async (format: string) => {
     setSelectedFormat(format);
     if (!selectedTopic) return;
@@ -80,7 +85,6 @@ export default function TryDemo() {
     }
 
     setLoading(true);
-
     setTimeout(() => {
       const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
       setFullScript(combined);
@@ -96,17 +100,11 @@ export default function TryDemo() {
   async function generateVoice() {
     setLoading(true);
     setTimeout(() => {
-      let file = '/voice-fitness-2.mp3';
+      const topicKey = selectedTopic.toLowerCase().trim();
+      const audioFile =
+        voiceMap[topicKey]?.[selectedFormat]?.[selectedVoice] || '/voice-fitness-2.mp3';
 
-      if (selectedTopic.toLowerCase() === 'fitness at home') {
-        if (selectedFormat === 'Hook Video') {
-          file = selectedVoice === 'Deep Male Voice' ? '/fitnessmale.mp3' : '/fitnessfemale.mp3';
-        } else if (selectedFormat === 'Value Drop') {
-          file = selectedVoice === 'Deep Male Voice' ? '/fitnessmalevd.mp3' : '/fitnessfemalevd.mp3';
-        }
-      }
-
-      setAudioUrl(file);
+      setAudioUrl(audioFile);
       setVoiceReady(true);
       setLoading(false);
       setStep('voice');
@@ -129,6 +127,16 @@ export default function TryDemo() {
       setStep('preview');
     }, 2000);
   }
+
+  useEffect(() => {
+    if (loading) {
+      const dotsInterval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+      }, 600);
+      return () => clearInterval(dotsInterval);
+    }
+  }, [loading]);
+
   useEffect(() => {
     if (typing && fullScript.length > 0) {
       let index = 0;
@@ -156,57 +164,12 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
-
-  // ✅ Reusable Button Component
-  function LoadingButton({
-    onClick,
-    loading,
-    children,
-  }: {
-    onClick: () => void;
-    loading: boolean;
-    children: React.ReactNode;
-  }) {
-    const [dots, setDots] = useState('');
-
-    useEffect(() => {
-      if (loading) {
-        const interval = setInterval(() => {
-          setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
-        }, 400);
-        return () => clearInterval(interval);
-      }
-    }, [loading]);
-
-    return (
-      <motion.button
-        onClick={onClick}
-        disabled={loading}
-        whileTap={{ scale: 0.94 }}
-        whileHover={{ scale: 1.03 }}
-        className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
-          loading
-            ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
-            : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
-        }`}
-      >
-        {loading ? (
-          <div className="flex items-center justify-center gap-2">
-            <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
-            <span className="text-black font-bold">Loading{dots}</span>
-          </div>
-        ) : (
-          <span className="text-black font-bold">{children}</span>
-        )}
-      </motion.button>
-    );
-  }
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
         <p className="text-gray-400 text-center mb-10">
-          Explore AI-generated TikTok funnels & voice-powered scripts.
+          Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
         </p>
 
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
@@ -223,21 +186,27 @@ export default function TryDemo() {
                   className="space-y-4"
                 >
                   <span className="text-sm text-gray-500 mb-1 block">Step 1 of 5: Choose Your Topic</span>
-                  <h3 className="text-xl font-semibold mb-1">🔍 Enter Your Topic</h3>
+                  <h3 className="text-xl font-semibold mb-1">🔍 What do you want to make a video about?</h3>
                   <p className="text-xs text-gray-400 italic mb-2">
-                    What niche do you want to dominate today?
+                    For example: <span className="text-[#C2886D]">Why rich people stay quiet</span>, <span className="text-[#C2886D]">Budget eating</span>, <span className="text-[#C2886D]">Focus tips</span>...
                   </p>
                   <input
                     type="text"
-                    placeholder="e.g. Fitness, Skin care, Focus, Budget Eating..."
+                    placeholder="Type your topic..."
                     value={selectedTopic}
                     onChange={(e) => setSelectedTopic(e.target.value)}
                     className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
                   />
                   {error && <div className="text-red-400 text-sm">{error}</div>}
-                  <LoadingButton onClick={() => {}} loading={loading}>
-                    Search Topics
-                  </LoadingButton>
+                  <LoadingButton
+  onClick={() => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    handleTopicSubmit(fakeEvent);
+  }}
+  loading={loading}
+>
+  🔎 Search Topics
+</LoadingButton>
                 </motion.form>
               )}
 
@@ -250,9 +219,9 @@ export default function TryDemo() {
                   className="space-y-4"
                 >
                   <span className="text-sm text-gray-500 mb-1 block">Step 2 of 5: Choose a Funnel Format</span>
-                  <h3 className="text-xl font-semibold mb-1">🛠 Choose Your Funnel Format</h3>
+                  <h3 className="text-xl font-semibold mb-1">🛠 Choose a video style</h3>
                   <p className="text-xs text-gray-400 italic mb-2">
-                    Your format shapes how the message flows. Choose wisely — first impressions count.
+                    Want to hook viewers or drop pure value? Pick your approach.
                   </p>
                   {['Hook Video', 'Value Drop'].map((format) => (
                     <div
@@ -266,7 +235,8 @@ export default function TryDemo() {
                   ))}
                 </motion.div>
               )}
-                            {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
+
+              {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
                 <motion.div
                   key="script-box"
                   initial={{ opacity: 0, y: 20 }}
@@ -278,7 +248,7 @@ export default function TryDemo() {
                     <>
                       <span className="text-sm text-gray-500 mb-1 block">Step 3 of 5: Review Your Script</span>
                       <p className="text-xs text-gray-400 italic mb-2">
-                        Here's your story. Watch it unfold like magic — and make your audience stop scrolling.
+                        Here’s your viral voiceover script, built to stop scrolls.
                       </p>
                     </>
                   )}
@@ -299,12 +269,11 @@ export default function TryDemo() {
                 </motion.div>
               )}
             </AnimatePresence>
-
             {step === 'script' && (
               <div className="mt-6">
                 <Listbox value={selectedVoice} onChange={setSelectedVoice}>
                   <div className="relative">
-                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">🎤 Choose a Voice</Listbox.Label>
+                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">🎤 Pick Your Voice</Listbox.Label>
                     <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-[#111] py-3 pl-4 pr-10 text-left border border-[#C2886D] text-white focus:outline-none focus:ring-2 focus:ring-[#C2886D] focus:border-[#C2886D] transition">
                       <span className="block truncate">{selectedVoice}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -349,13 +318,13 @@ export default function TryDemo() {
                 </Listbox>
 
                 <div className="glow-text mt-2">
-                  🚀 More premium voices & custom voice cloning available on upgrade!
+                  🚀 Want to use your own voice or unlock more? <a href="/upgrade" className="underline text-[#C2886D]">Upgrade here</a>
                 </div>
               </div>
             )}
 
             <div className="mt-2 text-xs text-center text-gray-400">
-              Want your own cloned voice? <span className="text-[#C2886D] font-semibold">Upgrade now!</span>
+              Custom voice cloning available for pro accounts.
             </div>
 
             <div className="mt-6 space-y-4">
@@ -364,21 +333,24 @@ export default function TryDemo() {
                   🎙 Generate Voice
                 </LoadingButton>
               )}
+
               {step === 'voice' && voiceReady && (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="text-green-400 text-center mt-4"
+                  className="text-green-400 text-center mt-4 font-semibold"
                 >
-                  ✅ Voice Ready!
+                  ✅ Voice Ready! Tap below to preview.
                 </motion.div>
               )}
+
               {step === 'voice' && showPreviewButton && (
                 <LoadingButton onClick={generatePreview} loading={false}>
-                  🎬 Generate Preview
+                  🎬 Generate Video Preview
                 </LoadingButton>
               )}
+
               {step === 'previewGen' && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -404,7 +376,7 @@ export default function TryDemo() {
                     ❤️ Inspired by your preview?
                   </p>
                   <p className="text-xs text-gray-300 mb-4">
-                    Upgrade to unlock unlimited topics, formats, and AI voiceovers. Own your niche with content that never sleeps.
+                    Upgrade to unlock unlimited scripts, formats, and voice options. Quietly dominate your niche.
                   </p>
                   <a href="/upgrade">
                     <button className="bg-[#C2886D] text-black font-bold px-4 py-2 rounded-md hover:bg-[#b3745b] transition">
@@ -434,13 +406,13 @@ export default function TryDemo() {
                   transition={{ duration: 0.5 }}
                   className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide"
                 >
-                  🎬 Preview Mode — See your brand come to life
+                  🎬 Your Brand, In Motion
                 </motion.div>
 
                 {/* Background pulse aura */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
-                {/* TikTok preview with parsed script blocks */}
+                {/* TikTok preview with watermark */}
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
@@ -449,11 +421,18 @@ export default function TryDemo() {
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
                   <TikTokPhonePreview script={parseScriptToBlocks(fullScript)} audioUrl={audioUrl} />
+                  <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">Made with Quietly Rich</div>
 
                   {audioUrl && (
                     <div className="mt-6 text-center">
                       <p className="text-sm text-[#C2886D] font-semibold mb-2">🔊 Play Voice Preview</p>
                       <audio controls src={audioUrl} className="w-full max-w-xs mx-auto rounded-lg" />
+                      <button
+                        onClick={() => setStep('previewGen')}
+                        className="mt-2 text-xs text-gray-400 hover:text-white underline"
+                      >
+                        🔁 Replay Preview
+                      </button>
                     </div>
                   )}
                 </motion.div>
