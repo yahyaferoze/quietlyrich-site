@@ -1,16 +1,30 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 
 export default function DemoOutput() {
   const [brand, setBrand] = useState({
-    name: "AlphaWaves",
-    niche: "Personal Growth for Gen Z",
-    voice: "Viral-Style AI Male Voice",
-    style: "Motivational micro-scripts",
-    sampleScript:
-      "No one’s coming to save you. But that’s the best part — you get to build your own empire.",
-    voiceSampleUrl: "/assets/alpha-voice.mp3",
+    name: '',
+    niche: '',
+    voice: '',
+    style: '',
+    sampleScript: '',
+    voiceSampleUrl: '',
   });
+
+  useEffect(() => {
+    const stored = localStorage.getItem('brandKit');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setBrand({
+        name: parsed.topic || 'Your Brand',
+        niche: parsed.format || 'Your Niche',
+        voice: parsed.voice || 'AI Voice',
+        style: 'Motivational micro-scripts',
+        sampleScript: parsed.script?.split('\n\n')[0]?.split(':')?.[1]?.trim() || '',
+        voiceSampleUrl: parsed.audioUrl || '',
+      });
+    }
+  }, []);
 
   return (
     <main className="min-h-screen bg-neutral-900 text-white px-6 py-12">
@@ -19,32 +33,23 @@ export default function DemoOutput() {
           🎉 Your Faceless Brand Is Ready
         </h1>
         <p className="text-lg text-neutral-400">
-          We’ve created your brand’s identity. No face. No burnout. Just quiet
-          execution.
+          We’ve created your brand’s identity. No face. No burnout. Just quiet execution.
         </p>
 
         <div className="bg-neutral-800 rounded-xl p-6 mt-8 space-y-4 text-left shadow-lg border border-neutral-700">
-          <div>
-            <strong>Brand Name:</strong> {brand.name}
-          </div>
-          <div>
-            <strong>Niche:</strong> {brand.niche}
-          </div>
-          <div>
-            <strong>Voice Style:</strong> {brand.voice}
-          </div>
-          <div>
-            <strong>Content Style:</strong> {brand.style}
-          </div>
-          <div>
-            <strong>Sample Script:</strong> {brand.sampleScript}
-          </div>
+          <div><strong>Brand Name:</strong> {brand.name}</div>
+          <div><strong>Niche:</strong> {brand.niche}</div>
+          <div><strong>Voice Style:</strong> {brand.voice}</div>
+          <div><strong>Content Style:</strong> {brand.style}</div>
+          <div><strong>Sample Script:</strong> {brand.sampleScript}</div>
         </div>
 
-        {/* Placeholder: Hook this to real voice audio later */}
-        <button className="mt-4 bg-white text-black px-4 py-2 rounded-lg hover:bg-neutral-100">
-          🔊 Hear Voice Sample
-        </button>
+        {brand.voiceSampleUrl && (
+          <div className="mt-6">
+            <p className="text-sm text-[#C2886D] font-semibold mb-2">🔊 Hear Voice Sample</p>
+            <audio controls src={brand.voiceSampleUrl} className="w-full max-w-xs mx-auto rounded-lg" />
+          </div>
+        )}
 
         <div className="mt-10 space-y-4">
           <p className="text-xl font-semibold">
@@ -66,7 +71,7 @@ export default function DemoOutput() {
           </div>
         </div>
 
-        <div className="mt-12 text-neutral-500 text-sm">
+        <div className="mt-12 text-neutral-500 text-sm italic">
           "Launched in 15 minutes. 250K views. Didn’t record a thing."
           <br />– Faceless Creator, TikTok
         </div>
