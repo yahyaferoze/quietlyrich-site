@@ -47,7 +47,6 @@ export default function TryDemo() {
     });
     return blocks;
   };
-
   const voiceMap: Record<string, Record<string, Record<string, string>>> = {
     'fitness at home': {
       'Hook Video': {
@@ -59,6 +58,7 @@ export default function TryDemo() {
         'Natural Female Voice': '/fitnessfemalevd.mp3',
       },
     },
+    // Add more mappings here as needed
   };
 
   const handleTopicSubmit = async (e: React.FormEvent) => {
@@ -163,11 +163,9 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
-
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
-        {/* Sticky Progress Header */}
         <div className="sticky top-0 z-20 bg-black pb-4">
           <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">
             Try QuietlyRich Demo
@@ -182,7 +180,7 @@ export default function TryDemo() {
         </p>
 
         <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
-          {/* Left Side */}
+          {/* Left Column */}
           <div className="w-full lg:w-1/2">
             <AnimatePresence mode="wait">
               {step === 'topic' && (
@@ -225,7 +223,8 @@ export default function TryDemo() {
                   </LoadingButton>
                 </motion.form>
               )}
-                            {step === 'format' && (
+
+              {step === 'format' && (
                 <motion.div
                   key="formats"
                   initial={{ opacity: 0, y: 10 }}
@@ -256,22 +255,136 @@ export default function TryDemo() {
                   ))}
                 </motion.div>
               )}
-            </AnimatePresence>
-          </div>
 
-          {/* Right Side: TikTok Phone Preview */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center">
-            {step === 'previewGen' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center pt-20"
-              >
-                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
-                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
-              </motion.div>
+              {step === 'script' && (
+                <motion.div
+                  key="script"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col"
+                >
+                  <span className="text-sm text-gray-500 mb-1 block">
+                    Step 3 of 5: Review Your Script
+                  </span>
+                  <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
+                  <div className="relative">
+                    <textarea
+                      ref={textareaRef}
+                      readOnly
+                      value={displayedText}
+                      placeholder="Your generated script will appear here…"
+                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
+                      style={{ minHeight: '480px', maxHeight: '520px' }}
+                    />
+                    {typing && (
+                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {step === 'script' && (
+              <div className="mt-6">
+                <Listbox value={selectedVoice} onChange={setSelectedVoice}>
+                  <div className="relative">
+                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">
+                      🎤 Pick Your Voice
+                    </Listbox.Label>
+                    <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-[#111] py-3 pl-4 pr-10 text-left border border-[#C2886D] text-white focus:outline-none focus:ring-2 focus:ring-[#C2886D] focus:border-[#C2886D] transition">
+                      <span className="block truncate">{selectedVoice}</span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                        <ChevronUpDownIcon className="h-5 w-5 text-[#C2886D]" aria-hidden="true" />
+                      </span>
+                    </Listbox.Button>
+                    <Transition
+                      as={Fragment}
+                      leave="transition ease-in duration-100"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded-md bg-[#111] py-1 text-base shadow-lg ring-1 ring-[#C2886D] focus:outline-none sm:text-sm z-50">
+                        {voices.map(voice => (
+                          <Listbox.Option
+                            key={voice.id}
+                            className={({ active }) =>
+                              `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                active ? 'bg-[#C2886D] text-black' : 'text-white'
+                              }`
+                            }
+                            value={voice.name}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                  {voice.name}
+                                </span>
+                                {selected && (
+                                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <CheckIcon className="h-5 w-5 text-black" aria-hidden="true" />
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </Transition>
+                  </div>
+                </Listbox>
+
+                <div className="glow-text mt-2">
+                  🚀 Want to use your own voice or unlock more?{' '}
+                  <a href="/upgrade" className="underline text-[#C2886D]">
+                    Upgrade here
+                  </a>
+                </div>
+              </div>
             )}
 
+            <div className="mt-2 text-xs text-center text-gray-400">
+              Custom voice cloning available for pro accounts.
+            </div>
+
+            <div className="mt-6 space-y-4">
+              {step === 'script' && (
+                <LoadingButton onClick={generateVoice} loading={loading}>
+                  🎙 Generate Voice
+                </LoadingButton>
+              )}
+
+              {step === 'voice' && voiceReady && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-green-400 text-center mt-4 font-semibold"
+                >
+                  ✅ Voice Ready! Tap below to preview.
+                </motion.div>
+              )}
+
+              {step === 'voice' && showPreviewButton && (
+                <LoadingButton onClick={generatePreview} loading={false}>
+                  🎬 Generate Video Preview
+                </LoadingButton>
+              )}
+
+              {step === 'previewGen' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
+                >
+                  <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
+                  Generating Preview...
+                </motion.div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column: TikTokPhonePreview */}
+          <div className="w-full lg:w-1/2 flex flex-col items-center">
             {step === 'preview' && (
               <div className="relative w-full flex flex-col items-center">
                 <motion.div
