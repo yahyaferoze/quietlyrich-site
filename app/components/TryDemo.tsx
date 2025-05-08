@@ -7,8 +7,11 @@ import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar from '../components/ProgressBar';
+
 export default function TryDemo() {
-  const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
+  const [step, setStep] = useState<
+    'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'
+  >('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState<string>('');
@@ -28,19 +31,20 @@ export default function TryDemo() {
     { id: 2, name: 'Natural Female Voice' },
   ];
 
-  const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
+  const parseScriptToBlocks = (
+    script: string
+  ): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
     const blocks: { type: string; text: string }[] = [];
-
     lines.forEach(line => {
       const splitIndex = line.indexOf(':');
       if (splitIndex !== -1) {
-        const type = line.substring(0, splitIndex).trim();
-        const text = line.substring(splitIndex + 1).trim();
-        blocks.push({ type, text });
+        blocks.push({
+          type: line.substring(0, splitIndex).trim(),
+          text: line.substring(splitIndex + 1).trim(),
+        });
       }
     });
-
     return blocks;
   };
 
@@ -62,31 +66,34 @@ export default function TryDemo() {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
     const availableTopics = Object.keys(topics);
-    const matchedTopic = availableTopics.find(topic => topic.includes(topicInput));
-
+    const matchedTopic = availableTopics.find(topic =>
+      topic.includes(topicInput)
+    );
     if (matchedTopic) {
       setSelectedTopic(matchedTopic);
       setError('');
       setStep('format');
     } else {
-      setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
+      setError(
+        '❌ This topic is not available in the demo. Upgrade to unlock full access!'
+      );
     }
   };
+
   const handleFormatSelect = async (format: string) => {
     setSelectedFormat(format);
     if (!selectedTopic) return;
-
     const topicKey = selectedTopic.toLowerCase().trim();
     const scripts = (topics as any)[topicKey]?.[format];
-
     if (!scripts) {
       setError('❌ This format is locked for this topic.');
       return;
     }
-
     setLoading(true);
     setTimeout(() => {
-      const combined = scripts.map((block: any) => `${block.type.toUpperCase()}: ${block.text}`).join('\n\n');
+      const combined = scripts
+        .map((block: any) => `${block.type.toUpperCase()}: ${block.text}`)
+        .join('\n\n');
       setFullScript(combined);
       setDisplayedText('');
       setTyping(true);
@@ -102,8 +109,8 @@ export default function TryDemo() {
     setTimeout(() => {
       const topicKey = selectedTopic.toLowerCase().trim();
       const audioFile =
-        voiceMap[topicKey]?.[selectedFormat]?.[selectedVoice] || '/voice-fitness-2.mp3';
-
+        voiceMap[topicKey]?.[selectedFormat]?.[selectedVoice] ||
+        '/voice-fitness-2.mp3';
       setAudioUrl(audioFile);
       setVoiceReady(true);
       setLoading(false);
@@ -117,45 +124,38 @@ export default function TryDemo() {
       format: selectedFormat,
       voice: selectedVoice,
       script: fullScript,
-      audioUrl: audioUrl,
+      audioUrl,
     };
-
-    localStorage.setItem("brandKit", JSON.stringify(brandKit));
-
+    localStorage.setItem('brandKit', JSON.stringify(brandKit));
     setStep('previewGen');
-    setTimeout(() => {
-      setStep('preview');
-    }, 2000);
+    setTimeout(() => setStep('preview'), 2000);
   }
 
   useEffect(() => {
     if (loading) {
-      const dotsInterval = setInterval(() => {
-        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+      const id = setInterval(() => {
+        setDots(d => (d.length < 3 ? d + '.' : ''));
       }, 600);
-      return () => clearInterval(dotsInterval);
+      return () => clearInterval(id);
     }
   }, [loading]);
 
   useEffect(() => {
-    if (typing && fullScript.length > 0) {
+    if (typing && fullScript) {
       let index = 0;
-      const delayedStart = setTimeout(() => {
-        async function typeScript() {
-          while (index < fullScript.length) {
-            setDisplayedText(prev => prev + fullScript[index]);
-            if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
-              await new Promise(resolve => setTimeout(resolve, 300));
-            } else {
-              await new Promise(resolve => setTimeout(resolve, 18));
-            }
-            index++;
+      const tid = setTimeout(async () => {
+        while (index < fullScript.length) {
+          setDisplayedText(prev => prev + fullScript[index]);
+          if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
+            await new Promise(r => setTimeout(r, 300));
+          } else {
+            await new Promise(r => setTimeout(r, 18));
           }
-          setTyping(false);
+          index++;
         }
-        typeScript();
+        setTyping(false);
       }, 700);
-      return () => clearTimeout(delayedStart);
+      return () => clearTimeout(tid);
     }
   }, [typing, fullScript]);
 
@@ -164,49 +164,62 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
+
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
-        <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">Try QuietlyRich Demo</h2>
+        <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">
+          Try QuietlyRich Demo
+        </h2>
+        <div className="max-w-xl mx-auto mb-6">
+          <ProgressBar currentStep={step} />
+        </div>
         <p className="text-gray-400 text-center mb-10">
           Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
         </p>
-
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
           {/* Left Side */}
           <div>
             <AnimatePresence mode="wait">
               {step === 'topic' && (
                 <motion.form
-                  onSubmit={handleTopicSubmit}
                   key="topic"
+                  onSubmit={handleTopicSubmit}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-4"
                 >
-                  <span className="text-sm text-gray-500 mb-1 block">Step 1 of 5: Choose Your Topic</span>
-                  <h3 className="text-xl font-semibold mb-1">🔍 What do you want to make a video about?</h3>
+                  <span className="text-sm text-gray-500 mb-1 block">
+                    Step 1 of 5: Choose Your Topic
+                  </span>
+                  <h3 className="text-xl font-semibold mb-1">
+                    🔍 What do you want to make a video about?
+                  </h3>
                   <p className="text-xs text-gray-400 italic mb-2">
-                    For example: <span className="text-[#C2886D]">Why rich people stay quiet</span>, <span className="text-[#C2886D]">Budget eating</span>, <span className="text-[#C2886D]">Focus tips</span>...
+                    For example:{' '}
+                    <span className="text-[#C2886D]">Why rich people stay quiet</span>
+                    ,{' '}
+                    <span className="text-[#C2886D]">Budget eating</span>,{' '}
+                    <span className="text-[#C2886D]">Focus tips</span>...
                   </p>
                   <input
                     type="text"
                     placeholder="Type your topic..."
                     value={selectedTopic}
-                    onChange={(e) => setSelectedTopic(e.target.value)}
+                    onChange={e => setSelectedTopic(e.target.value)}
                     className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
                   />
                   {error && <div className="text-red-400 text-sm">{error}</div>}
                   <LoadingButton
-  onClick={() => {
-    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-    handleTopicSubmit(fakeEvent);
-  }}
-  loading={loading}
->
-  🔎 Search Topics
-</LoadingButton>
+                    onClick={() => {
+                      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+                      handleTopicSubmit(fakeEvent);
+                    }}
+                    loading={loading}
+                  >
+                    🔎 Search Topics
+                  </LoadingButton>
                 </motion.form>
               )}
 
@@ -218,25 +231,34 @@ export default function TryDemo() {
                   exit={{ opacity: 0 }}
                   className="space-y-4"
                 >
-                  <span className="text-sm text-gray-500 mb-1 block">Step 2 of 5: Choose a Funnel Format</span>
-                  <h3 className="text-xl font-semibold mb-1">🛠 Choose a video style</h3>
+                  <span className="text-sm text-gray-500 mb-1 block">
+                    Step 2 of 5: Choose a Funnel Format
+                  </span>
+                  <h3 className="text-xl font-semibold mb-1">
+                    🛠 Choose a video style
+                  </h3>
                   <p className="text-xs text-gray-400 italic mb-2">
                     Want to hook viewers or drop pure value? Pick your approach.
                   </p>
-                  {['Hook Video', 'Value Drop'].map((format) => (
+                  {['Hook Video', 'Value Drop'].map(format => (
                     <div
                       key={format}
                       onClick={() => handleFormatSelect(format)}
                       className="flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition border-[#444] bg-[#111] hover:border-[#C2886D]"
                     >
                       <div className="font-medium">{format}</div>
-                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">Use →</button>
+                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">
+                        Use →
+                      </button>
                     </div>
                   ))}
                 </motion.div>
               )}
 
-              {(step === 'script' || step === 'voice' || step === 'previewGen' || step === 'preview') && (
+              {(step === 'script' ||
+                step === 'voice' ||
+                step === 'previewGen' ||
+                step === 'preview') && (
                 <motion.div
                   key="script-box"
                   initial={{ opacity: 0, y: 20 }}
@@ -246,7 +268,9 @@ export default function TryDemo() {
                 >
                   {step === 'script' && (
                     <>
-                      <span className="text-sm text-gray-500 mb-1 block">Step 3 of 5: Review Your Script</span>
+                      <span className="text-sm text-gray-500 mb-1 block">
+                        Step 3 of 5: Review Your Script
+                      </span>
                       <p className="text-xs text-gray-400 italic mb-2">
                         Here’s your viral voiceover script, built to stop scrolls.
                       </p>
@@ -269,11 +293,14 @@ export default function TryDemo() {
                 </motion.div>
               )}
             </AnimatePresence>
+
             {step === 'script' && (
               <div className="mt-6">
                 <Listbox value={selectedVoice} onChange={setSelectedVoice}>
                   <div className="relative">
-                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">🎤 Pick Your Voice</Listbox.Label>
+                    <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">
+                      🎤 Pick Your Voice
+                    </Listbox.Label>
                     <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-[#111] py-3 pl-4 pr-10 text-left border border-[#C2886D] text-white focus:outline-none focus:ring-2 focus:ring-[#C2886D] focus:border-[#C2886D] transition">
                       <span className="block truncate">{selectedVoice}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -288,7 +315,7 @@ export default function TryDemo() {
                       leaveTo="opacity-0"
                     >
                       <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded-md bg-[#111] py-1 text-base shadow-lg ring-1 ring-[#C2886D] focus:outline-none sm:text-sm z-50">
-                        {voices.map((voice) => (
+                        {voices.map(voice => (
                           <Listbox.Option
                             key={voice.id}
                             className={({ active }) =>
@@ -303,11 +330,11 @@ export default function TryDemo() {
                                 <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                   {voice.name}
                                 </span>
-                                {selected ? (
+                                {selected && (
                                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <CheckIcon className="h-5 w-5 text-black" aria-hidden="true" />
                                   </span>
-                                ) : null}
+                                )}
                               </>
                             )}
                           </Listbox.Option>
@@ -318,7 +345,10 @@ export default function TryDemo() {
                 </Listbox>
 
                 <div className="glow-text mt-2">
-                  🚀 Want to use your own voice or unlock more? <a href="/upgrade" className="underline text-[#C2886D]">Upgrade here</a>
+                  🚀 Want to use your own voice or unlock more?{' '}
+                  <a href="/upgrade" className="underline text-[#C2886D]">
+                    Upgrade here
+                  </a>
                 </div>
               </div>
             )}
@@ -361,37 +391,40 @@ export default function TryDemo() {
                   Generating Preview...
                 </motion.div>
               )}
-            </div>
-            {step === 'preview' && (
-              <div className="flex flex-col items-center mt-6 space-y-6">
-                <a href="/demo-output">
-                  <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b] transition">
-                    🎉 See Your Full Brand Kit →
-                  </button>
-                </a>
 
-                {/* ✅ Conversion Prompt #2: Post-Preview Emotional Trigger */}
-                <div className="bg-[#111] border border-[#C2886D] p-4 rounded-md text-center max-w-md">
-                  <p className="text-sm text-[#C2886D] font-semibold mb-2">
-                    ❤️ Inspired by your preview?
-                  </p>
-                  <p className="text-xs text-gray-300 mb-4">
-                    Upgrade to unlock unlimited scripts, formats, and voice options. Quietly dominate your niche.
-                  </p>
-                  <a href="/upgrade">
-                    <button className="bg-[#C2886D] text-black font-bold px-4 py-2 rounded-md hover:bg-[#b3745b] transition">
-                      🚀 Upgrade & Unlock More
+              {step === 'preview' && (
+                <div className="flex flex-col items-center mt-6 space-y-6">
+                  <a href="/demo-output">
+                    <button className="bg-[#C2886D] text-black px-6 py-3 rounded-lg font-bold hover:bg-[#b3745b] transition">
+                      🎉 See Your Full Brand Kit →
                     </button>
                   </a>
+                  <div className="bg-[#111] border border-[#C2886D] p-4 rounded-md text-center max-w-md">
+                    <p className="text-sm text-[#C2886D] font-semibold mb-2">
+                      ❤️ Inspired by your preview?
+                    </p>
+                    <p className="text-xs text-gray-300 mb-4">
+                      Upgrade to unlock unlimited scripts, formats, and voice options. Quietly dominate your niche.
+                    </p>
+                    <a href="/upgrade">
+                      <button className="bg-[#C2886D] text-black font-bold px-4 py-2 rounded-md hover:bg-[#b3745b] transition">
+                        🚀 Upgrade & Unlock More
+                      </button>
+                    </a>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Right Side */}
           <div className="flex justify-center items-center pt-2 min-h-[500px] relative">
             {step === 'previewGen' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center"
+              >
                 <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
                 <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
               </motion.div>
@@ -399,7 +432,9 @@ export default function TryDemo() {
 
             {step === 'preview' && (
               <div className="relative flex flex-col items-center -mt-4">
-                <span className="text-sm text-gray-500 mb-1 block">Step 5 of 5: Preview Your Brand Kit</span>
+                <span className="text-sm text-gray-500 mb-1 block">
+                  Step 5 of 5: Preview Your Brand Kit
+                </span>
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -408,11 +443,7 @@ export default function TryDemo() {
                 >
                   🎬 Your Brand, In Motion
                 </motion.div>
-
-                {/* Background pulse aura */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
-
-                {/* TikTok preview with watermark */}
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
@@ -420,13 +451,23 @@ export default function TryDemo() {
                   transition={{ duration: 0.8, type: 'spring' }}
                   className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
-                  <TikTokPhonePreview script={parseScriptToBlocks(fullScript)} audioUrl={audioUrl} />
-                  <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">Made with Quietly Rich</div>
-
+                  <TikTokPhonePreview
+                    script={parseScriptToBlocks(fullScript)}
+                    audioUrl={audioUrl}
+                  />
+                  <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
+                    Made with Quietly Rich
+                  </div>
                   {audioUrl && (
                     <div className="mt-6 text-center">
-                      <p className="text-sm text-[#C2886D] font-semibold mb-2">🔊 Play Voice Preview</p>
-                      <audio controls src={audioUrl} className="w-full max-w-xs mx-auto rounded-lg" />
+                      <p className="text-sm text-[#C2886D] font-semibold mb-2">
+                        🔊 Play Voice Preview
+                      </p>
+                      <audio
+                        controls
+                        src={audioUrl}
+                        className="w-full max-w-xs mx-auto rounded-lg"
+                      />
                       <button
                         onClick={() => setStep('previewGen')}
                         className="mt-2 text-xs text-gray-400 hover:text-white underline"
@@ -456,13 +497,10 @@ function LoadingButton({
   children: React.ReactNode;
 }) {
   const [dots, setDots] = useState('');
-
   useEffect(() => {
     if (loading) {
-      const interval = setInterval(() => {
-        setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
-      }, 400);
-      return () => clearInterval(interval);
+      const id = setInterval(() => setDots(d => (d.length < 3 ? d + '.' : '')), 400);
+      return () => clearInterval(id);
     }
   }, [loading]);
 
