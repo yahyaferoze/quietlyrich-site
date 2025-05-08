@@ -47,6 +47,7 @@ export default function TryDemo() {
     });
     return blocks;
   };
+
   const voiceMap: Record<string, Record<string, Record<string, string>>> = {
     'fitness at home': {
       'Hook Video': {
@@ -58,7 +59,7 @@ export default function TryDemo() {
         'Natural Female Voice': '/fitnessfemalevd.mp3',
       },
     },
-    // Add more mappings here as needed
+    // Extend as needed
   };
 
   const handleTopicSubmit = async (e: React.FormEvent) => {
@@ -78,7 +79,6 @@ export default function TryDemo() {
       );
     }
   };
-
   const handleFormatSelect = async (format: string) => {
     setSelectedFormat(format);
     if (!selectedTopic) return;
@@ -114,6 +114,12 @@ export default function TryDemo() {
       setVoiceReady(true);
       setLoading(false);
       setStep('voice');
+
+      // Auto-scroll to the voice action area on desktop
+      const voiceButton = document.getElementById('voice-actions');
+      if (voiceButton) {
+        voiceButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }, 1000);
   }
 
@@ -127,7 +133,13 @@ export default function TryDemo() {
     };
     localStorage.setItem('brandKit', JSON.stringify(brandKit));
     setStep('previewGen');
-    setTimeout(() => setStep('preview'), 2000);
+    setTimeout(() => {
+      setStep('preview');
+      const previewSection = document.getElementById('preview-right');
+      if (previewSection) {
+        previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 2000);
   }
 
   useEffect(() => {
@@ -255,37 +267,37 @@ export default function TryDemo() {
                   ))}
                 </motion.div>
               )}
-
-              {step === 'script' && (
-                <motion.div
-                  key="script"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col"
-                >
-                  <span className="text-sm text-gray-500 mb-1 block">
-                    Step 3 of 5: Review Your Script
-                  </span>
-                  <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div className="relative">
-                    <textarea
-                      ref={textareaRef}
-                      readOnly
-                      value={displayedText}
-                      placeholder="Your generated script will appear here…"
-                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
-                      style={{ minHeight: '480px', maxHeight: '520px' }}
-                    />
-                    {typing && (
-                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
-                    )}
-                  </div>
-                </motion.div>
-              )}
             </AnimatePresence>
             {step === 'script' && (
-              <div className="mt-6">
+              <motion.div
+                key="script"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col"
+              >
+                <span className="text-sm text-gray-500 mb-1 block">
+                  Step 3 of 5: Review Your Script
+                </span>
+                <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
+                <div className="relative">
+                  <textarea
+                    ref={textareaRef}
+                    readOnly
+                    value={displayedText}
+                    placeholder="Your generated script will appear here…"
+                    className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
+                    style={{ minHeight: '480px', maxHeight: '520px' }}
+                  />
+                  {typing && (
+                    <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {step === 'script' && (
+              <div className="mt-6" id="voice-actions">
                 <Listbox value={selectedVoice} onChange={setSelectedVoice}>
                   <div className="relative">
                     <Listbox.Label className="block mb-2 text-sm font-medium text-[#C2886D]">
@@ -382,9 +394,19 @@ export default function TryDemo() {
               )}
             </div>
           </div>
+                    {/* Right Column: TikTokPhonePreview */}
+                    <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
+            {step === 'previewGen' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center pt-20"
+              >
+                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
+              </motion.div>
+            )}
 
-          {/* Right Column: TikTokPhonePreview */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center">
             {step === 'preview' && (
               <div className="relative w-full flex flex-col items-center">
                 <motion.div
@@ -396,8 +418,10 @@ export default function TryDemo() {
                   🎬 Your Brand, In Motion
                 </motion.div>
 
+                {/* Glow Aura Behind Preview */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
+                {/* Phone Preview with Replay & Audio */}
                 <motion.div
                   key="phone"
                   initial={{ opacity: 0, y: 40 }}
@@ -413,6 +437,7 @@ export default function TryDemo() {
                     Made with Quietly Rich
                   </div>
                 </motion.div>
+
                 {audioUrl && (
                   <div className="mt-6 text-center space-y-2">
                     <p className="text-sm text-[#C2886D] font-semibold">🔊 Voice Preview</p>
@@ -430,7 +455,7 @@ export default function TryDemo() {
                   </div>
                 )}
 
-                {/* Final CTA */}
+                {/* Final CTA Section */}
                 <div className="mt-10 text-center space-y-6 w-full">
                   <h4 className="text-xl font-bold text-white">
                     ✅ Brand Kit Generated — Ready to Publish?
