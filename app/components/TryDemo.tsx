@@ -48,6 +48,7 @@ function LoadingButton({
     </motion.button>
   );
 }
+
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -62,6 +63,7 @@ export default function TryDemo() {
   const [error, setError] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
   const [dots, setDots] = useState('');
+  const [isPlaying, setIsPlaying] = useState(false); // NEW: voice playback state
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const voices = [
@@ -91,6 +93,36 @@ export default function TryDemo() {
     }
   };
 
+  const generateVoice = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
+      if (url) {
+        setAudioUrl(url);
+        setStep('voice');
+        setVoiceReady(true);
+      } else {
+        setError('❌ Voice file not found for this combination.');
+      }
+      setLoading(false);
+
+      // SMART SCROLL FIX — avoid jumpy desktop scroll
+      if (window.innerWidth < 768) {
+        scrollToAnchor('voice-actions');
+      } else {
+        const el = document.getElementById('voice-actions');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 1000);
+  };
+  const generatePreview = async () => {
+    setStep('previewGen');
+    setTimeout(() => {
+      setStep('preview');
+      scrollToAnchor('step-anchor');
+    }, 1200);
+  };
+
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
     const blocks: { type: string; text: string }[] = [];
@@ -105,6 +137,7 @@ export default function TryDemo() {
     });
     return blocks;
   };
+
   const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
@@ -147,29 +180,6 @@ export default function TryDemo() {
     }, 800);
   };
 
-  const generateVoice = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
-      if (url) {
-        setAudioUrl(url);
-        setStep('voice');
-        setVoiceReady(true);
-      } else {
-        setError('❌ Voice file not found for this combination.');
-      }
-      setLoading(false);
-      scrollToAnchor('voice-actions'); // ✅ scrolls directly to CTA instead of jumping too far
-    }, 1000);
-  };
-
-  const generatePreview = async () => {
-    setStep('previewGen');
-    setTimeout(() => {
-      setStep('preview');
-      scrollToAnchor('step-anchor');
-    }, 1200);
-  };
   useEffect(() => {
     if (loading) {
       const id = setInterval(() => {
@@ -193,7 +203,13 @@ export default function TryDemo() {
           index++;
         }
         setTyping(false);
-        scrollToAnchor('voice-actions'); // ensures CTA is visible post-script
+
+        if (window.innerWidth < 768) {
+          scrollToAnchor('voice-actions');
+        } else {
+          const el = document.getElementById('voice-actions');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }, 700);
       return () => clearTimeout(tid);
     }
@@ -208,7 +224,7 @@ export default function TryDemo() {
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-black pb-4">
+        <div className="sticky top-0 z-20 bg-black pb-4 shadow-md shadow-[#C2886D]/10">
           <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">
             Try QuietlyRich Demo
           </h2>
@@ -221,11 +237,11 @@ export default function TryDemo() {
           Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
         </p>
 
+        {/* Left + Right Columns */}
         <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start" id="step-anchor">
-          {/* Left Column */}
+          {/* Left Column (Form Flow) */}
           <div className="w-full lg:w-1/2">
             <AnimatePresence mode="wait">
-              {/* Step 1: Topic Selection */}
               {step === 'topic' && (
                 <motion.form
                   key="topic"
@@ -266,7 +282,6 @@ export default function TryDemo() {
                   </LoadingButton>
                 </motion.form>
               )}
-                            {/* Step 2: Format Selection */}
                             {step === 'format' && (
                 <motion.div
                   key="formats"
@@ -299,7 +314,7 @@ export default function TryDemo() {
             </AnimatePresence>
           </div>
 
-          {/* Right Column Placeholder */}
+          {/* Right Column Placeholder (Desktop Preview Box) */}
           <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
             {(step === 'topic' || step === 'format') && (
               <div className="text-center text-gray-400 mt-6">
@@ -408,8 +423,9 @@ export default function TryDemo() {
             </LoadingButton>
           </div>
         )}
-                {/* Voice Ready Confirmation */}
-                {step === 'voice' && voiceReady && (
+
+        {/* Voice Ready Confirmation */}
+        {step === 'voice' && voiceReady && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -424,9 +440,9 @@ export default function TryDemo() {
         {/* Generate Preview CTA */}
         {step === 'voice' && showPreviewButton && (
           <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-4"
           >
             <LoadingButton onClick={generatePreview} loading={false}>
@@ -434,9 +450,8 @@ export default function TryDemo() {
             </LoadingButton>
           </motion.div>
         )}
-
-        {/* Loading Spinner During PreviewGen */}
-        {step === 'previewGen' && (
+                {/* Loading Spinner During PreviewGen */}
+                {step === 'previewGen' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -446,9 +461,10 @@ export default function TryDemo() {
             Generating Preview...
           </motion.div>
         )}
-                {/* Step 5: Final Preview */}
-                {step === 'preview' && (
-          <div className="relative w-full flex flex-col items-center mt-10">
+
+        {/* Step 5: Final Preview */}
+        {step === 'preview' && (
+          <div className="relative w-full flex flex-col items-center mt-6 md:mt-4">
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -467,7 +483,7 @@ export default function TryDemo() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, type: 'spring' }}
-              className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+              className="relative z-10 shadow-xl shadow-[#C2886D]/10 mt-[-40px]"
             >
               <TikTokPhonePreview
                 script={parseScriptToBlocks(fullScript)}
@@ -479,11 +495,15 @@ export default function TryDemo() {
                 <button
                   onClick={() => {
                     const audio = document.getElementById('preview-audio') as HTMLAudioElement;
-                    if (audio) audio.play();
+                    if (audio) {
+                      setIsPlaying(true);
+                      audio.play();
+                      audio.onended = () => setIsPlaying(false);
+                    }
                   }}
-                  className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition"
+                  className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition animate-pulse"
                 >
-                  🔊 Play Voice
+                  {isPlaying ? '🔁 Playing...' : '🔊 Play Voice'}
                 </button>
               )}
 
@@ -493,7 +513,7 @@ export default function TryDemo() {
               </div>
             </motion.div>
 
-            {/* Audio Element (hidden, controlled by floating button) */}
+            {/* Audio Element (preloaded, hidden) */}
             {audioUrl && (
               <audio
                 id="preview-audio"
@@ -510,12 +530,12 @@ export default function TryDemo() {
 
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="/demo-output">
-                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full">
+                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
                     🎉 See Your Full Brand Kit →
                   </button>
                 </a>
                 <a href="/upgrade">
-                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full">
+                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
                     🚀 Upgrade & Unlock More
                   </button>
                 </a>
@@ -528,6 +548,8 @@ export default function TryDemo() {
                   if (audio) {
                     audio.currentTime = 0;
                     audio.play();
+                    setIsPlaying(true);
+                    audio.onended = () => setIsPlaying(false);
                   }
                 }}
                 className="text-xs text-gray-400 hover:text-white underline"
@@ -557,4 +579,4 @@ export default function TryDemo() {
       </div>
     </section>
   );
-}
+} 
