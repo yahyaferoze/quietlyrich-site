@@ -9,9 +9,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar from '../components/ProgressBar';
 
 export default function TryDemo() {
-  const [step, setStep] = useState<
-    'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'
-  >('topic');
+  const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState<string>('');
@@ -23,17 +21,15 @@ export default function TryDemo() {
   const [showPreviewButton, setShowPreviewButton] = useState(true);
   const [error, setError] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dots, setDots] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const voices = [
     { id: 1, name: 'Deep Male Voice' },
     { id: 2, name: 'Natural Female Voice' },
   ];
 
-  const parseScriptToBlocks = (
-    script: string
-  ): { type: string; text: string }[] => {
+  const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
     const blocks: { type: string; text: string }[] = [];
     lines.forEach(line => {
@@ -59,7 +55,14 @@ export default function TryDemo() {
         'Natural Female Voice': '/fitnessfemalevd.mp3',
       },
     },
-    // Extend with more mappings if needed
+  };
+  const scrollToAnchor = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const yOffset = -40;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   };
 
   const handleTopicSubmit = async (e: React.FormEvent) => {
@@ -75,9 +78,7 @@ export default function TryDemo() {
       setStep('format');
       scrollToAnchor('step-anchor');
     } else {
-      setError(
-        '❌ This topic is not available in the demo. Upgrade to unlock full access!'
-      );
+      setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
     }
   };
 
@@ -106,16 +107,6 @@ export default function TryDemo() {
     }, 800);
   };
 
-  const scrollToAnchor = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      const yOffset = -40;
-      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
-  // Effects continue in part 2...
   useEffect(() => {
     if (loading) {
       const id = setInterval(() => {
@@ -181,7 +172,6 @@ export default function TryDemo() {
       scrollToAnchor('preview-right');
     }, 2000);
   }
-
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
@@ -199,9 +189,8 @@ export default function TryDemo() {
         </p>
 
         <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start" id="step-anchor">
-
-                    {/* Left Column */}
-                    <div className="w-full lg:w-1/2">
+          {/* Left Column */}
+          <div className="w-full lg:w-1/2">
             <AnimatePresence mode="wait">
               {step === 'topic' && (
                 <motion.form
@@ -275,37 +264,36 @@ export default function TryDemo() {
                   ))}
                 </motion.div>
               )}
-
-              {step === 'script' && (
-                <motion.div
-                  key="script"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col"
-                >
-                  <span className="text-sm text-gray-500 mb-1 block">
-                    Step 3 of 5: Review Your Script
-                  </span>
-                  <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
-                  <div className="relative">
-                    <textarea
-                      ref={textareaRef}
-                      readOnly
-                      value={displayedText}
-                      placeholder="Your generated script will appear here…"
-                      className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
-                      style={{ minHeight: '480px', maxHeight: '520px' }}
-                    />
-                    {typing && (
-                      <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
-                    )}
-                  </div>
-                </motion.div>
-              )}
             </AnimatePresence>
 
             {step === 'script' && (
+              <motion.div
+                key="script"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col"
+              >
+                <span className="text-sm text-gray-500 mb-1 block">
+                  Step 3 of 5: Review Your Script
+                </span>
+                <h3 className="text-xl font-semibold mb-2">📜 Your Script</h3>
+                <div className="relative">
+                  <textarea
+                    ref={textareaRef}
+                    readOnly
+                    value={displayedText}
+                    placeholder="Your generated script will appear here…"
+                    className="w-full bg-[#111] border-2 border-[#C2886D] p-4 rounded-md text-white placeholder-gray-500 text-sm resize-y overflow-y-auto"
+                    style={{ minHeight: '480px', maxHeight: '520px' }}
+                  />
+                  {typing && (
+                    <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-[#C2886D] via-transparent to-[#C2886D] animate-pulse" />
+                  )}
+                </div>
+              </motion.div>
+            )}
+                        {step === 'script' && (
               <div className="mt-6" id="voice-actions">
                 <Listbox value={selectedVoice} onChange={setSelectedVoice}>
                   <div className="relative">
@@ -337,7 +325,11 @@ export default function TryDemo() {
                           >
                             {({ selected }) => (
                               <>
-                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                <span
+                                  className={`block truncate ${
+                                    selected ? 'font-medium' : 'font-normal'
+                                  }`}
+                                >
                                   {voice.name}
                                 </span>
                                 {selected && (
@@ -367,7 +359,7 @@ export default function TryDemo() {
               Custom voice cloning available for pro accounts.
             </div>
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-6 space-y-4" id="preview-actions">
               {step === 'script' && (
                 <LoadingButton onClick={generateVoice} loading={loading}>
                   🎙 Generate Voice
@@ -402,134 +394,134 @@ export default function TryDemo() {
                 </motion.div>
               )}
             </div>
-            </div>
+          </div>
 
-{/* Right Column: TikTokPhonePreview */}
-<div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
-  {step === 'previewGen' && (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex flex-col items-center pt-20"
-    >
-      <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
-      <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
-    </motion.div>
-  )}
+          {/* Right Column: TikTokPhonePreview */}
+          <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
+            {step === 'previewGen' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center pt-20"
+              >
+                <div className="h-16 w-16 border-4 border-[#C2886D] border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-[#C2886D] font-semibold">Preparing Preview...</p>
+              </motion.div>
+            )}
+                        {step === 'preview' && (
+              <div className="relative w-full flex flex-col items-center">
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
+                >
+                  🎬 Your Brand, In Motion
+                </motion.div>
 
-  {step === 'preview' && (
-    <div className="relative w-full flex flex-col items-center">
-      <motion.div
-        initial={{ opacity: 0, y: -6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
-      >
-        🎬 Your Brand, In Motion
-      </motion.div>
+                {/* Glow Aura Behind Preview */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
-      {/* Glow Aura Behind Preview */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+                {/* Phone Preview */}
+                <motion.div
+                  key="phone"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, type: 'spring' }}
+                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+                >
+                  <TikTokPhonePreview
+                    script={parseScriptToBlocks(fullScript)}
+                    audioUrl={audioUrl}
+                  />
+                  <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
+                    Made with Quietly Rich
+                  </div>
+                </motion.div>
 
-      {/* Phone Preview with Replay & Audio */}
-      <motion.div
-        key="phone"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, type: 'spring' }}
-        className="relative z-10 shadow-xl shadow-[#C2886D]/10"
-      >
-        <TikTokPhonePreview
-          script={parseScriptToBlocks(fullScript)}
-          audioUrl={audioUrl}
-        />
-        <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
-          Made with Quietly Rich
-        </div>
-      </motion.div>
+                {/* Voice Playback */}
+                {audioUrl && (
+                  <div className="mt-6 text-center space-y-2">
+                    <p className="text-sm text-[#C2886D] font-semibold">🔊 Voice Preview</p>
+                    <audio
+                      controls
+                      src={audioUrl}
+                      className="w-full max-w-xs mx-auto rounded-lg"
+                    />
+                    <button
+                      onClick={() => setStep('previewGen')}
+                      className="text-xs text-gray-400 hover:text-white underline mt-1"
+                    >
+                      🔁 Replay Preview
+                    </button>
+                  </div>
+                )}
 
-      {audioUrl && (
-        <div className="mt-6 text-center space-y-2">
-          <p className="text-sm text-[#C2886D] font-semibold">🔊 Voice Preview</p>
-          <audio
-            controls
-            src={audioUrl}
-            className="w-full max-w-xs mx-auto rounded-lg"
-          />
-          <button
-            onClick={() => setStep('previewGen')}
-            className="text-xs text-gray-400 hover:text-white underline mt-1"
-          >
-            🔁 Replay Preview
-          </button>
-        </div>
-      )}
-
-      {/* Final CTA Section */}
-      <div className="mt-10 text-center space-y-6 w-full">
-        <h4 className="text-xl font-bold text-white">
-          ✅ Brand Kit Generated — Ready to Publish?
-        </h4>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <a href="/demo-output">
-            <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition">
-              🎉 See Your Full Brand Kit →
-            </button>
-          </a>
-          <a href="/upgrade">
-            <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition">
-              🚀 Upgrade & Unlock More
-            </button>
-          </a>
+                {/* Final CTAs */}
+                <div className="mt-10 text-center space-y-6 w-full">
+                  <h4 className="text-xl font-bold text-white">
+                    ✅ Brand Kit Generated — Ready to Publish?
+                  </h4>
+                  <div className="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/demo-output">
+                      <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition">
+                        🎉 See Your Full Brand Kit →
+                      </button>
+                    </a>
+                    <a href="/upgrade">
+                      <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition">
+                        🚀 Upgrade & Unlock More
+                      </button>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  )}
-</div>
-</div>
-</div>
-</section>
-);
+    </section>
+  );
 }
 
 // ✅ Reusable Button Component
 function LoadingButton({
-onClick,
-loading,
-children,
+  onClick,
+  loading,
+  children,
 }: {
-onClick: () => void;
-loading: boolean;
-children: React.ReactNode;
+  onClick: () => void;
+  loading: boolean;
+  children: React.ReactNode;
 }) {
-const [dots, setDots] = useState('');
-useEffect(() => {
-if (loading) {
-const id = setInterval(() => setDots(d => (d.length < 3 ? d + '.' : '')), 400);
-return () => clearInterval(id);
-}
-}, [loading]);
+  const [dots, setDots] = useState('');
+  useEffect(() => {
+    if (loading) {
+      const id = setInterval(() => setDots(d => (d.length < 3 ? d + '.' : '')), 400);
+      return () => clearInterval(id);
+    }
+  }, [loading]);
 
-return (
-<motion.button
-onClick={onClick}
-disabled={loading}
-whileTap={{ scale: 0.94 }}
-whileHover={{ scale: 1.03 }}
-className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
-loading
-? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
-: 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
-}`}
->
-{loading ? (
-<div className="flex items-center justify-center gap-2">
-<div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
-<span className="text-black font-bold">Loading{dots}</span>
-</div>
-) : (
-<span className="text-black font-bold">{children}</span>
-)}
-</motion.button>
-);
+  return (
+    <motion.button
+      onClick={onClick}
+      disabled={loading}
+      whileTap={{ scale: 0.94 }}
+      whileHover={{ scale: 1.03 }}
+      className={`w-full py-3 rounded-md font-semibold transition relative overflow-hidden ${
+        loading
+          ? 'bg-gradient-to-r from-[#C2886D] via-[#e0b8a4] to-[#C2886D] animate-pulse shadow-lg shadow-[#C2886D]/40'
+          : 'bg-[#C2886D] text-black hover:shadow-md hover:shadow-[#C2886D]/40'
+      }`}
+    >
+      {loading ? (
+        <div className="flex items-center justify-center gap-2">
+          <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+          <span className="text-black font-bold">Loading{dots}</span>
+        </div>
+      ) : (
+        <span className="text-black font-bold">{children}</span>
+      )}
+    </motion.button>
+  );
 }
