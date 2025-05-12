@@ -159,7 +159,7 @@ export default function TryDemo() {
         setError('❌ Voice file not found for this combination.');
       }
       setLoading(false);
-      scrollToAnchor('step-anchor');
+      scrollToAnchor('voice-actions'); // ✅ scrolls directly to CTA instead of jumping too far
     }, 1000);
   };
 
@@ -193,7 +193,7 @@ export default function TryDemo() {
           index++;
         }
         setTyping(false);
-        scrollToAnchor('voice-actions');
+        scrollToAnchor('voice-actions'); // ensures CTA is visible post-script
       }, 700);
       return () => clearTimeout(tid);
     }
@@ -204,7 +204,6 @@ export default function TryDemo() {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [displayedText, typing]);
-
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
@@ -300,7 +299,7 @@ export default function TryDemo() {
             </AnimatePresence>
           </div>
 
-          {/* Right Column Placeholder (Empty Preview or Spinner) */}
+          {/* Right Column Placeholder */}
           <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
             {(step === 'topic' || step === 'format') && (
               <div className="text-center text-gray-400 mt-6">
@@ -392,7 +391,7 @@ export default function TryDemo() {
               </div>
             </Listbox>
 
-            <div className="glow-text mt-2">
+            <div className="glow-text mt-2 text-sm text-gray-400 text-center max-w-sm mx-auto">
               🚀 Want to use your own voice or unlock more?{' '}
               <a href="/upgrade" className="underline text-[#C2886D]">
                 Upgrade here
@@ -400,34 +399,40 @@ export default function TryDemo() {
             </div>
           </div>
         )}
-                {/* Generate Voice CTA */}
-                {step === 'script' && (
+
+        {/* Generate Voice CTA */}
+        {step === 'script' && (
           <div className="mt-6">
             <LoadingButton onClick={generateVoice} loading={loading}>
               🎙 Generate Voice
             </LoadingButton>
           </div>
         )}
-
-        {/* Voice Ready Confirmation */}
-        {step === 'voice' && voiceReady && (
+                {/* Voice Ready Confirmation */}
+                {step === 'voice' && voiceReady && (
           <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-green-400 text-center mt-4 font-semibold"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-green-400 text-center mt-4 font-semibold flex items-center justify-center gap-2"
           >
-            ✅ Voice Ready! Tap below to preview.
+            <span className="text-xl">✅</span>
+            <span>Voice Ready! Tap below to preview.</span>
           </motion.div>
         )}
 
         {/* Generate Preview CTA */}
         {step === 'voice' && showPreviewButton && (
-          <div className="mt-4">
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mt-4"
+          >
             <LoadingButton onClick={generatePreview} loading={false}>
               🎬 Generate Video Preview
             </LoadingButton>
-          </div>
+          </motion.div>
         )}
 
         {/* Loading Spinner During PreviewGen */}
@@ -435,15 +440,14 @@ export default function TryDemo() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex justify-center items-center text-[#C2886D] font-semibold mt-4"
+            className="flex justify-center items-center text-[#C2886D] font-semibold mt-6"
           >
             <div className="h-6 w-6 border-2 border-[#C2886D] border-t-transparent rounded-full animate-spin mr-3" />
             Generating Preview...
           </motion.div>
         )}
-
-        {/* Step 5: Final Preview */}
-        {step === 'preview' && (
+                {/* Step 5: Final Preview */}
+                {step === 'preview' && (
           <div className="relative w-full flex flex-col items-center mt-10">
             <motion.div
               initial={{ opacity: 0, y: -6 }}
@@ -451,13 +455,13 @@ export default function TryDemo() {
               transition={{ duration: 0.6 }}
               className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
             >
-              🎬 Your Brand, In Motion
+              🎬 Your Brand. In Motion.
             </motion.div>
 
             {/* Glow Aura Behind Preview */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
-            {/* TikTokPhonePreview */}
+            {/* TikTokPhonePreview + Floating Play Button */}
             <motion.div
               key="phone"
               initial={{ opacity: 0, y: 40 }}
@@ -469,46 +473,84 @@ export default function TryDemo() {
                 script={parseScriptToBlocks(fullScript)}
                 audioUrl={audioUrl}
               />
+
+              {/* Floating Voice Preview Play Button */}
+              {audioUrl && (
+                <button
+                  onClick={() => {
+                    const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+                    if (audio) audio.play();
+                  }}
+                  className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition"
+                >
+                  🔊 Play Voice
+                </button>
+              )}
+
+              {/* Watermark */}
               <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
                 Made with Quietly Rich
               </div>
             </motion.div>
 
-            {/* Voice Playback */}
+            {/* Audio Element (hidden, controlled by floating button) */}
             {audioUrl && (
-              <div className="mt-6 text-center space-y-2">
-                <p className="text-sm text-[#C2886D] font-semibold">🔊 Voice Preview</p>
-                <audio
-                  controls
-                  src={audioUrl}
-                  className="w-full max-w-xs mx-auto rounded-lg"
-                />
-                <button
-                  onClick={() => setStep('previewGen')}
-                  className="text-xs text-gray-400 hover:text-white underline mt-1"
-                >
-                  🔁 Replay Preview
-                </button>
-              </div>
+              <audio
+                id="preview-audio"
+                src={audioUrl}
+                className="hidden"
+                preload="auto"
+              />
             )}
-
-            {/* Final CTAs */}
-            <div className="mt-10 text-center space-y-6 w-full">
+                        {/* Final CTAs */}
+                        <div className="mt-8 text-center space-y-6 w-full max-w-sm">
               <h4 className="text-xl font-bold text-white">
                 ✅ Brand Kit Generated — Ready to Publish?
               </h4>
+
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="/demo-output">
-                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition">
+                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full">
                     🎉 See Your Full Brand Kit →
                   </button>
                 </a>
                 <a href="/upgrade">
-                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition">
+                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full">
                     🚀 Upgrade & Unlock More
                   </button>
                 </a>
               </div>
+
+              {/* Replay Preview */}
+              <button
+                onClick={() => {
+                  const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+                  if (audio) {
+                    audio.currentTime = 0;
+                    audio.play();
+                  }
+                }}
+                className="text-xs text-gray-400 hover:text-white underline"
+              >
+                🔁 Replay Voice
+              </button>
+
+              {/* Start Again CTA */}
+              <button
+                onClick={() => {
+                  setStep('topic');
+                  setSelectedTopic('');
+                  setSelectedFormat('');
+                  setDisplayedText('');
+                  setFullScript('');
+                  setVoiceReady(false);
+                  setAudioUrl('');
+                  scrollToAnchor('step-anchor');
+                }}
+                className="text-xs text-gray-500 hover:text-white underline mt-2 block"
+              >
+                🔄 Start Again
+              </button>
             </div>
           </div>
         )}
