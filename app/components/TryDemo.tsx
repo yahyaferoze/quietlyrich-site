@@ -48,7 +48,6 @@ function LoadingButton({
     </motion.button>
   );
 }
-
 export default function TryDemo() {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -65,10 +64,11 @@ export default function TryDemo() {
   const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
   const [dots, setDots] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showScriptBox, setShowScriptBox] = useState(false); // ✅ Controls script animation
-  const [showPreviewPhone, setShowPreviewPhone] = useState(false); // ✅ Controls TikTokPhonePreview animation
+  const [showScriptBox, setShowScriptBox] = useState(false);
+  const [showPreviewPhone, setShowPreviewPhone] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const voices = [
     { id: 1, name: 'Deep Male Voice' },
     { id: 2, name: 'Natural Female Voice' },
@@ -97,29 +97,36 @@ export default function TryDemo() {
 
   const generateVoice = async () => {
     setTransitioning(true);
-    setShowScriptBox(false); // smoothly fade out script box
+    setShowScriptBox(false);
     setTimeout(() => {
       const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
       if (url) {
         setAudioUrl(url);
         setVoiceReady(true);
         setStep('voice');
-        scrollToAnchor('voice-actions', -160); // scroll UP to next step
+        scrollToAnchor('voice-actions', -160);
       } else {
         setError('❌ Voice file not found for this combination.');
       }
       setTransitioning(false);
-    }, 600); // match exit animation
+    }, 600);
   };
 
   const generatePreview = async () => {
     setStep('previewGen');
-    setShowPreviewPhone(false); // prepare for entrance animation
+    setShowPreviewPhone(false); // reserve space
     setTimeout(() => {
       setStep('preview');
-      setShowPreviewPhone(true); // animate phone preview in
-      scrollToAnchor('step-anchor', -120);
-    }, 1000);
+      setShowPreviewPhone(true); // fade in phone preview
+    }, 500);
+
+    setTimeout(() => {
+      const el = document.getElementById('step-anchor');
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 700); // scroll after animation starts
   };
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
@@ -170,7 +177,7 @@ export default function TryDemo() {
       setFullScript(combined);
       setDisplayedText('');
       setTyping(true);
-      setShowScriptBox(false); // reset animation visibility
+      setShowScriptBox(false);
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(true);
@@ -192,7 +199,7 @@ export default function TryDemo() {
     if (typing && fullScript) {
       let index = 0;
       const tid = setTimeout(async () => {
-        setShowScriptBox(true); // ✅ animate script box in
+        setShowScriptBox(true);
         while (index < fullScript.length) {
           setDisplayedText(prev => prev + fullScript[index]);
           if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
@@ -306,7 +313,7 @@ export default function TryDemo() {
             </AnimatePresence>
           </div>
 
-          {/* Right Column (placeholder or preview area) */}
+          {/* Right Column */}
           <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
             {(step === 'topic' || step === 'format') && (
               <div className="text-center text-gray-400 mt-6">
@@ -437,8 +444,9 @@ export default function TryDemo() {
             </motion.div>
           )}
         </AnimatePresence>
-                {/* ✅ Voice Ready confirmation */}
-                <AnimatePresence>
+
+        {/* ✅ Voice Ready confirmation */}
+        <AnimatePresence>
           {step === 'voice' && voiceReady && !transitioning && (
             <motion.div
               key="voiceready"
@@ -483,10 +491,9 @@ export default function TryDemo() {
             Generating Preview...
           </motion.div>
         )}
-
-        {/* Step 5: Final Preview */}
-        {step === 'preview' && (
-          <div className="relative w-full flex flex-col items-center mt-10">
+                {/* Step 5: Final Preview */}
+                {step === 'preview' && (
+          <div className="relative w-full flex flex-col items-center mt-10 min-h-[calc(100vh-200px)]">
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -545,8 +552,9 @@ export default function TryDemo() {
                 preload="auto"
               />
             )}
-                        {/* Final CTAs */}
-                        <div className="mt-8 text-center space-y-6 w-full max-w-sm">
+
+            {/* Final CTAs */}
+            <div className="mt-6 text-center space-y-6 w-full max-w-sm">
               <h4 className="text-xl font-bold text-white">
                 ✅ Brand Kit Generated — Ready to Publish?
               </h4>
