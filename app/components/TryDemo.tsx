@@ -341,7 +341,7 @@ export default function TryDemo() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col mt-4"
+              className="flex flex-col mt-4 mb-2"
             >
               <span className="text-sm text-gray-500 mb-1 block">
                 Step 3 of 5: Review Your Script
