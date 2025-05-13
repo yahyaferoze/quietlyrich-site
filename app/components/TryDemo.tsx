@@ -58,20 +58,21 @@ export default function TryDemo() {
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
-  const [transitioning, setTransitioning] = useState(false); // NEW
+  const [transitioning, setTransitioning] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
   const [showPreviewButton, setShowPreviewButton] = useState(true);
   const [error, setError] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
   const [dots, setDots] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showScriptBox, setShowScriptBox] = useState(false); // NEW
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const voices = [
     { id: 1, name: 'Deep Male Voice' },
     { id: 2, name: 'Natural Female Voice' },
   ];
-
   const voiceMap: Record<string, Record<string, Record<string, string>>> = {
     'fitness at home': {
       'Hook Video': {
@@ -85,34 +86,35 @@ export default function TryDemo() {
     },
   };
 
-  const scrollToAnchor = (id: string) => {
+  const scrollToAnchor = (id: string, offset: number = -40) => {
     const el = document.getElementById(id);
     if (el) {
-      const yOffset = -40;
-      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + offset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
   const generateVoice = async () => {
-    setTransitioning(true); // trigger AnimatePresence exit
+    setTransitioning(true);
     setTimeout(() => {
       const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
       if (url) {
         setAudioUrl(url);
         setVoiceReady(true);
         setStep('voice');
+        scrollToAnchor('voice-actions', -160); // 👈 scroll UP slightly
       } else {
         setError('❌ Voice file not found for this combination.');
       }
-      setTransitioning(false); // allow AnimatePresence entry
-    }, 600); // fade-out duration should match AnimatePresence exit
+      setTransitioning(false);
+    }, 600);
   };
+
   const generatePreview = async () => {
     setStep('previewGen');
     setTimeout(() => {
       setStep('preview');
-      scrollToAnchor('step-anchor');
+      scrollToAnchor('step-anchor', -120); // 👈 scroll up for preview appearance
     }, 1200);
   };
 
@@ -130,7 +132,6 @@ export default function TryDemo() {
     });
     return blocks;
   };
-
   const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
@@ -165,6 +166,7 @@ export default function TryDemo() {
       setFullScript(combined);
       setDisplayedText('');
       setTyping(true);
+      setShowScriptBox(false);
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(true);
@@ -172,7 +174,6 @@ export default function TryDemo() {
       scrollToAnchor('step-anchor');
     }, 800);
   };
-
   useEffect(() => {
     if (loading) {
       const id = setInterval(() => {
@@ -186,6 +187,7 @@ export default function TryDemo() {
     if (typing && fullScript) {
       let index = 0;
       const tid = setTimeout(async () => {
+        setShowScriptBox(true); // ✅ trigger smooth script reveal
         while (index < fullScript.length) {
           setDisplayedText(prev => prev + fullScript[index]);
           if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
@@ -196,21 +198,14 @@ export default function TryDemo() {
           index++;
         }
         setTyping(false);
-
         const el = document.getElementById('voice-actions');
         if (window.innerWidth < 768 && el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      }, 700);
+      }, 500);
       return () => clearTimeout(tid);
     }
   }, [typing, fullScript]);
-
-  useEffect(() => {
-    if (textareaRef.current && typing) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
-    }
-  }, [displayedText, typing]);
   return (
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
@@ -419,8 +414,9 @@ export default function TryDemo() {
             </motion.div>
           )}
         </AnimatePresence>
-                {/* Generate Voice CTA (shown in script step) */}
-                <AnimatePresence>
+
+        {/* Generate Voice CTA */}
+        <AnimatePresence>
           {step === 'script' && !transitioning && (
             <motion.div
               key="genvoice"
@@ -436,9 +432,8 @@ export default function TryDemo() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ✅ Voice Ready confirmation */}
-        <AnimatePresence>
+                {/* ✅ Voice Ready confirmation */}
+                <AnimatePresence>
           {step === 'voice' && voiceReady && !transitioning && (
             <motion.div
               key="voiceready"
@@ -471,8 +466,9 @@ export default function TryDemo() {
             </motion.div>
           )}
         </AnimatePresence>
-                {/* Loading Spinner During PreviewGen */}
-                {step === 'previewGen' && (
+
+        {/* 🔄 Loading Spinner During PreviewGen */}
+        {step === 'previewGen' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
