@@ -229,7 +229,7 @@ export default function TryDemo() {
     }
   }, [typing, fullScript]);
   return (
-    <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
+    <section className="py-8 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 bg-black pb-4 shadow-md shadow-[#C2886D]/10" id="step-anchor">
@@ -241,7 +241,7 @@ export default function TryDemo() {
           </div>
         </div>
 
-        <p className="text-gray-400 text-center mb-10">
+        <p className="text-gray-400 text-center mb-6">
           Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
         </p>
 
