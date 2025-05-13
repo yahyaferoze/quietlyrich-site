@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
@@ -67,6 +67,7 @@ export default function TryDemo() {
   const [showScriptBox, setShowScriptBox] = useState(false);
   const [showPreviewPhone, setShowPreviewPhone] = useState(false);
 
+  const previewRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const voices = [
@@ -112,25 +113,24 @@ export default function TryDemo() {
     }, 600);
   };
 
-  // ✅ Updated generatePreview with realistic delay and smooth animation
+  // ✅ NEW: smoother delay, no jump scroll, synced animation
   const generatePreview = async () => {
     setStep('previewGen');
     setShowPreviewPhone(false);
 
-    // ⏳ Delay to simulate loading spinner
-    setTimeout(() => setStep('preview'), 1000);
-
-    // 🎬 Delay preview phone entrance for smoother animation
-    setTimeout(() => setShowPreviewPhone(true), 1400);
-
-    // 🧭 Scroll slightly later, after animation starts
     setTimeout(() => {
-      const el = document.getElementById('step-anchor');
-      if (el) {
-        const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+      setStep('preview');
+    }, 1000);
+
+    setTimeout(() => {
+      setShowPreviewPhone(true);
+    }, 1400);
+
+    setTimeout(() => {
+      if (previewRef.current) {
+        previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 1600);
+    }, 1600); // ensure scroll happens after component starts animating
   };
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
@@ -497,12 +497,15 @@ export default function TryDemo() {
         )}
                 {/* Step 5: Final Preview */}
                 {step === 'preview' && (
-          <div className="relative w-full flex flex-col items-center mt-4 min-h-[calc(100vh-100px)] max-h-[calc(100vh-100px)] overflow-y-auto justify-start">
+          <div
+            ref={previewRef}
+            className="relative w-full flex flex-col items-center mt-10 mb-10"
+          >
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="mb-3 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
+              className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
             >
               🎬 Your Brand. In Motion.
             </motion.div>
@@ -510,23 +513,22 @@ export default function TryDemo() {
             {/* Glow Aura Behind Preview */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
-            {/* TikTokPhonePreview with floating play button */}
             <AnimatePresence>
               {showPreviewPhone && (
                 <motion.div
                   key="phone"
-                  initial={{ opacity: 0, y: 60, scale: 0.95 }}
+                  layoutId="tiktok-preview"
+                  initial={{ opacity: 0, y: 80, scale: 0.92 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.1, ease: 'easeOut' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10 mt-[-40px]"
+                  exit={{ opacity: 0, y: 40 }}
+                  transition={{ duration: 1.2, ease: 'easeOut' }}
+                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
                 >
                   <TikTokPhonePreview
                     script={parseScriptToBlocks(fullScript)}
                     audioUrl={audioUrl}
                   />
 
-                  {/* Floating Play Button */}
                   {audioUrl && (
                     <button
                       onClick={() => {
@@ -544,7 +546,6 @@ export default function TryDemo() {
                     </button>
                   )}
 
-                  {/* Watermark */}
                   <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
                     Made with Quietly Rich
                   </div>
@@ -552,69 +553,55 @@ export default function TryDemo() {
               )}
             </AnimatePresence>
 
-            {/* Hidden Audio Element */}
             {audioUrl && (
-              <audio
-                id="preview-audio"
-                src={audioUrl}
-                className="hidden"
-                preload="auto"
-              />
+              <audio id="preview-audio" src={audioUrl} className="hidden" preload="auto" />
             )}
+          </div>
+        )}
 
-            {/* Final CTAs */}
-            <div className="mt-6 text-center space-y-6 w-full max-w-sm">
-              <h4 className="text-xl font-bold text-white">
-                ✅ Brand Kit Generated — Ready to Publish?
-              </h4>
-
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="/demo-output">
-                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
-                    🎉 See Your Full Brand Kit →
-                  </button>
-                </a>
-                <a href="/upgrade">
-                  <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
-                    🚀 Upgrade & Unlock More
-                  </button>
-                </a>
-              </div>
-
-              {/* Replay Preview Button */}
-              <button
-                onClick={() => {
-                  const audio = document.getElementById('preview-audio') as HTMLAudioElement;
-                  if (audio) {
-                    audio.currentTime = 0;
-                    audio.play();
-                    setIsPlaying(true);
-                    audio.onended = () => setIsPlaying(false);
-                  }
-                }}
-                className="text-xs text-gray-400 hover:text-white underline"
-              >
-                🔁 Replay Voice
+        {/* ✅ Sticky CTA Band (Always visible after preview) */}
+        {step === 'preview' && (
+          <div className="sticky bottom-0 z-30 bg-black border-t border-[#333] px-4 py-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+            <a href="/demo-output">
+              <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
+                🎉 See Your Full Brand Kit →
               </button>
-
-              {/* Start Again CTA */}
-              <button
-                onClick={() => {
-                  setStep('topic');
-                  setSelectedTopic('');
-                  setSelectedFormat('');
-                  setDisplayedText('');
-                  setFullScript('');
-                  setVoiceReady(false);
-                  setAudioUrl('');
-                  setIsPlaying(false);
-                  scrollToAnchor('step-anchor');
-                }}
-                className="text-xs text-gray-500 hover:text-white underline mt-2 block"
-              >
-                🔄 Start Again
+            </a>
+            <a href="/upgrade">
+              <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
+                🚀 Upgrade & Unlock More
               </button>
-            </div>
+            </a>
+            <button
+              onClick={() => {
+                const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+                if (audio) {
+                  audio.currentTime = 0;
+                  audio.play();
+                  setIsPlaying(true);
+                  audio.onended = () => setIsPlaying(false);
+                }
+              }}
+              className="text-xs text-gray-400 hover:text-white underline"
+            >
+              🔁 Replay Voice
+            </button>
+            <button
+              onClick={() => {
+                setStep('topic');
+                setSelectedTopic('');
+                setSelectedFormat('');
+                setDisplayedText('');
+                setFullScript('');
+                setVoiceReady(false);
+                setAudioUrl('');
+                setIsPlaying(false);
+                scrollToAnchor('step-anchor');
+              }}
+              className="text-xs text-gray-500 hover:text-white underline"
+            >
+              🔄 Start Again
+            </button>
           </div>
         )}
       </div>
