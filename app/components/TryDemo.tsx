@@ -96,25 +96,30 @@ export default function TryDemo() {
     }
   };
 
-  // ✅ FIXED: scrolls higher after voice to prevent preview jump
+  // ✅ SMOOTH: scroll first, then animate voice picker in
   const generateVoice = async () => {
     setTransitioning(true);
     setShowScriptBox(false);
+
+    scrollToAnchor('step-anchor', -180); // scroll up first
+
     setTimeout(() => {
       const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
       if (url) {
         setAudioUrl(url);
-        setVoiceReady(true);
         setStep('voice');
-        scrollToAnchor('step-anchor', -60); // updated scroll position
+        setVoiceReady(true);
+
+        // Optional: delay CTA entrance for smoother pacing
+        setTimeout(() => setShowPreviewButton(true), 200);
       } else {
         setError('❌ Voice file not found for this combination.');
       }
+
       setTransitioning(false);
-    }, 600);
+    }, 500); // wait after scroll before changing layout
   };
 
-  // ✅ SMOOTH delayed preview animation
   const generatePreview = async () => {
     setStep('previewGen');
     setShowPreviewPhone(false);
@@ -227,7 +232,7 @@ export default function TryDemo() {
     <section className="py-12 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-black pb-4 shadow-md shadow-[#C2886D]/10">
+        <div className="sticky top-0 z-20 bg-black pb-4 shadow-md shadow-[#C2886D]/10" id="step-anchor">
           <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">
             Try QuietlyRich Demo
           </h2>
@@ -241,7 +246,7 @@ export default function TryDemo() {
         </p>
 
         {/* Two-Column Layout */}
-        <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start" id="step-anchor">
+        <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
           {/* Left Column */}
           <div className="w-full lg:w-1/2">
             <AnimatePresence mode="wait">
@@ -560,7 +565,7 @@ export default function TryDemo() {
           </div>
         )}
 
-        {/* ✅ Sticky CTA Band (Always visible after preview) */}
+        {/* ✅ Sticky CTA Band */}
         {step === 'preview' && (
           <div className="sticky bottom-0 z-30 bg-black border-t border-[#333] px-4 py-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
             <a href="/demo-output">
@@ -597,7 +602,7 @@ export default function TryDemo() {
                 setVoiceReady(false);
                 setAudioUrl('');
                 setIsPlaying(false);
-                scrollToAnchor('step-anchor', -60); // ✅ Fix: scroll higher on reset
+                scrollToAnchor('step-anchor', -180); // ✅ Scroll up clean on reset
               }}
               className="text-xs text-gray-500 hover:text-white underline"
             >
