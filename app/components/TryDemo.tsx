@@ -112,21 +112,25 @@ export default function TryDemo() {
     }, 600);
   };
 
+  // ✅ Updated generatePreview with realistic delay and smooth animation
   const generatePreview = async () => {
     setStep('previewGen');
-    setShowPreviewPhone(false); // reserve space
-    setTimeout(() => {
-      setStep('preview');
-      setShowPreviewPhone(true); // fade in phone preview
-    }, 500);
+    setShowPreviewPhone(false);
 
+    // ⏳ Delay to simulate loading spinner
+    setTimeout(() => setStep('preview'), 1000);
+
+    // 🎬 Delay preview phone entrance for smoother animation
+    setTimeout(() => setShowPreviewPhone(true), 1400);
+
+    // 🧭 Scroll slightly later, after animation starts
     setTimeout(() => {
       const el = document.getElementById('step-anchor');
       if (el) {
         const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
-    }, 700); // scroll after animation starts
+    }, 1600);
   };
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
@@ -493,12 +497,12 @@ export default function TryDemo() {
         )}
                 {/* Step 5: Final Preview */}
                 {step === 'preview' && (
-          <div className="relative w-full flex flex-col items-center mt-10 min-h-[calc(100vh-200px)]">
+          <div className="relative w-full flex flex-col items-center mt-4 min-h-[calc(100vh-100px)] max-h-[calc(100vh-100px)] overflow-y-auto justify-start">
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
+              className="mb-3 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
             >
               🎬 Your Brand. In Motion.
             </motion.div>
@@ -507,41 +511,46 @@ export default function TryDemo() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
             {/* TikTokPhonePreview with floating play button */}
-            <motion.div
-              key="phone"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, type: 'spring' }}
-              className="relative z-10 shadow-xl shadow-[#C2886D]/10 mt-[-40px]"
-            >
-              <TikTokPhonePreview
-                script={parseScriptToBlocks(fullScript)}
-                audioUrl={audioUrl}
-              />
-
-              {/* Floating Play Button */}
-              {audioUrl && (
-                <button
-                  onClick={() => {
-                    const audio = document.getElementById('preview-audio') as HTMLAudioElement;
-                    if (audio) {
-                      setIsPlaying(true);
-                      audio.currentTime = 0;
-                      audio.play();
-                      audio.onended = () => setIsPlaying(false);
-                    }
-                  }}
-                  className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition animate-pulse"
+            <AnimatePresence>
+              {showPreviewPhone && (
+                <motion.div
+                  key="phone"
+                  initial={{ opacity: 0, y: 60, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.1, ease: 'easeOut' }}
+                  className="relative z-10 shadow-xl shadow-[#C2886D]/10 mt-[-40px]"
                 >
-                  {isPlaying ? '🔁 Playing...' : '🔊 Play Voice'}
-                </button>
-              )}
+                  <TikTokPhonePreview
+                    script={parseScriptToBlocks(fullScript)}
+                    audioUrl={audioUrl}
+                  />
 
-              {/* Watermark */}
-              <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
-                Made with Quietly Rich
-              </div>
-            </motion.div>
+                  {/* Floating Play Button */}
+                  {audioUrl && (
+                    <button
+                      onClick={() => {
+                        const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+                        if (audio) {
+                          setIsPlaying(true);
+                          audio.currentTime = 0;
+                          audio.play();
+                          audio.onended = () => setIsPlaying(false);
+                        }
+                      }}
+                      className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition animate-pulse"
+                    >
+                      {isPlaying ? '🔁 Playing...' : '🔊 Play Voice'}
+                    </button>
+                  )}
+
+                  {/* Watermark */}
+                  <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
+                    Made with Quietly Rich
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Hidden Audio Element */}
             {audioUrl && (
