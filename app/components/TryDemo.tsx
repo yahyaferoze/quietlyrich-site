@@ -341,7 +341,7 @@ export default function TryDemo() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col mt-10"
+              className="flex flex-col mt-4"
             >
               <span className="text-sm text-gray-500 mb-1 block">
                 Step 3 of 5: Review Your Script
@@ -446,7 +446,7 @@ export default function TryDemo() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4 }}
-              className="mt-6"
+              className="mt-4"
             >
               <LoadingButton onClick={generateVoice} loading={loading}>
                 🎙 Generate Voice
