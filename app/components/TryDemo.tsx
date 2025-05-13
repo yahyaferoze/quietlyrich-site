@@ -65,14 +65,15 @@ export default function TryDemo() {
   const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
   const [dots, setDots] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showScriptBox, setShowScriptBox] = useState(false); // NEW
+  const [showScriptBox, setShowScriptBox] = useState(false); // ✅ Controls script animation
+  const [showPreviewPhone, setShowPreviewPhone] = useState(false); // ✅ Controls TikTokPhonePreview animation
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   const voices = [
     { id: 1, name: 'Deep Male Voice' },
     { id: 2, name: 'Natural Female Voice' },
   ];
+
   const voiceMap: Record<string, Record<string, Record<string, string>>> = {
     'fitness at home': {
       'Hook Video': {
@@ -96,28 +97,30 @@ export default function TryDemo() {
 
   const generateVoice = async () => {
     setTransitioning(true);
+    setShowScriptBox(false); // smoothly fade out script box
     setTimeout(() => {
       const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
       if (url) {
         setAudioUrl(url);
         setVoiceReady(true);
         setStep('voice');
-        scrollToAnchor('voice-actions', -160); // 👈 scroll UP slightly
+        scrollToAnchor('voice-actions', -160); // scroll UP to next step
       } else {
         setError('❌ Voice file not found for this combination.');
       }
       setTransitioning(false);
-    }, 600);
+    }, 600); // match exit animation
   };
 
   const generatePreview = async () => {
     setStep('previewGen');
+    setShowPreviewPhone(false); // prepare for entrance animation
     setTimeout(() => {
       setStep('preview');
-      scrollToAnchor('step-anchor', -120); // 👈 scroll up for preview appearance
-    }, 1200);
+      setShowPreviewPhone(true); // animate phone preview in
+      scrollToAnchor('step-anchor', -120);
+    }, 1000);
   };
-
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
     const blocks: { type: string; text: string }[] = [];
@@ -132,6 +135,7 @@ export default function TryDemo() {
     });
     return blocks;
   };
+
   const handleTopicSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topicInput = selectedTopic.toLowerCase().trim();
@@ -166,7 +170,7 @@ export default function TryDemo() {
       setFullScript(combined);
       setDisplayedText('');
       setTyping(true);
-      setShowScriptBox(false);
+      setShowScriptBox(false); // reset animation visibility
       setStep('script');
       setVoiceReady(false);
       setShowPreviewButton(true);
@@ -174,6 +178,7 @@ export default function TryDemo() {
       scrollToAnchor('step-anchor');
     }, 800);
   };
+
   useEffect(() => {
     if (loading) {
       const id = setInterval(() => {
@@ -187,7 +192,7 @@ export default function TryDemo() {
     if (typing && fullScript) {
       let index = 0;
       const tid = setTimeout(async () => {
-        setShowScriptBox(true); // ✅ trigger smooth script reveal
+        setShowScriptBox(true); // ✅ animate script box in
         while (index < fullScript.length) {
           setDisplayedText(prev => prev + fullScript[index]);
           if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
@@ -312,7 +317,7 @@ export default function TryDemo() {
         </div>
                 {/* Step 3: Script Reveal */}
                 <AnimatePresence mode="wait">
-          {step === 'script' && !transitioning && (
+          {step === 'script' && showScriptBox && !transitioning && (
             <motion.div
               key="script"
               initial={{ opacity: 0, y: 20 }}
@@ -417,7 +422,7 @@ export default function TryDemo() {
 
         {/* Generate Voice CTA */}
         <AnimatePresence>
-          {step === 'script' && !transitioning && (
+          {step === 'script' && showScriptBox && !transitioning && (
             <motion.div
               key="genvoice"
               initial={{ opacity: 0, y: 10 }}
