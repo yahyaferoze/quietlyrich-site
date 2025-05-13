@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
@@ -96,6 +96,7 @@ export default function TryDemo() {
     }
   };
 
+  // ✅ FIXED: scrolls higher after voice to prevent preview jump
   const generateVoice = async () => {
     setTransitioning(true);
     setShowScriptBox(false);
@@ -105,7 +106,7 @@ export default function TryDemo() {
         setAudioUrl(url);
         setVoiceReady(true);
         setStep('voice');
-        scrollToAnchor('voice-actions', -160);
+        scrollToAnchor('step-anchor', -60); // updated scroll position
       } else {
         setError('❌ Voice file not found for this combination.');
       }
@@ -113,7 +114,7 @@ export default function TryDemo() {
     }, 600);
   };
 
-  // ✅ NEW: smoother delay, no jump scroll, synced animation
+  // ✅ SMOOTH delayed preview animation
   const generatePreview = async () => {
     setStep('previewGen');
     setShowPreviewPhone(false);
@@ -130,7 +131,7 @@ export default function TryDemo() {
       if (previewRef.current) {
         previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 1600); // ensure scroll happens after component starts animating
+    }, 1600);
   };
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
@@ -596,7 +597,7 @@ export default function TryDemo() {
                 setVoiceReady(false);
                 setAudioUrl('');
                 setIsPlaying(false);
-                scrollToAnchor('step-anchor');
+                scrollToAnchor('step-anchor', -60); // ✅ Fix: scroll higher on reset
               }}
               className="text-xs text-gray-500 hover:text-white underline"
             >
