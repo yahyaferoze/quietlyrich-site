@@ -93,7 +93,7 @@ export default function QuietlyRichLanding() {
     className="w-full max-w-[360px] rounded-2xl object-cover shadow-xl"
   >
     <source
-      src="/assets/quietlyrich-homepage-clip-1.mp4"
+      src="/Users/yahyaferoze/Downloads/sandbox/public/quietlyrich-homepage-clip-1.mp4"
       type="video/mp4"
     />
     {/* you can add a fallback message here */}
