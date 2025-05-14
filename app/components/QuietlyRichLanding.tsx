@@ -27,90 +27,95 @@ export default function QuietlyRichLanding() {
 
   return (
     <>
-      {/* HERO – Cinematic Rebuild */}
-      <motion.section
-        id="hero"
-        className="relative h-screen bg-gradient-to-b from-black via-[#140032] to-[#6A00FF]/40 text-white flex items-center justify-center overflow-hidden px-6"
+     <motion.section
+  id="hero"
+  className="relative h-screen bg-gradient-to-b from-black via-[#140032] to-[#6A00FF]/40 text-white flex items-center justify-center overflow-hidden px-6"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 1 }}
+>
+  {/* Background glows */}
+  <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/20 rounded-full blur-[180px] top-[-100px] left-[-100px] z-0" />
+  <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/20 rounded-full blur-[140px] bottom-[-80px] right-[-80px] z-0" />
+
+  {/* Content */}
+  <div className="relative z-10 max-w-7xl w-full flex flex-col-reverse md:flex-row items-center justify-between gap-12 pt-28 md:pt-0">
+    {/* Text Column */}
+    <div className="w-full md:w-1/2 text-center md:text-left">
+      <motion.h1
+        className="text-4xl md:text-5xl font-bold font-serif leading-tight mb-6"
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.8 }}
+      >
+        Turn Ideas Into <span className="text-[#C2886D]">Faceless Fame</span><br />
+        In 30 Seconds.
+      </motion.h1>
+      <motion.p
+        className="text-lg text-gray-300 max-w-md leading-relaxed mx-auto md:mx-0 mb-8"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.8 }}
+      >
+        No face. No mic. Just AI, quietly building you an empire.
+      </motion.p>
+      <motion.div
+        className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ delay: 0.6, duration: 0.8 }}
       >
-        {/* Background glows */}
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/20 rounded-full blur-[180px] top-[-100px] left-[-100px] z-0" />
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/20 rounded-full blur-[140px] bottom-[-80px] right-[-80px] z-0" />
-
-        {/* Content */}
-        <div className="relative z-10 max-w-7xl w-full flex flex-col-reverse md:flex-row items-center justify-between gap-12 pt-28 md:pt-0">
-          {/* Text */}
-          <div className="w-full md:w-1/2 text-center md:text-left">
-            <motion.h1
-              className="text-4xl md:text-5xl font-bold font-serif leading-tight mb-6"
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-            >
-              Turn Ideas Into <span className="text-[#C2886D]">Faceless Fame</span> <br />
-              In 30 Seconds.
-            </motion.h1>
-            <motion.p
-              className="text-lg text-gray-300 max-w-md leading-relaxed mx-auto md:mx-0 mb-8"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            >
-              No face. No mic. Just AI, quietly building you an empire.
-            </motion.p>
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-            >
-              <a
-                href="#try-demo"
-                className="bg-[#C2886D] text-white px-6 py-3 rounded-full font-medium text-sm shadow-md hover:scale-105 transition"
-              >
-                Start Free
-              </a>
-              <button className="border border-gray-500 text-gray-300 px-6 py-3 rounded-full hover:border-white hover:text-white transition text-sm">
-                Watch Demo
-              </button>
-            </motion.div>
-          </div>
-
-          {/* Hero Video */}
-          <motion.div
-  className="w-full md:w-1/2 flex justify-center"
-  initial={{ scale: 0.95, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  transition={{ delay: 0.8, duration: 0.8 }}
->
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="w-full max-w-[360px] rounded-2xl object-cover shadow-xl"
-  >
-    <source
-      src="/Users/yahyaferoze/Downloads/sandbox/public/quietlyrich-homepage-clip-1.mp4"
-      type="video/mp4"
-    />
-    {/* you can add a fallback message here */}
-  </video>
-</motion.div>
-        </div>
-
-        {/* Scroll cue */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce text-white text-sm opacity-80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
-          transition={{ delay: 1.2 }}
+        <a
+          href="#try-demo"
+          className="bg-[#C2886D] text-white px-6 py-3 rounded-full font-medium text-sm shadow-md hover:scale-105 transition"
         >
-          ↓ Scroll to see how it works
-        </motion.div>
-      </motion.section>
+          Start Free
+        </a>
+        <button className="border border-gray-500 text-gray-300 px-6 py-3 rounded-full hover:border-white hover:text-white transition text-sm">
+          Watch Demo
+        </button>
+      </motion.div>
+    </div>
+
+    {/* Video Column */}
+    <motion.div
+      className="w-full md:w-1/2 flex justify-center"
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 0.8, duration: 0.8 }}
+    >
+      <div className="w-full max-w-[360px]">
+        {/* 9:16 aspect ratio wrapper */}
+        <div className="aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-lg">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source
+              src="/assets/quietlyrich-homepage-clip-1.mp4"
+              type="video/mp4"
+            />
+            {/* fallback text */}
+            Your browser doesn’t support video.
+          </video>
+        </div>
+      </div>
+    </motion.div>
+  </div>
+
+  {/* Scroll cue */}
+  <motion.div
+    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce text-white text-sm opacity-80"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 0.8 }}
+    transition={{ delay: 1.2 }}
+  >
+    ↓ Scroll to see how it works
+  </motion.div>
+</motion.section>
             {/* SECTION 2 – Scroll-Based Journey */}
             <section id="how" className="bg-black text-white py-36 px-6 relative">
         <div className="max-w-6xl mx-auto text-center mb-20">
