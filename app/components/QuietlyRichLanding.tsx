@@ -95,7 +95,7 @@ export default function QuietlyRichLanding() {
             className="w-full h-full object-cover"
           >
             <source
-              src="/assets/quietlyrich-homepage-clip-1.mp4"
+              src="/Users/yahyaferoze/Downloads/sandbox/public/quietlyrich-homepage-clip-1.mp4"
               type="video/mp4"
             />
             {/* fallback text */}
