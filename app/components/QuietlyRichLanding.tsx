@@ -1,26 +1,26 @@
 'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import TryDemo from "./TryDemo";
-import TikTokPhonePreview from "./TikTokPhonePreview";
+import React from 'react';
+import { motion } from 'framer-motion';
+import TryDemo from './TryDemo';
+import TikTokPhonePreview from './TikTokPhonePreview';
 
 export default function QuietlyRichLanding() {
   const previewClips = [
     {
-      video: "/assets/quietlyrich-homepage-clip-1.mp4",
-      label: "AI Voice: Calm UK",
-      stats: "12.4K views · 87% watch time",
+      video: '/quietlyrich-homepage-clip-1.mp4',
+      label: 'AI Voice: Calm UK',
+      stats: '12.4K views · 87% watch time',
     },
     {
-      video: "/example-preview.mp4",
-      label: "AI Voice: American Female",
-      stats: "10.1K views · 83% watch time",
+      video: '/example-preview.mp4',
+      label: 'AI Voice: American Female',
+      stats: '10.1K views · 83% watch time',
     },
     {
-      video: "/example-preview.mp4",
-      label: "Niche: Side Hustles",
-      stats: "8.7K views · 90% engagement",
+      video: '/example-preview.mp4',
+      label: 'Niche: Side Hustles',
+      stats: '8.7K views · 90% engagement',
     },
   ];
 
@@ -48,7 +48,7 @@ export default function QuietlyRichLanding() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.8 }}
             >
-              Turn Ideas Into <span className="text-[#C2886D]">Faceless Fame</span><br/>
+              Turn Ideas Into <span className="text-[#C2886D]">Faceless Fame</span><br />
               In 30 Seconds.
             </motion.h1>
             <motion.p
@@ -76,9 +76,8 @@ export default function QuietlyRichLanding() {
               </button>
             </motion.div>
           </div>
-
-          {/* Hero Video */}
-          <motion.div
+                    {/* Hero Video */}
+                    <motion.div
             className="w-full md:w-1/2 flex justify-center"
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -93,7 +92,7 @@ export default function QuietlyRichLanding() {
                 className="w-full h-full object-cover"
               >
                 <source
-                  src="/assets/quietlyrich-homepage-clip-1.mp4"
+                  src="/quietlyrich-homepage-clip-1.mp4"
                   type="video/mp4"
                 />
                 Sorry, your browser doesn’t support embedded videos.
@@ -112,7 +111,6 @@ export default function QuietlyRichLanding() {
           ↓ Scroll to see how it works
         </motion.div>
       </motion.section>
-
             {/* SECTION 2 – Scroll-Based Journey */}
             <section id="how" className="bg-black text-white py-36 px-6 relative">
         <div className="max-w-6xl mx-auto text-center mb-20">
@@ -123,6 +121,7 @@ export default function QuietlyRichLanding() {
             QuietlyRich builds your entire faceless content engine in under a minute.
           </p>
         </div>
+
         <div className="flex flex-col gap-20 md:gap-32 max-w-4xl mx-auto">
           {/* Step 1 */}
           <motion.div
@@ -171,9 +170,8 @@ export default function QuietlyRichLanding() {
               </div>
             </div>
           </motion.div>
-
-          {/* Step 3 */}
-          <motion.div
+                    {/* Step 3 */}
+                    <motion.div
             className="flex flex-col md:flex-row items-center gap-10"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -185,7 +183,7 @@ export default function QuietlyRichLanding() {
                 Step 3: Pick or Clone a Voice
               </h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Use a viral‐style voice, clone your own, or generate one from scratch.
+                Use a viral-style voice, clone your own, or generate one from scratch.
               </p>
             </div>
             <div className="md:w-1/2 bg-[#111] border border-[#2a2a2a] rounded-xl p-6 text-sm text-gray-300">
@@ -229,11 +227,14 @@ export default function QuietlyRichLanding() {
           </motion.div>
         </div>
       </section>
+            {/* SECTION 3 – Auto-Playing Preview Gallery */}
+            <section
+        id="preview-gallery"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0" />
 
-      {/* SECTION 3 – Auto-Playing Preview Gallery */}
-      <section id="preview-gallery" className="bg-black text-white py-36 px-6 relative overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0"/>
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0"/>
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
             See QuietlyRich in Action
@@ -241,22 +242,31 @@ export default function QuietlyRichLanding() {
           <p className="text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed">
             Real outputs generated by AI. Faceless. Viral-ready. Built in seconds.
           </p>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {previewClips.map((c, i) => (
-              <div key={i} className="relative bg-[#111] border border-[#2a2a2a] rounded-2xl p-3 overflow-hidden group">
+            {previewClips.map((clip, i) => (
+              <div
+                key={i}
+                className="relative bg-[#111] border border-[#2a2a2a] rounded-2xl p-3 overflow-hidden group"
+              >
                 <div className="aspect-[9/16] w-full rounded-xl overflow-hidden shadow-lg">
                   <video
                     className="w-full h-full object-cover"
-                    src={c.video}
                     autoPlay
                     muted
                     loop
                     playsInline
-                  />
+                    controls={false}
+                    preload="auto"
+                    key={clip.video}
+                  >
+                    <source src={clip.video} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center text-center p-4">
-                  <p className="text-sm text-white mb-2">{c.label}</p>
-                  <p className="text-xs text-gray-400">{c.stats}</p>
+                  <p className="text-sm text-white mb-2">“{clip.label}”</p>
+                  <p className="text-xs text-gray-400">{clip.stats}</p>
                 </div>
               </div>
             ))}
@@ -264,9 +274,13 @@ export default function QuietlyRichLanding() {
         </div>
       </section>
             {/* SECTION 4 – Emotional Creator Stories */}
-            <section id="testimonials" className="bg-black text-white py-36 px-6 relative overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[160px] rounded-full -top-32 -left-20 z-0"/>
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[140px] rounded-full -bottom-20 right-0 z-0"/>
+            <section
+        id="testimonials"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[160px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[140px] rounded-full -bottom-20 right-0 z-0" />
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
             Loved by Faceless Creators
@@ -274,37 +288,51 @@ export default function QuietlyRichLanding() {
           <p className="text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed">
             Hear how QuietlyRich powers growth behind the scenes — without burnout.
           </p>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {[
               {
                 name: "Jay N.",
                 role: "Anonymous TikTok Creator",
-                quote:"I hit 100K followers in 3 weeks using AI scripts — never showed my face once.",
-                img:"https://randomuser.me/api/portraits/men/36.jpg",
+                quote:
+                  "I hit 100K followers in 3 weeks using AI scripts — never showed my face once.",
+                img: "https://randomuser.me/api/portraits/men/36.jpg",
               },
               {
                 name: "Zara Patel",
                 role: "Digital Ghostwriter",
-                quote:"I batch 7 videos in 40 minutes now. QuietlyRich made me consistent without effort.",
-                img:"https://randomuser.me/api/portraits/women/32.jpg",
+                quote:
+                  "I batch 7 videos in 40 minutes now. QuietlyRich made me consistent without effort.",
+                img: "https://randomuser.me/api/portraits/women/32.jpg",
               },
               {
                 name: "Ali R.",
                 role: "Voice-Only YouTuber",
-                quote:"QuietlyRich writes, voices, and previews everything. I just publish and grow.",
-                img:"https://randomuser.me/api/portraits/men/29.jpg",
+                quote:
+                  "QuietlyRich writes, voices, and previews everything. I just publish and grow.",
+                img: "https://randomuser.me/api/portraits/men/29.jpg",
               },
               {
                 name: "Sophia Kim",
                 role: "Faceless Brand Coach",
-                quote:"My clients love it. They no longer need to hire editors or writers to scale.",
-                img:"https://randomuser.me/api/portraits/women/44.jpg",
+                quote:
+                  "My clients love it. They no longer need to hire editors or writers to scale.",
+                img: "https://randomuser.me/api/portraits/women/44.jpg",
               },
-            ].map((t,i)=>(
-              <div key={i} className="bg-[#111] border border-[#2a2a2a] rounded-2xl px-8 py-10 shadow-lg group hover:shadow-[#C2886D]/20 transition">
-                <p className="text-lg text-gray-300 italic mb-6 leading-relaxed">“{t.quote}”</p>
+            ].map((t, i) => (
+              <div
+                key={i}
+                className="bg-[#111] border border-[#2a2a2a] rounded-2xl px-8 py-10 shadow-lg group hover:shadow-[#C2886D]/20 transition"
+              >
+                <p className="text-lg text-gray-300 italic mb-6 leading-relaxed">
+                  “{t.quote}”
+                </p>
                 <div className="flex items-center gap-4">
-                  <img src={t.img} alt={t.name} className="w-12 h-12 rounded-full border border-[#C2886D] object-cover"/>
+                  <img
+                    src={t.img}
+                    alt={t.name}
+                    className="w-12 h-12 rounded-full border border-[#C2886D] object-cover"
+                  />
                   <div>
                     <p className="text-white font-semibold text-sm">{t.name}</p>
                     <p className="text-gray-400 text-xs">{t.role}</p>
@@ -317,28 +345,65 @@ export default function QuietlyRichLanding() {
       </section>
 
       {/* SECTION 5 – Inside the QuietlyRich Engine */}
-      <section id="features" className="bg-black text-white py-36 px-6 relative overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0"/>
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0"/>
+      <section
+        id="features"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0" />
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
             Inside the QuietlyRich Engine
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto mb-20 leading-relaxed">
-            Everything you need to grow quietly, consistently, and automatically — built into one system.
+            Everything you need to grow quietly, consistently, and automatically —
+            built into one system.
           </p>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {[
-              { icon:"🎯", title:"Viral Niche Wizard", desc:"Effortlessly define your tone, audience, and angle for each post." },
-              { icon:"🧠", title:"AI Script Generator", desc:"Get high-retention scripts auto-written in your voice and tone." },
-              { icon:"🎙️", title:"Voice & Clone System", desc:"Choose a viral voice, upload your own, or clone yourself in seconds." },
-              { icon:"📆", title:"Schedule & Export", desc:"One-click export to your calendar or content dashboard." },
-              { icon:"⚡", title:"Auto Funnel CTAs", desc:"Quietly inject powerful CTA lines into your scripts to convert." },
-              { icon:"📈", title:"Built-In Growth Blueprint", desc:"Use our silent scaling framework to grow faceless and fast." },
-            ].map((f,i)=>(
-              <motion.div key={i} whileHover={{ scale:1.03 }} transition={{ type:"spring", stiffness:300 }} className="bg-[#0f0f0f] border border-[#1e1e1e] rounded-2xl p-6 shadow-sm hover:shadow-[#C2886D]/20 transition-all">
+              {
+                icon: "🎯",
+                title: "Viral Niche Wizard",
+                desc: "Effortlessly define your tone, audience, and angle for each post.",
+              },
+              {
+                icon: "🧠",
+                title: "AI Script Generator",
+                desc: "Get high-retention scripts auto-written in your voice and tone.",
+              },
+              {
+                icon: "🎙️",
+                title: "Voice & Clone System",
+                desc: "Choose a viral voice, upload your own, or clone yourself in seconds.",
+              },
+              {
+                icon: "📆",
+                title: "Schedule & Export",
+                desc: "One-click export to your calendar or content dashboard.",
+              },
+              {
+                icon: "⚡",
+                title: "Auto Funnel CTAs",
+                desc: "Quietly inject powerful CTA lines into your scripts to convert.",
+              },
+              {
+                icon: "📈",
+                title: "Built-In Growth Blueprint",
+                desc: "Use our silent scaling framework to grow faceless and fast.",
+              },
+            ].map((f, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="bg-[#0f0f0f] border border-[#1e1e1e] rounded-2xl p-6 shadow-sm hover:shadow-[#C2886D]/20 transition-all"
+              >
                 <div className="text-3xl mb-4">{f.icon}</div>
-                <h3 className="text-lg font-semibold text-white mb-2 font-serif">{f.title}</h3>
+                <h3 className="text-lg font-semibold text-white mb-2 font-serif">
+                  {f.title}
+                </h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
@@ -346,9 +411,13 @@ export default function QuietlyRichLanding() {
         </div>
       </section>
             {/* SECTION 6 – Comparison */}
-            <section id="comparison" className="bg-black text-white py-36 px-6 relative overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0"/>
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0"/>
+            <section
+        id="comparison"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0" />
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
             Why Creators Choose QuietlyRich
@@ -356,26 +425,50 @@ export default function QuietlyRichLanding() {
           <p className="text-gray-400 max-w-2xl mx-auto mb-20 leading-relaxed">
             Here’s how we outperform typical “AI tools” — built for creators, not just content.
           </p>
+
           <div className="grid gap-6">
             {[
-              { title:"Faceless Growth", quietly:"✅ Yes — optimized for creators who never want to show their face.", other:"❌ No — most tools assume you’re on camera." },
-              { title:"Voice Memory", quietly:"✅ Yes — remembers your voice & tone across scripts.", other:"❌ No — each session starts fresh." },
-              { title:"Auto Funnels", quietly:"✅ Yes — scripts include high-converting CTA lines.", other:"❌ No — you manually add your funnel steps." },
-              { title:"Built-In Blueprint", quietly:"✅ Yes — includes strategy, not just tools.", other:"❌ No — you're left figuring out how to grow." },
-              { title:"Preview Before Export", quietly:"✅ Yes — watch it like TikTok before posting.", other:"❌ No — most just give static outputs." },
-            ].map((i,x)=>(
-              <div key={x} className="flex flex-col md:flex-row items-stretch justify-between bg-[#121212] border border-[#1e1e1e] rounded-2xl p-6 hover:shadow-[#C2886D]/20 transition-shadow duration-300 group">
+              {
+                title: "Faceless Growth",
+                quietly: "✅ Yes — optimized for creators who never want to show their face.",
+                other: "❌ No — most tools assume you’re on camera.",
+              },
+              {
+                title: "Voice Memory",
+                quietly: "✅ Yes — remembers your voice & tone across scripts.",
+                other: "❌ No — each session starts fresh.",
+              },
+              {
+                title: "Auto Funnels",
+                quietly: "✅ Yes — scripts include high-converting CTA lines.",
+                other: "❌ No — you manually add your funnel steps.",
+              },
+              {
+                title: "Built-In Blueprint",
+                quietly: "✅ Yes — includes strategy, not just tools.",
+                other: "❌ No — you're left figuring out how to grow.",
+              },
+              {
+                title: "Preview Before Export",
+                quietly: "✅ Yes — watch it like TikTok before posting.",
+                other: "❌ No — most just give static outputs.",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="flex flex-col md:flex-row items-stretch justify-between bg-[#121212] border border-[#1e1e1e] rounded-2xl p-6 hover:shadow-[#C2886D]/20 transition-shadow duration-300 group"
+              >
                 <div className="w-full md:w-1/2 mb-6 md:mb-0 md:pr-6 border-b md:border-b-0 md:border-r border-[#2a2a2a]">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"/>
-                    <h3 className="text-white font-bold">{i.title}</h3>
+                    <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                    <h3 className="text-white font-bold">{item.title}</h3>
                   </div>
                   <p className="text-[#C2886D] text-sm font-medium mb-1">QuietlyRich</p>
-                  <p className="text-gray-400 text-sm">{i.quietly}</p>
+                  <p className="text-gray-400 text-sm">{item.quietly}</p>
                 </div>
                 <div className="w-full md:w-1/2 md:pl-6">
                   <p className="text-white font-bold mb-1">Other Tools</p>
-                  <p className="text-gray-400 text-sm">{i.other}</p>
+                  <p className="text-gray-400 text-sm">{item.other}</p>
                 </div>
               </div>
             ))}
@@ -384,9 +477,13 @@ export default function QuietlyRichLanding() {
       </section>
 
       {/* SECTION 7 – Try QuietlyRich (Demo) */}
-      <section id="try-demo" className="bg-black text-white py-36 px-6 relative overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[180px] rounded-full -top-32 -left-20 z-0"/>
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[120px] rounded-full -bottom-20 right-0 z-0"/>
+      <section
+        id="try-demo"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[180px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[120px] rounded-full -bottom-20 right-0 z-0" />
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
             Try QuietlyRich For Yourself
@@ -399,11 +496,14 @@ export default function QuietlyRichLanding() {
           </div>
         </div>
       </section>
+            {/* SECTION 8 – Pricing */}
+            <section
+        id="pricing"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[180px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[120px] rounded-full -bottom-20 right-0 z-0" />
 
-      {/* SECTION 8 – Pricing */}
-      <section id="pricing" className="bg-black text-white py-36 px-6 relative overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[180px] rounded-full -top-32 -left-20 z-0"/>
-        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[120px] rounded-full -bottom-20 right-0 z-0"/>
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
             Pricing Made Simple
@@ -421,32 +521,72 @@ export default function QuietlyRichLanding() {
               </button>
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name:"Free", price:"£0/mo", features:["3 content templates","Basic script generator","Limited AI voice access"], button:"Start Free" },
-              { name:"Pro",  price:"£29/mo", highlight:true, features:["Unlimited templates","Daily trending drops","AI voice + script memory","Export + preview"], button:"Upgrade" },
-              { name:"Agency",price:"£99/mo", features:["All Pro features","Client access + team seats","Dedicated voice models","Performance reporting"], button:"Scale With Us" },
-            ].map((p,i)=>(
-              <div key={i} className={`p-6 rounded-2xl border flex flex-col relative transition-all ${
-                p.highlight ? "border-[#C2886D] shadow-lg bg-[#181818]" : "border-[#1e1e1e] bg-[#121212]"
-              }`}>
-                {p.name==="Pro" && (
+              {
+                name: "Free",
+                price: "£0/mo",
+                features: [
+                  "3 content templates",
+                  "Basic script generator",
+                  "Limited AI voice access",
+                ],
+                button: "Start Free",
+              },
+              {
+                name: "Pro",
+                price: "£29/mo",
+                highlight: true,
+                features: [
+                  "Unlimited templates",
+                  "Daily trending drops",
+                  "AI voice + script memory",
+                  "Export + preview",
+                ],
+                button: "Upgrade",
+              },
+              {
+                name: "Agency",
+                price: "£99/mo",
+                features: [
+                  "All Pro features",
+                  "Client access + team seats",
+                  "Dedicated voice models",
+                  "Performance reporting",
+                ],
+                button: "Scale With Us",
+              },
+            ].map((plan, i) => (
+              <div
+                key={i}
+                className={`p-6 rounded-2xl border flex flex-col relative transition-all ${
+                  plan.highlight
+                    ? "border-[#C2886D] shadow-lg bg-[#181818]"
+                    : "border-[#1e1e1e] bg-[#121212]"
+                }`}
+              >
+                {plan.name === "Pro" && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C2886D] px-3 py-1 rounded-full text-black text-xs font-semibold shadow-sm">
                     Most Popular
                   </div>
                 )}
-                <h3 className="text-white text-xl font-serif font-bold mb-2">{p.name}</h3>
-                <p className="text-3xl font-bold text-[#C2886D] mb-4">{p.price}</p>
+                <h3 className="text-white text-xl font-serif font-bold mb-2">
+                  {plan.name}
+                </h3>
+                <p className="text-3xl font-bold text-[#C2886D] mb-4">
+                  {plan.price}
+                </p>
                 <ul className="space-y-2 text-gray-400 text-sm mb-6">
-                  {p.features.map((f,j)=>(
-                    <li key={j} className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-[#C2886D] rounded-full"/>
+                  {plan.features.map((f, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[#C2886D] rounded-full" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <button className="w-full mt-auto py-2 bg-[#C2886D] text-white rounded-full text-sm font-medium hover:scale-105 transition">
-                  {p.button}
+                  {plan.button}
                 </button>
               </div>
             ))}
@@ -455,15 +595,19 @@ export default function QuietlyRichLanding() {
       </section>
 
       {/* SECTION 9 – Final Call to Action */}
-      <section id="cta" className="relative z-10 bg-[#0e0e0e] py-28 px-6 text-center overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 w-[700px] h-[700px] bg-[#C2886D]/10 blur-[160px] rounded-full -translate-x-1/2 -translate-y-1/2 z-0"/>
-        <div className="absolute top-20 right-20 w-[300px] h-[300px] bg-[#6A00FF]/10 blur-[100px] rounded-full z-0"/>
+      <section
+        id="cta"
+        className="relative z-10 bg-[#0e0e0e] py-28 px-6 text-center overflow-hidden"
+      >
+        <div className="absolute top-1/2 left-1/2 w-[700px] h-[700px] bg-[#C2886D]/10 blur-[160px] rounded-full -translate-x-1/2 -translate-y-1/2 z-0" />
+        <div className="absolute top-20 right-20 w-[300px] h-[300px] bg-[#6A00FF]/10 blur-[100px] rounded-full z-0" />
         <div className="max-w-3xl mx-auto relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
             Ready to Grow Without Burnout?
           </h2>
           <p className="text-gray-400 text-base md:text-lg mb-10 leading-relaxed">
-            Join hundreds of silent creators scaling with QuietlyRich — no meetings, no editing, no burnout.
+            Join hundreds of silent creators scaling with QuietlyRich — no meetings,
+            no editing, no burnout.
           </p>
           <a
             href="#try-demo"
