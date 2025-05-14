@@ -76,16 +76,25 @@ export default function QuietlyRichLanding() {
           </div>
 
           {/* TikTok Phone Preview */}
-          <div className="relative w-full aspect-[9/16] rounded-xl overflow-hidden shadow-lg">
-  <video
-    src="/assets/quietlyrich-homepage-clip-1.mp4"
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="w-full h-full object-cover"
-  />
-</div>
+          <motion.div
+  className="w-full md:w-1/2 flex justify-center"
+  initial={{ scale: 0.95, opacity: 0 }}
+  animate={{ scale: 1, opacity: 1 }}
+  transition={{ delay: 0.8, duration: 0.8 }}
+>
+  <div className="max-w-[320px] md:max-w-[360px] w-full shadow-lg rounded-2xl overflow-hidden">
+    <div className="aspect-[9/16] w-full h-full rounded-xl overflow-hidden shadow-md">
+      <video
+        src="/assets/quietlyrich-homepage-clip-1.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </div>
+</motion.div>
         </div>
 
         {/* Scroll cue */}
