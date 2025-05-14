@@ -38,9 +38,9 @@ export default function QuietlyRichLanding() {
   <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/20 rounded-full blur-[180px] top-[-100px] left-[-100px] z-0" />
   <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/20 rounded-full blur-[140px] bottom-[-80px] right-[-80px] z-0" />
 
-  {/* Content */}
+  {/* Hero Content */}
   <div className="relative z-10 max-w-7xl w-full flex flex-col-reverse md:flex-row items-center justify-between gap-12 pt-28 md:pt-0">
-    {/* Text Column */}
+    {/* Text */}
     <div className="w-full md:w-1/2 text-center md:text-left">
       <motion.h1
         className="text-4xl md:text-5xl font-bold font-serif leading-tight mb-6"
@@ -48,7 +48,7 @@ export default function QuietlyRichLanding() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.8 }}
       >
-        Turn Ideas Into <span className="text-[#C2886D]">Faceless Fame</span><br />
+        Turn Ideas Into <span className="text-[#C2886D]">Faceless Fame</span><br/>
         In 30 Seconds.
       </motion.h1>
       <motion.p
@@ -77,7 +77,7 @@ export default function QuietlyRichLanding() {
       </motion.div>
     </div>
 
-    {/* Video Column */}
+    {/* Video */}
     <motion.div
       className="w-full md:w-1/2 flex justify-center"
       initial={{ scale: 0.95, opacity: 0 }}
@@ -85,9 +85,11 @@ export default function QuietlyRichLanding() {
       transition={{ delay: 0.8, duration: 0.8 }}
     >
       <div className="w-full max-w-[360px]">
-        {/* 9:16 aspect ratio wrapper */}
+        {/* enforce 9:16 frame */}
         <div className="aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-lg">
           <video
+            controls
+            preload="auto"
             autoPlay
             muted
             loop
@@ -95,11 +97,10 @@ export default function QuietlyRichLanding() {
             className="w-full h-full object-cover"
           >
             <source
-              src="/Users/yahyaferoze/Downloads/sandbox/public/quietlyrich-homepage-clip-1.mp4"
+              src="/assets/quietlyrich-homepage-clip-1.mp4"
               type="video/mp4"
             />
-            {/* fallback text */}
-            Your browser doesn’t support video.
+            Your browser doesn’t support HTML5 video.
           </video>
         </div>
       </div>
@@ -116,6 +117,7 @@ export default function QuietlyRichLanding() {
     ↓ Scroll to see how it works
   </motion.div>
 </motion.section>
+
             {/* SECTION 2 – Scroll-Based Journey */}
             <section id="how" className="bg-black text-white py-36 px-6 relative">
         <div className="max-w-6xl mx-auto text-center mb-20">
