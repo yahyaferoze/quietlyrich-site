@@ -266,22 +266,22 @@ export default function QuietlyRichLanding() {
           stats: "12.4K views · 87% watch time",
         },
         {
-          video: "/example-preview.mp4",
+          video: "/Users/yahyaferoze/Downloads/sandbox/public/3 health myths.mp4",
           label: "AI Voice: American Female",
           stats: "10.1K views · 83% watch time",
         },
         {
-          video: "/example-preview.mp4",
+          video: "/public/hiden movies.mp4",
           label: "Niche: Side Hustles",
           stats: "8.7K views · 90% engagement",
         },
         {
-          video: "/example-preview.mp4",
+          video: "//Users/yahyaferoze/Downloads/sandbox/public/losing fat .mp4",
           label: "Voice: Bold Male",
           stats: "15.3K views · 85% watch time",
         },
         {
-          video: "/example-preview.mp4",
+          video: "//Users/yahyaferoze/Downloads/sandbox/public/passive income tips.mp4",
           label: "Style: Documentary",
           stats: "9.4K views · 88% avg watch",
         },
