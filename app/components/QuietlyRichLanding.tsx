@@ -540,6 +540,89 @@ export default function QuietlyRichLanding() {
         </div>
       </section>
 
+      {/* SECTION – QuietlyRich Tools Suite */}
+<section
+  id="tools-suite"
+  className="bg-black text-white py-36 px-6 relative overflow-hidden"
+>
+  <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0" />
+  <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0" />
+
+  <div className="max-w-6xl mx-auto text-center relative z-10">
+    <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
+      Clip. Voice. Caption. Schedule.
+    </h2>
+    <p className="text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed">
+      No more jumping between tools. QuietlyRich handles it all — one platform, one click.
+    </p>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+      {[
+        {
+          icon: "✂️",
+          title: "AI Clipping",
+          desc: "Cut viral-ready vertical videos automatically from longer scripts or audio.",
+        },
+        {
+          icon: "💬",
+          title: "AI Captioning",
+          desc: "Burn in animated captions to boost retention and visual clarity.",
+        },
+        {
+          icon: "📅",
+          title: "Social Calendar",
+          desc: "Schedule & auto-publish to TikTok, Reels, or Shorts — no manual uploads.",
+        },
+        {
+          icon: "🎞️",
+          title: "AI B-Roll",
+          desc: "Auto-generate cutaways and overlays to break repetition and keep viewers hooked.",
+        },
+        {
+          icon: "🗣️",
+          title: "AI Voiceover",
+          desc: "Realistic voices with perfect pacing — built to replay and engage.",
+        },
+        {
+          icon: "📊",
+          title: "Analytics",
+          desc: "See what’s working. Track hooks, views, and retention per script.",
+        },
+        {
+          icon: "🎚️",
+          title: "Audio Cleaner",
+          desc: "Remove pauses, filler words, or hiss — perfect for faceless voice delivery.",
+        },
+        {
+          icon: "📐",
+          title: "AI Reframing",
+          desc: "Reformat for 9:16, 1:1, or 16:9 — automatically, without editing.",
+        },
+        {
+          icon: "🔁",
+          title: "Remix Engine",
+          desc: "Re-spin top videos into 5+ formats to double your output with zero extra effort.",
+        },
+      ].map((tool, i) => (
+        <motion.div
+          key={i}
+          whileHover={{ scale: 1.03 }}
+          transition={{ type: "spring", stiffness: 250 }}
+          className="bg-[#0f0f0f] border border-[#1e1e1e] rounded-2xl p-6 shadow-sm hover:shadow-[#C2886D]/20 transition"
+        >
+          <div className="text-3xl mb-4">{tool.icon}</div>
+          <h3 className="text-lg font-semibold text-white mb-2 font-serif">
+            {tool.title}
+          </h3>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            {tool.desc}
+          </p>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
       {/* SECTION – Who It's For */}
       <section
         id="who-for"
