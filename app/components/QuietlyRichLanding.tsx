@@ -335,6 +335,74 @@ export default function QuietlyRichLanding() {
           </div>
         </div>
       </section>
+            {/* SECTION – Fantasy Mode */}
+            <section
+        id="fantasy-mode"
+        className="bg-[#0b0b0b] text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[200px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[160px] rounded-full -bottom-20 right-0 z-0" />
+
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
+            🎮 Fantasy Mode: Content That Was Never Meant to Exist
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed">
+            Podcast skits with footballers. Fake news headlines. Dream matchups. Parody memes.
+            QuietlyRich lets you animate the impossible — facelessly.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "⚽ Messi vs Ronaldo Podcast",
+                desc: "Auto-generated skits of viral debates using AI voices + avatars.",
+              },
+              {
+                title: "🥊 Fantasy Matchups",
+                desc: "Fake UFC, boxing, or anime battles — voiced and captioned for virality.",
+              },
+              {
+                title: "📰 Meme News Clips",
+                desc: "‘BREAKING: Haaland Signs for Local Pub Team’ — parody headlines in your style.",
+              },
+              {
+                title: "🎭 Babyface Parodies",
+                desc: "Make athletes or celebrities sound like cartoons. Meme gold.",
+              },
+              {
+                title: "🎙️ Fake Interviews",
+                desc: "Scripted podcasts with real personalities, generated facelessly.",
+              },
+              {
+                title: "💬 Viral Skits",
+                desc: "Use trending formats (like AI Drake roasting fans) with zero editing.",
+              },
+            ].map((block, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="bg-[#111] border border-[#2a2a2a] rounded-2xl p-6 text-left shadow-sm hover:shadow-[#C2886D]/20 transition"
+              >
+                <h3 className="text-lg font-semibold text-white mb-2 font-serif">
+                  {block.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{block.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-12">
+            <a
+              href="#try-demo"
+              className="inline-block bg-[#C2886D] text-white px-8 py-3 rounded-full text-sm font-medium hover:scale-105 transition"
+            >
+              Try Fantasy Mode Free
+            </a>
+          </div>
+        </div>
+      </section>
             {/* SECTION – Testimonials */}
             <section
         id="testimonials"
@@ -534,6 +602,27 @@ export default function QuietlyRichLanding() {
                 <p className="text-gray-400 text-sm leading-relaxed">{p.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+            {/* SECTION – Try QuietlyRich (Demo) */}
+            <section
+        id="try-demo"
+        className="bg-black text-white py-36 px-6 relative overflow-hidden"
+      >
+        <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[180px] rounded-full -top-32 -left-20 z-0" />
+        <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[120px] rounded-full -bottom-20 right-0 z-0" />
+
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
+            Try QuietlyRich For Yourself
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+            Watch AI write, voice, and preview your faceless video — no sign-up needed.
+          </p>
+
+          <div className="max-w-4xl mx-auto bg-[#111] border border-[#2a2a2a] p-6 rounded-2xl shadow-lg">
+            <TryDemo />
           </div>
         </div>
       </section>
