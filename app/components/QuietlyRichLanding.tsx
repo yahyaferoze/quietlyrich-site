@@ -5,7 +5,7 @@ import QuietlyRichLandingHero from './QuietlyRichLandingHero';
 import TrustBar from './TrustBar';
 import HowItWorksContent from './HowItWorksContent'; 
 import PreviewGallery from './PreviewGallery';
-import ResultsProofBar from './ResultsProofBar';
+import ResultsProofBar from './ResultsProofBarFixed';
 import TestimonialsSection from './TestimonialsSection';
 import TryDemoSection from './TryDemoSection';
 import PricingSection from './PricingSection';
@@ -47,7 +47,7 @@ export default function QuietlyRichLanding({
       <PreviewGallery fantasyMode={fantasyMode} />
 
       {/* RESULTS BAR */}
-      <ResultsProofBar />
+      <ResultsProofBarFixed.tsx />
 
       {/* TESTIMONIALS */}
       <TestimonialsSection />
