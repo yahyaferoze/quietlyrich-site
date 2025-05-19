@@ -39,7 +39,7 @@ const plans = [
   },
 ];
 
-export default function PricingSection() {
+export default function PricingSectionFixed() {
   return (
     <section
       id="pricing"
