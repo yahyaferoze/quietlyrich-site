@@ -6,7 +6,7 @@ import TrustBar from './TrustBar';
 import HowItWorksContent from './HowItWorksContent'; 
 import PreviewGallery from './PreviewGallery';
 import ResultsProofBar from './ResultsProofBarFinal';
-import TestimonialsSection from './TestimonialsSection';
+import TestimonialsSectionFixed from './TestimonialsSectionFixed';
 import TryDemoSection from './TryDemoSection';
 import PricingSection from './PricingSection';
 import CompareBar from './CompareBar';
@@ -50,7 +50,7 @@ export default function QuietlyRichLanding({
       <ResultsProofBar />
 
       {/* TESTIMONIALS */}
-      <TestimonialsSection />
+      <TestimonialsSectionFixed />
 
       {/* TRY DEMO */}
       <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
