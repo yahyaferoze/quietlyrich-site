@@ -8,6 +8,10 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar from '../components/ProgressBar';
 
+type TryDemoProps = {
+  fantasyMode: boolean;
+};
+
 function LoadingButton({
   onClick,
   loading,
@@ -48,7 +52,7 @@ function LoadingButton({
     </motion.button>
   );
 }
-export default function TryDemo() {
+  export default function TryDemo({ fantasyMode }: TryDemoProps) {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
