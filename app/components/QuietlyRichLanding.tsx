@@ -4,7 +4,7 @@ import React from 'react';
 import QuietlyRichLandingHero from './QuietlyRichLandingHero';
 import TrustBar from './TrustBar';
 import HowItWorksContent from './HowItWorksContent'; 
-import PreviewGallerySection from './PreviewGallerySection';
+import PreviewGallery from './PreviewGallery';
 import ResultsProofBar from './ResultsProofBar';
 import TestimonialsSection from './TestimonialsSection';
 import TryDemoSection from './TryDemoSection';
@@ -44,7 +44,7 @@ export default function QuietlyRichLanding({
       <HowItWorksContent fantasyMode={fantasyMode} />
 
       {/* PREVIEW GALLERY */}
-      <PreviewGallerySection fantasyMode={fantasyMode} />
+      <PreviewGallery fantasyMode={fantasyMode} />
 
       {/* RESULTS BAR */}
       <ResultsProofBar />
