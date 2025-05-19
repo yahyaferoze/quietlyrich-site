@@ -9,7 +9,7 @@ import ResultsProofBar from './ResultsProofBarFinal';
 import TestimonialsSectionFixed from './TestimonialsSectionFixed';
 import TryDemoSection from './TryDemoSection';
 import PricingSectionFixed from './PricingSectionFixed';
-import CompareBar from './CompareBar';
+import CompareBarFixed from './CompareBarFixed';
 import FAQSection from './FAQSection';
 import FinalCTAAndFooter from './FinalCTAAndFooter';
 import PricingSection from './PricingSectionFixed';
@@ -62,7 +62,7 @@ export default function QuietlyRichLanding({
       {/* COMPARE BAR */}
       <div className="max-w-6xl mx-auto">
         <h3 className="text-2xl font-bold text-[#C2886D] text-center mb-4">How QuietlyRich Compares</h3>
-        <CompareBar />
+        <CompareBarFixed />
       </div>
 
       {/* FAQ + NEWSLETTER */}
