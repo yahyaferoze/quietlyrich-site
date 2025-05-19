@@ -8,10 +8,11 @@ import PreviewGallery from './PreviewGallery';
 import ResultsProofBar from './ResultsProofBarFinal';
 import TestimonialsSectionFixed from './TestimonialsSectionFixed';
 import TryDemoSection from './TryDemoSection';
-import PricingSection from './PricingSection';
+import PricingSectionFixed from './PricingSectionFixed';
 import CompareBar from './CompareBar';
 import FAQSection from './FAQSection';
 import FinalCTAAndFooter from './FinalCTAAndFooter';
+import PricingSection from './PricingSectionFixed';
 
 type QuietlyRichLandingProps = {
   fantasyMode: boolean;
@@ -56,7 +57,7 @@ export default function QuietlyRichLanding({
       <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
 
       {/* PRICING */}
-      <PricingSection />
+      <PricingSectionFixed />
 
       {/* COMPARE BAR */}
       <div className="max-w-6xl mx-auto">
