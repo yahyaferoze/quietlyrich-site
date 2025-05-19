@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import QuietlyRichLandingHero from './QuietlyRichLandingHero';
 import TrustBar from './TrustBar';
 import HowItWorksSection from './HowItWorksSection';
@@ -17,12 +17,11 @@ type QuietlyRichLandingProps = {
   fantasyMode: boolean;
   setFantasyMode: (v: boolean) => void;
 };
+
 export default function QuietlyRichLanding({
   fantasyMode,
   setFantasyMode,
 }: QuietlyRichLandingProps) {
-
-
   return (
     <div className="relative">
       {/* Floating Fantasy Mode ON Badge */}
