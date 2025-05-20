@@ -54,7 +54,7 @@ export default function QuietlyRichLanding({
       <TestimonialsSectionFixed />
 
       {/* TRY DEMO */}
-      <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+      <TryDemoSection />
 
       {/* PRICING */}
       <PricingSectionFixed />

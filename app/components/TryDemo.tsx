@@ -52,7 +52,8 @@ function LoadingButton({
     </motion.button>
   );
 }
-  export default function TryDemo({ fantasyMode }: TryDemoProps) {
+
+export default function TryDemo({ fantasyMode }: TryDemoProps) {
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
@@ -142,6 +143,7 @@ function LoadingButton({
       }
     }, 1600);
   };
+
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
     const lines = script.split('\n').filter(line => line.trim() !== '');
     const blocks: { type: string; text: string }[] = [];
@@ -232,6 +234,14 @@ function LoadingButton({
       return () => clearTimeout(tid);
     }
   }, [typing, fullScript]);
+
+  // === The rest of the UI code (see previous message) ===
+  // ... everything from:
+  // return (
+  //   <section className="py-8 bg-black text-white min-h-screen overflow-hidden">
+  // ...
+  // to the end, closing all brackets as needed.
+
   return (
     <section className="py-8 bg-black text-white min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
@@ -336,8 +346,9 @@ function LoadingButton({
             )}
           </div>
         </div>
-                {/* Step 3: Script Reveal */}
-                <AnimatePresence mode="wait">
+
+        {/* Step 3: Script Reveal */}
+        <AnimatePresence mode="wait">
           {step === 'script' && showScriptBox && !transitioning && (
             <motion.div
               key="script"
@@ -505,8 +516,9 @@ function LoadingButton({
             Generating Preview...
           </motion.div>
         )}
-                {/* Step 5: Final Preview */}
-                {step === 'preview' && (
+
+        {/* Step 5: Final Preview */}
+        {step === 'preview' && (
           <div
             ref={previewRef}
             className="relative w-full flex flex-col items-center mt-10 mb-10"

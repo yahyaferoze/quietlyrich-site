@@ -4,12 +4,11 @@ import React from 'react';
 import TryDemo from './TryDemo';
 import FantasyToggle from './FantasyToggle';
 
-type TryDemoSectionProps = {
-  fantasyMode: boolean;
-  setFantasyMode: (value: boolean) => void;
-};
+export default function TryDemoSection() {
+  // You can still call useFantasyMode() here if you want to use the values in this file,
+  // but you no longer need to pass them as props below!
+  // const { fantasyMode, setFantasyMode } = useFantasyMode();
 
-export default function TryDemoSection({ fantasyMode, setFantasyMode }: TryDemoSectionProps) {
   return (
     <section id="try-demo" className="bg-black text-white py-36 px-6 relative overflow-hidden">
       <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[180px] rounded-full -top-32 -left-20 z-0" />
@@ -25,12 +24,12 @@ export default function TryDemoSection({ fantasyMode, setFantasyMode }: TryDemoS
 
         {/* Fantasy Mode Toggle */}
         <div className="flex justify-center mb-8">
-          <FantasyToggle fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+          <FantasyToggle />
         </div>
 
         {/* Try Demo */}
         <div className="max-w-4xl mx-auto bg-[#111] border border-[#2a2a2a] p-6 rounded-2xl shadow-lg">
-          <TryDemo fantasyMode={fantasyMode} />
+          <TryDemo />
         </div>
       </div>
     </section>

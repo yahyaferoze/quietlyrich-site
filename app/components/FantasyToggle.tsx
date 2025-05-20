@@ -1,11 +1,9 @@
 import React from 'react';
+import { useFantasyMode } from './FantasyModeContext';
 
-type FantasyToggleProps = {
-  fantasyMode: boolean;
-  setFantasyMode: (value: boolean) => void;
-};
+export default function FantasyToggle() {
+  const { fantasyMode, setFantasyMode } = useFantasyMode();
 
-export default function FantasyToggle({ fantasyMode, setFantasyMode }: FantasyToggleProps) {
   return (
     <div className="flex items-center space-x-2 ml-4">
       <label htmlFor="fantasy-toggle" className="text-xs text-gray-400">
