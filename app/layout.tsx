@@ -25,11 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-     <FantasyModeProvider>
-  <FantasyModeBody className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}>
-    {children}
-  </FantasyModeBody>
-</FantasyModeProvider>
+      <FantasyModeProvider>
+        {/* ✅ The actual <body> tag is rendered inside FantasyModeBody */}
+        <FantasyModeBody
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}
+        >
+          {children}
+        </FantasyModeBody>
+      </FantasyModeProvider>
     </html>
   );
 }
