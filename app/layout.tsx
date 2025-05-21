@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { FantasyModeProvider } from "./components/FantasyModeContext"; // Import the provider
+import { FantasyModeProvider } from "./components/FantasyModeContext";
+import FantasyModeBody from "./components/FantasyModeBody"; // NEW
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -25,13 +25,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}
-      >
-        <FantasyModeProvider>
+      <FantasyModeProvider>
+        <FantasyModeBody
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}
+        >
           {children}
-        </FantasyModeProvider>
-      </body>
+        </FantasyModeBody>
+      </FantasyModeProvider>
     </html>
   );
 }
