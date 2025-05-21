@@ -129,3 +129,58 @@ button {
 .fantasy-mode .border-primary {
   border-color: #C288FF !important;
 }
+/* ---------------------- */
+/* 🌌 Fantasy Mode Styles */
+/* ---------------------- */
+
+.fantasy-mode {
+  background: linear-gradient(145deg, #18002a, #4a006d);
+  color: #f2e7ff;
+}
+
+.fantasy-mode h1,
+.fantasy-mode h2,
+.fantasy-mode h3 {
+  color: #d3aaff;
+}
+
+.fantasy-mode .bg-black {
+  background-color: #200035 !important;
+}
+
+.fantasy-mode .text-white {
+  color: #f5eaff !important;
+}
+
+.fantasy-mode .text-[#C2886D] {
+  color: #ff9df2 !important;
+}
+
+.fantasy-mode .bg-[#111] {
+  background-color: #2a003f !important;
+}
+
+.fantasy-mode .border-[#2a2a2a],
+.fantasy-mode .border-[#C2886D] {
+  border-color: #9a4cd4 !important;
+}
+
+.fantasy-mode .glow-text {
+  text-shadow: 0 0 6px #c96bff, 0 0 12px #d07dff;
+}
+
+.fantasy-mode .animate-pulse {
+  animation: fantasy-pulse 2s infinite;
+}
+
+@keyframes fantasy-pulse {
+  0% {
+    box-shadow: 0 0 10px #b46fff, 0 0 20px #a54eff;
+  }
+  50% {
+    box-shadow: 0 0 20px #db9eff, 0 0 40px #b468ff;
+  }
+  100% {
+    box-shadow: 0 0 10px #b46fff, 0 0 20px #a54eff;
+  }
+}
