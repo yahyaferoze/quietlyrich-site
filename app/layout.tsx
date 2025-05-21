@@ -24,15 +24,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <body className="antialiased bg-black text-white min-h-screen overflow-x-hidden">
       <FantasyModeProvider>
-        {/* ✅ The actual <body> tag is rendered inside FantasyModeBody */}
-        <FantasyModeBody
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}
-        >
+        <FantasyModeBody>
           {children}
         </FantasyModeBody>
       </FantasyModeProvider>
-    </html>
+    </body>
+  </html>
   );
 }

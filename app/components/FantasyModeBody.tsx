@@ -11,8 +11,7 @@ type Props = {
 export function FantasyModeBody({ children, className }: Props) {
   const { fantasyMode } = useFantasyMode();
 
-  // Add the fantasy-mode class if enabled
-  const allClassNames = `${className ? className : ""} ${fantasyMode ? "fantasy-mode" : ""}`.trim();
+  const allClassNames = `${className ?? ""} ${fantasyMode ? "fantasy-mode" : ""}`.trim();
 
-  return <body className={allClassNames}>{children}</body>;
+  return <div className={allClassNames}>{children}</div>;
 }
