@@ -8,20 +8,11 @@ type Props = {
   className?: string;
 };
 
-export function FantasyModeBody({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) {
-    const { fantasyMode } = useFantasyMode();
-  
-    // Add the class if fantasyMode is enabled
-    const allClassNames =
-      className +
-      (fantasyMode ? " fantasy-mode" : "");
-  
-    return <body className={allClassNames}>{children}</body>;
-  }
-  
+export function FantasyModeBody({ children, className }: Props) {
+  const { fantasyMode } = useFantasyMode();
+
+  // Add the fantasy-mode class if enabled
+  const allClassNames = `${className ? className : ""} ${fantasyMode ? "fantasy-mode" : ""}`.trim();
+
+  return <body className={allClassNames}>{children}</body>;
+}

@@ -98,3 +98,34 @@ button {
 .bg-accent-hover:hover {
   background-color: var(--accent-hover);
 }
+/* === Fantasy Mode Visual Overrides === */
+.fantasy-mode {
+  background: radial-gradient(circle at top left, #140032 10%, #6A00FF 40%, #000 100%);
+  color: #ffffff;
+  transition: background 0.8s ease, color 0.8s ease;
+}
+
+.fantasy-mode h1,
+.fantasy-mode h2,
+.fantasy-mode h3,
+.fantasy-mode h4 {
+  color: #C288FF;
+  text-shadow: 0 0 8px #6A00FF, 0 0 12px #C288FF;
+}
+
+.fantasy-mode .glow-text,
+.fantasy-mode .text-primary {
+  color: #E0B8FF !important;
+  text-shadow: 0 0 6px #C288FF;
+}
+
+.fantasy-mode .bg-primary,
+.fantasy-mode .button-primary {
+  background-color: #6A00FF !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px #6A00FFAA;
+}
+
+.fantasy-mode .border-primary {
+  border-color: #C288FF !important;
+}
