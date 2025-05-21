@@ -6,6 +6,21 @@ const config: Config = {
     "./components/**/*.{ts,tsx}",
     "./pages/**/*.{ts,tsx}",
   ],
+  safelist: [
+    'fantasy-mode',
+    'fantasy-mode h1',
+    'fantasy-mode h2',
+    'fantasy-mode h3',
+    'fantasy-mode h4',
+    'fantasy-mode .bg-black',
+    'fantasy-mode .text-white',
+    'fantasy-mode .text-[#C2886D]',
+    'fantasy-mode .bg-[#111]',
+    'fantasy-mode .border-[#2a2a2a]',
+    'fantasy-mode .border-[#C2886D]',
+    'fantasy-mode .glow-text',
+    'fantasy-mode .animate-pulse',
+  ],
   theme: {
     extend: {
       colors: {
@@ -13,8 +28,6 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       animation: {
-        pulse: "pulse 2s ease-in-out infinite",
-        spin: "spin 1s linear infinite",
         pulseGlow: "pulseGlow 2.5s ease-in-out infinite",
       },
       keyframes: {
