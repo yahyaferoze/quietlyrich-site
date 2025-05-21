@@ -26,8 +26,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        accent: "var(--accent)",
+        "accent-hover": "var(--accent-hover)",
       },
       animation: {
+        pulse: "pulse 2s ease-in-out infinite",
+        spin: "spin 1s linear infinite",
         pulseGlow: "pulseGlow 2.5s ease-in-out infinite",
       },
       keyframes: {
@@ -41,4 +45,4 @@ const config: Config = {
   plugins: [],
 };
 
-export default config;
+export default config; 

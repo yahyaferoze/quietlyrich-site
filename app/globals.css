@@ -13,7 +13,7 @@
   --border: #444;
 }
 
-/* Optional Light Mode Support */
+/* Light Mode Optional Support */
 @media (prefers-color-scheme: light) {
   :root {
     --background: #ffffff;
@@ -32,16 +32,10 @@ body {
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
-/* ==== Buttons ==== */
-button {
-  @apply transition-all duration-300 ease-in-out;
-  border-radius: 0.375rem; /* rounded-md */
-  font-weight: 600;
-}
-
-/* ==== Glowing Text Effect ==== */
+/* ==== Glowing Text ==== */
 @keyframes shine {
   0% {
     background-position: -500px 0;
@@ -65,83 +59,18 @@ button {
   margin-top: 0.75rem;
 }
 
-/* ==== Pulse Glow Utility ==== */
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-.pulse-glow {
-  animation: pulseGlow 2.5s ease-in-out infinite;
-}
-
-/* ==== Utility: Shadow Soft Edge ==== */
-.soft-shadow {
-  box-shadow: 0 4px 30px rgba(194, 136, 109, 0.12);
-}
-
-/* ==== Utility: Branded Border ==== */
-.border-accent {
-  border-color: var(--accent);
-}
-
-.bg-accent {
-  background-color: var(--accent);
-}
-
-.bg-accent-hover:hover {
-  background-color: var(--accent-hover);
-}
-/* === Fantasy Mode Visual Overrides === */
+/* ==== Fantasy Mode Global Style Overrides ==== */
 .fantasy-mode {
-  background: radial-gradient(circle at top left, #140032 10%, #6A00FF 40%, #000 100%);
-  color: #ffffff;
-  transition: background 0.8s ease, color 0.8s ease;
+  background: linear-gradient(145deg, #18002a, #4a006d) !important;
+  color: #f2e7ff !important;
 }
 
 .fantasy-mode h1,
 .fantasy-mode h2,
 .fantasy-mode h3,
 .fantasy-mode h4 {
-  color: #C288FF;
+  color: #d3aaff !important;
   text-shadow: 0 0 8px #6A00FF, 0 0 12px #C288FF;
-}
-
-.fantasy-mode .glow-text,
-.fantasy-mode .text-primary {
-  color: #E0B8FF !important;
-  text-shadow: 0 0 6px #C288FF;
-}
-
-.fantasy-mode .bg-primary,
-.fantasy-mode .button-primary {
-  background-color: #6A00FF !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 12px #6A00FFAA;
-}
-
-.fantasy-mode .border-primary {
-  border-color: #C288FF !important;
-}
-/* ---------------------- */
-/* 🌌 Fantasy Mode Styles */
-/* ---------------------- */
-
-.fantasy-mode {
-  background: linear-gradient(145deg, #18002a, #4a006d);
-  color: #f2e7ff;
-}
-
-.fantasy-mode h1,
-.fantasy-mode h2,
-.fantasy-mode h3 {
-  color: #d3aaff;
 }
 
 .fantasy-mode .bg-black {
