@@ -2,33 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==== Root Theming ==== */
+/* ==== Root Defaults ==== */
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
   --accent: #c2886d;
   --accent-hover: #b3745b;
-  --danger: #ef4444;
-  --success: #22c55e;
-  --border: #444;
 }
 
-/* Light Mode Optional Support */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
-}
-
-/* ==== Base Elements ==== */
+/* ==== Base Styles ==== */
 html {
   scroll-behavior: smooth;
 }
+
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', system-ui, Arial, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -36,56 +24,45 @@ body {
 
 /* ==== Glowing Text ==== */
 @keyframes shine {
-  0% {
-    background-position: -500px 0;
-  }
-  100% {
-    background-position: 500px 0;
-  }
+  0% { background-position: -500px 0; }
+  100% { background-position: 500px 0; }
 }
 
 .glow-text {
-  background: linear-gradient(90deg, var(--accent), #ffffff, var(--accent));
+  background: linear-gradient(90deg, var(--accent), #fff, var(--accent));
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   animation: shine 3s linear infinite;
   font-weight: 600;
-  font-size: 0.85rem;
-  text-align: center;
-  display: block;
-  margin-top: 0.75rem;
 }
 
-/* ==== Fantasy Mode Global Style Overrides ==== */
+/* ==== Fantasy Mode ==== */
 .fantasy-mode {
-  background: linear-gradient(145deg, #18002a, #4a006d) !important;
-  color: #f2e7ff !important;
+  background: linear-gradient(145deg, #18002a, #4a006d);
+  color: #f2e7ff;
 }
 
 .fantasy-mode h1,
 .fantasy-mode h2,
 .fantasy-mode h3,
 .fantasy-mode h4 {
-  color: #d3aaff !important;
-  text-shadow: 0 0 8px #6A00FF, 0 0 12px #C288FF;
-}
-
-.fantasy-mode .bg-black {
-  background-color: #200035 !important;
+  color: #d3aaff;
+  text-shadow: 0 0 8px #6a00ff, 0 0 12px #c288ff;
 }
 
 .fantasy-mode .text-white {
   color: #f5eaff !important;
 }
 
-.fantasy-mode .text-[#C2886D] {
-  color: #ff9df2 !important;
-}
-
+.fantasy-mode .bg-black,
 .fantasy-mode .bg-[#111] {
   background-color: #2a003f !important;
+}
+
+.fantasy-mode .text-[#C2886D] {
+  color: #ff9df2 !important;
 }
 
 .fantasy-mode .border-[#2a2a2a],
@@ -95,20 +72,4 @@ body {
 
 .fantasy-mode .glow-text {
   text-shadow: 0 0 6px #c96bff, 0 0 12px #d07dff;
-}
-
-.fantasy-mode .animate-pulse {
-  animation: fantasy-pulse 2s infinite;
-}
-
-@keyframes fantasy-pulse {
-  0% {
-    box-shadow: 0 0 10px #b46fff, 0 0 20px #a54eff;
-  }
-  50% {
-    box-shadow: 0 0 20px #db9eff, 0 0 40px #b468ff;
-  }
-  100% {
-    box-shadow: 0 0 10px #b46fff, 0 0 20px #a54eff;
-  }
 }
