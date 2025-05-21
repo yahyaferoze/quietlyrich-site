@@ -3,16 +3,25 @@
 import React from "react";
 import { useFantasyMode } from "./FantasyModeContext";
 
-export default function FantasyModeBody({ children }: { children: React.ReactNode }) {
-  const { fantasyMode } = useFantasyMode();
+type Props = {
+  children: React.ReactNode;
+  className?: string;
+};
 
-  return (
-    <body
-      className={`antialiased bg-black text-white min-h-screen overflow-x-hidden
-        ${fantasyMode ? "fantasy-mode" : ""}
-      `}
-    >
-      {children}
-    </body>
-  );
-}
+export function FantasyModeBody({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) {
+    const { fantasyMode } = useFantasyMode();
+  
+    // Add the class if fantasyMode is enabled
+    const allClassNames =
+      className +
+      (fantasyMode ? " fantasy-mode" : "");
+  
+    return <body className={allClassNames}>{children}</body>;
+  }
+  

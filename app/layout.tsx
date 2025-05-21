@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FantasyModeProvider } from "./components/FantasyModeContext";
-import FantasyModeBody from "./components/FantasyModeBody"; // NEW
+import { FantasyModeBody } from "./components/FantasyModeBody";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,13 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <FantasyModeProvider>
-        <FantasyModeBody
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}
-        >
-          {children}
-        </FantasyModeBody>
-      </FantasyModeProvider>
+     <FantasyModeProvider>
+  <FantasyModeBody className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden`}>
+    {children}
+  </FantasyModeBody>
+</FantasyModeProvider>
     </html>
   );
 }
