@@ -38,38 +38,56 @@ body {
   font-weight: 600;
 }
 
-/* ==== Fantasy Mode ==== */
+/* === Fantasy Mode – Upgraded Visual Theme === */
 .fantasy-mode {
-  background: linear-gradient(145deg, #18002a, #4a006d);
-  color: #f2e7ff;
+  background: radial-gradient(circle at top left, #12002a, #390066, #000000);
+  color: #f8eaff;
+  transition: all 0.6s ease-in-out;
 }
 
 .fantasy-mode h1,
 .fantasy-mode h2,
 .fantasy-mode h3,
 .fantasy-mode h4 {
-  color: #d3aaff;
-  text-shadow: 0 0 8px #6a00ff, 0 0 12px #c288ff;
+  color: #eabfff !important;
+  text-shadow: 0 0 12px #c288ff, 0 0 18px #6a00ff;
 }
 
 .fantasy-mode .text-white {
-  color: #f5eaff !important;
+  color: #f2d9ff !important;
 }
 
 .fantasy-mode .bg-black,
 .fantasy-mode .bg-[#111] {
-  background-color: #2a003f !important;
-}
-
-.fantasy-mode .text-[#C2886D] {
-  color: #ff9df2 !important;
+  background-color: #1a0033 !important;
 }
 
 .fantasy-mode .border-[#2a2a2a],
 .fantasy-mode .border-[#C2886D] {
-  border-color: #9a4cd4 !important;
+  border-color: #bf8bff !important;
 }
 
 .fantasy-mode .glow-text {
-  text-shadow: 0 0 6px #c96bff, 0 0 12px #d07dff;
+  color: #f2d9ff !important;
+  text-shadow: 0 0 10px #d96bff, 0 0 20px #6a00ff;
+}
+
+.fantasy-mode .button-primary,
+.fantasy-mode .bg-primary {
+  background-color: #6a00ff !important;
+  color: white !important;
+  box-shadow: 0 0 18px #6a00ffb0, 0 0 36px #c288ff80;
+}
+
+.fantasy-mode .animate-pulse {
+  animation: fantasy-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fantasy-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px #c288ff, 0 0 20px #6a00ff;
+  }
+  50% {
+    box-shadow: 0 0 20px #eabfff, 0 0 40px #6a00ff;
+  }
 }
