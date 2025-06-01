@@ -5,8 +5,11 @@ import QuietlyRichLanding from './components/QuietlyRichLanding';
 import { useFantasyMode } from './components/FantasyModeContext';
 
 export default function Home() {
-  const { fantasyMode, setFantasyMode } = useFantasyMode();
+  const { fantasyMode } = useFantasyMode(); // from context
   const [mounted, setMounted] = useState(false);
+
+  // 🛠 Add a local override setFantasyMode if needed
+  const [localFantasyMode, setFantasyMode] = useState(fantasyMode);
 
   useEffect(() => {
     setMounted(true);
@@ -15,6 +18,9 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+    <QuietlyRichLanding
+      fantasyMode={localFantasyMode}
+      setFantasyMode={setFantasyMode}
+    />
   );
 }
