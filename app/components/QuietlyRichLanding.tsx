@@ -19,7 +19,7 @@ type Props = {
 export default function QuietlyRichLanding({ fantasyMode, setFantasyMode }: Props) {
   return (
     <div className={fantasyMode ? 'fantasy-mode bg-black text-white' : 'bg-black text-white'}>
-      {/* Example toggle button for Fantasy Mode (customize as you wish) */}
+      {/* Example toggle button for Fantasy Mode */}
       <div className="flex justify-end p-4">
         <button
           className={`px-4 py-2 rounded ${fantasyMode ? 'bg-purple-700' : 'bg-[#C2886D]'} text-white font-bold shadow`}
