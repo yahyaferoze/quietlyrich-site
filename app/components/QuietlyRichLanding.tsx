@@ -7,7 +7,7 @@ import TestimonialsSectionFixed from './TestimonialsSectionFixed';
 import CompareBarFixed from './CompareBarFixed';
 import PreviewGallery from './PreviewGallery';
 import PricingSectionFixed from './PricingSectionFixed';
-import { FinalCTAAndFooter } from './FinalCTAAndFooter';
+import FinalCTAAndFooter from './FinalCTAAndFooter';
 import TrustBar from './TrustBar';
 import FAQSection from './FAQSection';
 
@@ -37,7 +37,7 @@ export default function QuietlyRichLanding() {
       </section>
 
       <section className="mt-16">
-        <FAQSection />
+      <FAQSection />
       </section>
 
       <section className="mt-16">
