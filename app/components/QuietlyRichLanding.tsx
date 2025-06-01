@@ -20,35 +20,27 @@ export default function QuietlyRichLanding({ fantasyMode, setFantasyMode }: Prop
   return (
     <div className={fantasyMode ? 'fantasy-mode bg-black text-white' : 'bg-black text-white'}>
       <QuietlyRichLandingHero />
-
       <section className="mt-16">
         <ResultsProofBarFinal />
       </section>
-
       <section className="mt-16">
         <TestimonialsSectionFixed />
       </section>
-
       <section className="mt-16">
         <CompareBarFixed />
       </section>
-
       <section className="mt-16">
         <PreviewGallery fantasyMode={fantasyMode} />
       </section>
-
       <section className="mt-16">
         <PricingSectionFixed fantasyMode={fantasyMode} />
       </section>
-
       <section className="mt-16">
         <FAQSection />
       </section>
-
       <section className="mt-16">
         <TrustBar />
       </section>
-
       <section className="mt-16">
         <FinalCTAAndFooter />
       </section>
