@@ -11,7 +11,12 @@ import FinalCTAAndFooter from './FinalCTAAndFooter';
 import TrustBar from './TrustBar';
 import FAQSection from './FAQSection';
 
-export default function QuietlyRichLanding() {
+type Props = {
+  fantasyMode: boolean;
+  setFantasyMode: (value: boolean) => void;
+};
+
+export default function QuietlyRichLanding({ fantasyMode, setFantasyMode }: Props) {
   return (
     <div className="bg-black text-white">
       <QuietlyRichLandingHero />
@@ -29,15 +34,15 @@ export default function QuietlyRichLanding() {
       </section>
 
       <section className="mt-16">
-        <PreviewGallery fantasyMode={false} />
+        <PreviewGallery fantasyMode={fantasyMode} />
       </section>
 
       <section className="mt-16">
-        <PricingSectionFixed fantasyMode={false} />
+        <PricingSectionFixed fantasyMode={fantasyMode} />
       </section>
 
       <section className="mt-16">
-      <FAQSection />
+        <FAQSection />
       </section>
 
       <section className="mt-16">
