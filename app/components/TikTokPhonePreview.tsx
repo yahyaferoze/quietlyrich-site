@@ -87,11 +87,17 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       />
       <audio ref={audioRef} className="hidden" />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent z-10" />
 
-      <div ref={scrollRef} className="absolute bottom-0 w-full p-4 text-white text-sm leading-relaxed overflow-y-auto max-h-48">
+      <div
+        ref={scrollRef}
+        className="absolute bottom-0 w-full px-4 pb-6 text-white text-sm leading-relaxed overflow-y-auto max-h-48 z-20 space-y-2"
+      >
         {script.slice(0, currentIndex + 1).map((block, idx) => (
-          <div key={idx} className={`mb-2 ${idx === currentIndex ? 'text-[#C2886D]' : ''}`}>
+          <div
+            key={idx}
+            className={`transition-opacity duration-500 ${idx === currentIndex ? 'text-[#C2886D] font-semibold' : 'text-gray-300'} fade-in`}
+          >
             <span className="font-bold text-[#C2886D]">{block.type.toUpperCase()}:</span>{' '}
             <span>{block.text}</span>
           </div>
@@ -101,7 +107,7 @@ export default function TikTokPhonePreview({ script, audioUrl }: TikTokPhonePrev
       {isDone && (
         <button
           onClick={replay}
-          className="absolute bottom-4 right-4 text-xs px-3 py-1 bg-[#C2886D] text-black rounded-md font-semibold hover:bg-[#b3745b] transition z-20"
+          className="absolute bottom-4 right-4 text-xs px-3 py-1 bg-[#C2886D] text-black rounded-md font-semibold hover:bg-[#b3745b] transition z-30"
         >
           🔁 Replay
         </button>

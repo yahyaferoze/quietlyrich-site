@@ -2,92 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==== Root Defaults ==== */
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --accent: #c2886d;
-  --accent-hover: #b3745b;
-}
-
-/* ==== Base Styles ==== */
-html {
-  scroll-behavior: smooth;
+  --primary-color: #C2886D;
+  --accent-color: #e0b8a4;
+  --background-color: #000000;
+  --text-color: #ffffff;
+  --fantasy-purple: #7f5af0;
+  --fantasy-pink: #ff8dc7;
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  @apply bg-black text-white antialiased transition-colors duration-500 ease-in-out;
+  font-family: 'Inter', sans-serif;
 }
 
-/* ==== Glowing Text ==== */
-@keyframes shine {
-  0% { background-position: -500px 0; }
-  100% { background-position: 500px 0; }
-}
-
-.glow-text {
-  background: linear-gradient(90deg, var(--accent), #fff, var(--accent));
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: shine 3s linear infinite;
-  font-weight: 600;
-}
-
-/* === Fantasy Mode – Upgraded Visual Theme === */
+/* Fantasy Mode Theme */
 .fantasy-mode {
-  background: radial-gradient(circle at top left, #12002a, #390066, #000000);
-  color: #f8eaff;
-  transition: all 0.6s ease-in-out;
+  background: linear-gradient(180deg, #12002f 0%, #1a003b 100%);
+  color: var(--text-color);
 }
 
-.fantasy-mode h1,
-.fantasy-mode h2,
-.fantasy-mode h3,
-.fantasy-mode h4 {
-  color: #eabfff !important;
-  text-shadow: 0 0 12px #c288ff, 0 0 18px #6a00ff;
+.fantasy-mode .bg-black {
+  background-color: rgba(28, 0, 55, 0.8);
 }
 
-.fantasy-mode .text-white {
-  color: #f2d9ff !important;
+.fantasy-mode .text-primary {
+  color: var(--fantasy-purple);
 }
 
-.fantasy-mode .bg-black,
-.fantasy-mode .bg-[#111] {
-  background-color: #1a0033 !important;
-}
-
-.fantasy-mode .border-[#2a2a2a],
-.fantasy-mode .border-[#C2886D] {
-  border-color: #bf8bff !important;
+.fantasy-mode .border-primary {
+  border-color: var(--fantasy-purple);
 }
 
 .fantasy-mode .glow-text {
-  color: #f2d9ff !important;
-  text-shadow: 0 0 10px #d96bff, 0 0 20px #6a00ff;
+  color: var(--fantasy-pink);
+  text-shadow: 0 0 8px var(--fantasy-pink), 0 0 12px var(--fantasy-purple);
 }
 
-.fantasy-mode .button-primary,
-.fantasy-mode .bg-primary {
-  background-color: #6a00ff !important;
-  color: white !important;
-  box-shadow: 0 0 18px #6a00ffb0, 0 0 36px #c288ff80;
+.fantasy-mode .glow-border {
+  border: 2px solid var(--fantasy-purple);
+  box-shadow: 0 0 10px var(--fantasy-purple), 0 0 20px var(--fantasy-pink);
 }
 
-.fantasy-mode .animate-pulse {
-  animation: fantasy-pulse 2s ease-in-out infinite;
+.fantasy-mode .gradient-bg {
+  background: linear-gradient(90deg, var(--fantasy-purple), var(--fantasy-pink));
+  color: black;
 }
 
-@keyframes fantasy-pulse {
-  0%, 100% {
-    box-shadow: 0 0 10px #c288ff, 0 0 20px #6a00ff;
+.fantasy-mode .pulse-border {
+  animation: pulseBorder 2s infinite;
+  border: 2px solid var(--fantasy-pink);
+}
+
+.fantasy-mode .sparkle {
+  animation: sparkle 1.5s infinite ease-in-out;
+  background: radial-gradient(circle, var(--fantasy-pink), transparent);
+  opacity: 0.8;
+}
+
+/* Text glow */
+.glow-text {
+  text-shadow: 0 0 6px var(--primary-color), 0 0 12px var(--primary-color);
+}
+
+/* Animations */
+@keyframes pulseBorder {
+  0% {
+    box-shadow: 0 0 0 0 var(--fantasy-pink);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 141, 199, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 141, 199, 0);
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
   }
   50% {
-    box-shadow: 0 0 20px #eabfff, 0 0 40px #6a00ff;
+    transform: scale(1.2);
+    opacity: 1;
   }
+}
+
+/* Button transitions */
+button {
+  @apply transition duration-300 ease-in-out;
+}
+
+button:hover {
+  @apply scale-105;
+}
+
+/* CTA section background override */
+.cta-band {
+  background: linear-gradient(90deg, #C2886D, #e0b8a4);
+  color: black;
+}
+
+/* Scroll smoothing */
+html {
+  scroll-behavior: smooth;
 }

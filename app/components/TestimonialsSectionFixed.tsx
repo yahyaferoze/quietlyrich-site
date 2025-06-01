@@ -4,72 +4,61 @@ import React from 'react';
 
 const testimonials = [
   {
-    name: "Jay N.",
-    role: "Anonymous TikTok Creator",
-    quote: "I hit 100K followers in 3 weeks using AI scripts — never showed my face once.",
-    img: "https://randomuser.me/api/portraits/men/36.jpg",
+    name: 'Faceless Finance Guy',
+    quote: "I used QuietlyRich to automate 20 TikToks a month. Now I’ve got leads coming in daily without recording anything.",
+    platform: 'TikTok – 120K Followers',
+    avatar: '/avatar-1.png',
   },
   {
-    name: "Zara Patel",
-    role: "Digital Ghostwriter",
-    quote: "I batch 7 videos in 40 minutes now. QuietlyRich made me consistent without effort.",
-    img: "https://randomuser.me/api/portraits/women/32.jpg",
+    name: 'Anonymous Fitness Coach',
+    quote: "Honestly, this saved me. I was stuck on editing and voiceovers. QuietlyRich made it so fast I batch content weekly now.",
+    platform: 'Instagram Reels – 80K Followers',
+    avatar: '/avatar-2.png',
   },
   {
-    name: "Ali R.",
-    role: "Voice-Only YouTuber",
-    quote: "QuietlyRich writes, voices, and previews everything. I just publish and grow.",
-    img: "https://randomuser.me/api/portraits/men/29.jpg",
+    name: 'Hidden Movie Reviewer',
+    quote: "From script to AI voice to preview—this tool made faceless content possible without burning out.",
+    platform: 'YouTube Shorts – 60K Subscribers',
+    avatar: '/avatar-3.png',
   },
   {
-    name: "Sophia Kim",
-    role: "Faceless Brand Coach",
-    quote: "My clients love it. They no longer need to hire editors or writers to scale.",
-    img: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: 'AI Niche Creator',
+    quote: "I’ve built an entire faceless brand without ever speaking on camera. QuietlyRich is a weapon.",
+    platform: 'TikTok – 200K Followers',
+    avatar: '/avatar-4.png',
   },
 ];
 
 export default function TestimonialsSection() {
   return (
-    <section
-      id="testimonials"
-      className="bg-black text-white py-36 px-6 relative overflow-hidden"
-    >
-      <div className="absolute w-[600px] h-[600px] bg-[#6A00FF]/10 blur-[160px] rounded-full -top-32 -left-20 z-0" />
-      <div className="absolute w-[400px] h-[400px] bg-[#C2886D]/10 blur-[140px] rounded-full -bottom-20 right-0 z-0" />
-
-      <div className="max-w-6xl mx-auto text-center relative z-10">
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-6">
-          Loved by Faceless Creators
+    <section className="bg-[#0b0b0b] border-t border-[#2a2a2a] py-24 px-6">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl md:text-5xl font-serif font-bold text-center text-[#C2886D] mb-12">
+          Trusted by Faceless Creators
         </h2>
-        <p className="text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed">
-          Hear how QuietlyRich powers growth behind the scenes — without burnout.
-        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className="bg-[#111] border border-[#2a2a2a] rounded-2xl px-8 py-10 shadow-lg text-left group hover:shadow-[#C2886D]/20 transition"
+              className="bg-[#161616] border border-[#282828] rounded-2xl p-6 shadow-md hover:shadow-lg transition"
             >
-              <p className="text-lg text-gray-300 italic mb-6 leading-relaxed">
-                “{t.quote}”
-              </p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 mb-4">
                 <img
-                  src={t.img}
-                  alt={t.name}
-                  className="w-12 h-12 rounded-full border border-[#C2886D] object-cover"
+                  src={t.avatar}
+                  alt={`${t.name} avatar`}
+                  className="w-12 h-12 rounded-full border border-[#444]"
                 />
                 <div>
-                  <p className="text-white font-semibold text-sm">{t.name}</p>
-                  <p className="text-gray-400 text-xs">{t.role}</p>
+                  <div className="font-semibold text-white">{t.name}</div>
+                  <div className="text-sm text-gray-400">{t.platform}</div>
                 </div>
               </div>
+              <p className="text-gray-300 italic">“{t.quote}”</p>
             </div>
           ))}
         </div>
       </div>
     </section>
   );
-}
+} 

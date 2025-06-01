@@ -2,74 +2,51 @@
 
 import React from 'react';
 import QuietlyRichLandingHero from './QuietlyRichLandingHero';
-import TrustBar from './TrustBar';
-import HowItWorksContent from './HowItWorksContent'; 
-import PreviewGallery from './PreviewGallery';
-import ResultsProofBar from './ResultsProofBarFinal';
+import ResultsProofBarFinal from './ResultsProofBarFinal';
 import TestimonialsSectionFixed from './TestimonialsSectionFixed';
-import TryDemoSection from './TryDemoSection';
-import PricingSectionFixed from './PricingSectionFixed';
 import CompareBarFixed from './CompareBarFixed';
+import PreviewGallery from './PreviewGallery';
+import PricingSectionFixed from './PricingSectionFixed';
+import { FinalCTAAndFooter } from './FinalCTAAndFooter';
+import TrustBar from './TrustBar';
 import FAQSection from './FAQSection';
-import FinalCTAAndFooter from './FinalCTAAndFooter';
-import PricingSection from './PricingSectionFixed';
 
-type QuietlyRichLandingProps = {
-  fantasyMode: boolean;
-  setFantasyMode: (v: boolean) => void;
-};
-
-export default function QuietlyRichLanding({
-  fantasyMode,
-  setFantasyMode,
-}: QuietlyRichLandingProps) {
+export default function QuietlyRichLanding() {
   return (
-    <div className="relative">
-      {/* Floating Fantasy Mode ON Badge */}
-      {fantasyMode && (
-        <div className="fixed top-6 right-6 z-50 bg-[#6A00FF] text-white px-4 py-2 rounded-full shadow-lg animate-pulse pointer-events-none">
-          <span role="img" aria-label="Magic">🪄</span> Fantasy Mode ON
-        </div>
-      )}
+    <div className="bg-black text-white">
+      <QuietlyRichLandingHero />
 
-      {/* HERO SECTION */}
-      <QuietlyRichLandingHero
-        fantasyMode={fantasyMode}
-        setFantasyMode={setFantasyMode}
-      />
+      <section className="mt-16">
+        <ResultsProofBarFinal />
+      </section>
 
-      {/* TRUST BAR */}
-      <TrustBar />
+      <section className="mt-16">
+        <TestimonialsSectionFixed />
+      </section>
 
-      {/* HOW IT WORKS */}
-      <HowItWorksContent fantasyMode={fantasyMode} />
-
-      {/* PREVIEW GALLERY */}
-      <PreviewGallery fantasyMode={fantasyMode} />
-
-      {/* RESULTS BAR */}
-      <ResultsProofBar />
-
-      {/* TESTIMONIALS */}
-      <TestimonialsSectionFixed />
-
-      {/* TRY DEMO */}
-      <TryDemoSection />
-
-      {/* PRICING */}
-      <PricingSectionFixed />
-
-      {/* COMPARE BAR */}
-      <div className="max-w-6xl mx-auto">
-        <h3 className="text-2xl font-bold text-[#C2886D] text-center mb-4">How QuietlyRich Compares</h3>
+      <section className="mt-16">
         <CompareBarFixed />
-      </div>
+      </section>
 
-      {/* FAQ + NEWSLETTER */}
-      <FAQSection />
+      <section className="mt-16">
+        <PreviewGallery fantasyMode={false} />
+      </section>
 
-      {/* FINAL CTA + FOOTER */}
-      <FinalCTAAndFooter />
+      <section className="mt-16">
+        <PricingSectionFixed fantasyMode={false} />
+      </section>
+
+      <section className="mt-16">
+        <FAQSection />
+      </section>
+
+      <section className="mt-16">
+        <TrustBar />
+      </section>
+
+      <section className="mt-16">
+        <FinalCTAAndFooter />
+      </section>
     </div>
   );
 }

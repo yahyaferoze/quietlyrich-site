@@ -7,7 +7,10 @@ import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar from '../components/ProgressBar';
+
+// Voice context (if needed)
 import { useFantasyMode } from './FantasyModeContext';
+
 type TryDemoProps = {
   fantasyMode: boolean;
 };
@@ -54,7 +57,6 @@ function LoadingButton({
 }
 
 export default function TryDemo({ fantasyMode }: TryDemoProps) {
-
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
@@ -68,7 +70,6 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
   const [showPreviewButton, setShowPreviewButton] = useState(true);
   const [error, setError] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('Deep Male Voice');
-  const [dots, setDots] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [showScriptBox, setShowScriptBox] = useState(false);
   const [showPreviewPhone, setShowPreviewPhone] = useState(false);
@@ -102,253 +103,243 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
     }
   };
 
-  // ✅ SMOOTH: scroll first, then animate voice picker in
-  const generateVoice = async () => {
-    setTransitioning(true);
-    setShowScriptBox(false);
-
-    scrollToAnchor('step-anchor', -180); // scroll up first
-
-    setTimeout(() => {
-      const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
-      if (url) {
-        setAudioUrl(url);
-        setStep('voice');
-        setVoiceReady(true);
-
-        // Optional: delay CTA entrance for smoother pacing
-        setTimeout(() => setShowPreviewButton(true), 200);
-      } else {
-        setError('❌ Voice file not found for this combination.');
-      }
-
-      setTransitioning(false);
-    }, 500); // wait after scroll before changing layout
-  };
-
-  const generatePreview = async () => {
-    setStep('previewGen');
-    setShowPreviewPhone(false);
-
-    setTimeout(() => {
-      setStep('preview');
-    }, 1000);
-
-    setTimeout(() => {
-      setShowPreviewPhone(true);
-    }, 1400);
-
-    setTimeout(() => {
-      if (previewRef.current) {
-        previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 1600);
-  };
-
-  const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
-    const lines = script.split('\n').filter(line => line.trim() !== '');
-    const blocks: { type: string; text: string }[] = [];
-    lines.forEach(line => {
-      const splitIndex = line.indexOf(':');
-      if (splitIndex !== -1) {
-        blocks.push({
-          type: line.substring(0, splitIndex).trim(),
-          text: line.substring(splitIndex + 1).trim(),
-        });
-      }
-    });
-    return blocks;
-  };
-
-  const handleTopicSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const topicInput = selectedTopic.toLowerCase().trim();
-    const availableTopics = Object.keys(topics);
-    const matchedTopic = availableTopics.find(topic =>
-      topic.includes(topicInput)
-    );
-    if (matchedTopic) {
-      setSelectedTopic(matchedTopic);
-      setError('');
-      setStep('format');
-      scrollToAnchor('step-anchor');
-    } else {
-      setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
-    }
-  };
-
-  const handleFormatSelect = async (format: string) => {
-    setSelectedFormat(format);
-    if (!selectedTopic) return;
-    const topicKey = selectedTopic.toLowerCase().trim();
-    const scripts = (topics as any)[topicKey]?.[format];
-    if (!scripts) {
-      setError('❌ This format is locked for this topic.');
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      const combined = scripts
-        .map((block: any) => `${block.type.toUpperCase()}: ${block.text}`)
-        .join('\n\n');
-      setFullScript(combined);
-      setDisplayedText('');
-      setTyping(true);
+    // ✅ SMOOTH: scroll first, then animate voice picker in
+    const generateVoice = async () => {
+      setTransitioning(true);
       setShowScriptBox(false);
-      setStep('script');
-      setVoiceReady(false);
-      setShowPreviewButton(true);
-      setLoading(false);
-      scrollToAnchor('step-anchor');
-    }, 800);
-  };
-
-  useEffect(() => {
-    if (loading) {
-      const id = setInterval(() => {
-        setDots(d => (d.length < 3 ? d + '.' : ''));
-      }, 600);
-      return () => clearInterval(id);
-    }
-  }, [loading]);
-
-  useEffect(() => {
-    if (typing && fullScript) {
-      let index = 0;
-      const tid = setTimeout(async () => {
-        setShowScriptBox(true);
-        while (index < fullScript.length) {
-          setDisplayedText(prev => prev + fullScript[index]);
-          if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
-            await new Promise(r => setTimeout(r, 300));
-          } else {
-            await new Promise(r => setTimeout(r, 18));
+  
+      scrollToAnchor('step-anchor', -180); // scroll up first
+  
+      setTimeout(() => {
+        const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
+        if (url) {
+          setAudioUrl(url);
+          setStep('voice');
+          setVoiceReady(true);
+  
+          // Optional: delay CTA entrance for smoother pacing
+          setTimeout(() => setShowPreviewButton(true), 200);
+        } else {
+          setError('❌ Voice file not found for this combination.');
+        }
+  
+        setTransitioning(false);
+      }, 500); // wait after scroll before changing layout
+    };
+  
+    const generatePreview = async () => {
+      setStep('previewGen');
+      setShowPreviewPhone(false);
+  
+      setTimeout(() => {
+        setStep('preview');
+      }, 1000);
+  
+      setTimeout(() => {
+        setShowPreviewPhone(true);
+      }, 1400);
+  
+      setTimeout(() => {
+        if (previewRef.current) {
+          previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 1600);
+    };
+  
+    const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
+      const lines = script.split('\n').filter(line => line.trim() !== '');
+      const blocks: { type: string; text: string }[] = [];
+      lines.forEach(line => {
+        const splitIndex = line.indexOf(':');
+        if (splitIndex !== -1) {
+          blocks.push({
+            type: line.substring(0, splitIndex).trim(),
+            text: line.substring(splitIndex + 1).trim(),
+          });
+        }
+      });
+      return blocks;
+    };
+    const handleTopicSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      const topicInput = selectedTopic.toLowerCase().trim();
+      const availableTopics = Object.keys(topics);
+      const matchedTopic = availableTopics.find(topic =>
+        topic.includes(topicInput)
+      );
+      if (matchedTopic) {
+        setSelectedTopic(matchedTopic);
+        setError('');
+        setStep('format');
+        scrollToAnchor('step-anchor');
+      } else {
+        setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
+      }
+    };
+  
+    const handleFormatSelect = async (format: string) => {
+      setSelectedFormat(format);
+      if (!selectedTopic) return;
+      const topicKey = selectedTopic.toLowerCase().trim();
+      const scripts = (topics as any)[topicKey]?.[format];
+      if (!scripts) {
+        setError('❌ This format is locked for this topic.');
+        return;
+      }
+      setLoading(true);
+      setTimeout(() => {
+        const combined = scripts
+          .map((block: any) => `${block.type.toUpperCase()}: ${block.text}`)
+          .join('\n\n');
+        setFullScript(combined);
+        setDisplayedText('');
+        setTyping(true);
+        setShowScriptBox(false);
+        setStep('script');
+        setVoiceReady(false);
+        setShowPreviewButton(true);
+        setLoading(false);
+        scrollToAnchor('step-anchor');
+      }, 800);
+    };
+  
+    useEffect(() => {
+      if (loading) {
+        const id = setInterval(() => {
+          setDots(d => (d.length < 3 ? d + '.' : ''));
+        }, 600);
+        return () => clearInterval(id);
+      }
+    }, [loading]);
+  
+    useEffect(() => {
+      if (typing && fullScript) {
+        let index = 0;
+        const tid = setTimeout(async () => {
+          setShowScriptBox(true);
+          while (index < fullScript.length) {
+            setDisplayedText(prev => prev + fullScript[index]);
+            if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
+              await new Promise(r => setTimeout(r, 300));
+            } else {
+              await new Promise(r => setTimeout(r, 18));
+            }
+            index++;
           }
-          index++;
-        }
-        setTyping(false);
-        const el = document.getElementById('voice-actions');
-        if (window.innerWidth < 768 && el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 500);
-      return () => clearTimeout(tid);
-    }
-  }, [typing, fullScript]);
-
-  // === The rest of the UI code (see previous message) ===
-  // ... everything from:
-  // return (
-  //   <section className="py-8 bg-black text-white min-h-screen overflow-hidden">
-  // ...
-  // to the end, closing all brackets as needed.
-
-  return (
-    <section className="py-8 bg-black text-white min-h-screen overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-12">
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-black pb-4 shadow-md shadow-[#C2886D]/10" id="step-anchor">
-          <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">
-            Try QuietlyRich Demo
-          </h2>
-          <div className="max-w-xl mx-auto">
-            <ProgressBar currentStep={step} />
+          setTyping(false);
+          const el = document.getElementById('voice-actions');
+          if (window.innerWidth < 768 && el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 500);
+        return () => clearTimeout(tid);
+      }
+    }, [typing, fullScript]);
+    return (
+      <section className="py-8 bg-black text-white min-h-screen overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-12">
+          {/* Sticky Header */}
+          <div className="sticky top-0 z-20 bg-black pb-4 shadow-md shadow-[#C2886D]/10" id="step-anchor">
+            <h2 className="text-4xl font-bold text-[#C2886D] text-center mb-2">
+              Try QuietlyRich Demo
+            </h2>
+            <div className="max-w-xl mx-auto">
+              <ProgressBar currentStep={step} />
+            </div>
           </div>
-        </div>
-
-        <p className="text-gray-400 text-center mb-6">
-          Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
-        </p>
-
-        {/* Two-Column Layout */}
-        <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
-          {/* Left Column */}
-          <div className="w-full lg:w-1/2">
-            <AnimatePresence mode="wait">
-              {step === 'topic' && (
-                <motion.form
-                  key="topic"
-                  onSubmit={handleTopicSubmit}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
-                >
-                  <span className="text-sm text-gray-500 mb-1 block">
-                    Step 1 of 5: Choose Your Topic
-                  </span>
-                  <h3 className="text-xl font-semibold mb-1">
-                    🔍 What do you want to make a video about?
-                  </h3>
-                  <p className="text-xs text-gray-400 italic mb-2">
-                    For example:{' '}
-                    <span className="text-[#C2886D]">Why rich people stay quiet</span>,{' '}
-                    <span className="text-[#C2886D]">Budget eating</span>,{' '}
-                    <span className="text-[#C2886D]">Focus tips</span>...
-                  </p>
-                  <input
-                    type="text"
-                    placeholder="Type your topic..."
-                    value={selectedTopic}
-                    onChange={e => setSelectedTopic(e.target.value)}
-                    className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
-                  />
-                  {error && <div className="text-red-400 text-sm">{error}</div>}
-                  <LoadingButton
-                    onClick={() => {
-                      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-                      handleTopicSubmit(fakeEvent);
-                    }}
-                    loading={loading}
+  
+          <p className="text-gray-400 text-center mb-6">
+            Turn any idea into a voice-powered, scroll-stopping video. In 30 seconds.
+          </p>
+  
+          {/* Two-Column Layout */}
+          <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
+            {/* Left Column */}
+            <div className="w-full lg:w-1/2">
+              <AnimatePresence mode="wait">
+                {step === 'topic' && (
+                  <motion.form
+                    key="topic"
+                    onSubmit={handleTopicSubmit}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-4"
                   >
-                    🔎 Search Topics
-                  </LoadingButton>
-                </motion.form>
-              )}
-
-              {step === 'format' && (
-                <motion.div
-                  key="formats"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
-                >
-                  <span className="text-sm text-gray-500 mb-1 block">
-                    Step 2 of 5: Choose a Funnel Format
-                  </span>
-                  <h3 className="text-xl font-semibold mb-1">🛠 Choose a video style</h3>
-                  <p className="text-xs text-gray-400 italic mb-2">
-                    Want to hook viewers or drop pure value? Pick your approach.
-                  </p>
-                  {['Hook Video', 'Value Drop'].map(format => (
-                    <div
-                      key={format}
-                      onClick={() => handleFormatSelect(format)}
-                      className="flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition border-[#444] bg-[#111] hover:border-[#C2886D]"
+                    <span className="text-sm text-gray-500 mb-1 block">
+                      Step 1 of 5: Choose Your Topic
+                    </span>
+                    <h3 className="text-xl font-semibold mb-1">
+                      🔍 What do you want to make a video about?
+                    </h3>
+                    <p className="text-xs text-gray-400 italic mb-2">
+                      For example:{' '}
+                      <span className="text-[#C2886D]">Why rich people stay quiet</span>,{' '}
+                      <span className="text-[#C2886D]">Budget eating</span>,{' '}
+                      <span className="text-[#C2886D]">Focus tips</span>...
+                    </p>
+                    <input
+                      type="text"
+                      placeholder="Type your topic..."
+                      value={selectedTopic}
+                      onChange={e => setSelectedTopic(e.target.value)}
+                      className="w-full bg-[#111] border-2 border-[#C2886D] p-3 rounded-md text-white placeholder-gray-500 text-sm"
+                    />
+                    {error && <div className="text-red-400 text-sm">{error}</div>}
+                    <LoadingButton
+                      onClick={() => {
+                        const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+                        handleTopicSubmit(fakeEvent);
+                      }}
+                      loading={loading}
                     >
-                      <div className="font-medium">{format}</div>
-                      <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">
-                        Use →
-                      </button>
-                    </div>
-                  ))}
-                </motion.div>
+                      🔎 Search Topics
+                    </LoadingButton>
+                  </motion.form>
+                )}
+  
+                {step === 'format' && (
+                  <motion.div
+                    key="formats"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-4"
+                  >
+                    <span className="text-sm text-gray-500 mb-1 block">
+                      Step 2 of 5: Choose a Funnel Format
+                    </span>
+                    <h3 className="text-xl font-semibold mb-1">🛠 Choose a video style</h3>
+                    <p className="text-xs text-gray-400 italic mb-2">
+                      Want to hook viewers or drop pure value? Pick your approach.
+                    </p>
+                    {['Hook Video', 'Value Drop'].map(format => (
+                      <div
+                        key={format}
+                        onClick={() => handleFormatSelect(format)}
+                        className="flex justify-between items-center p-3 rounded-lg border h-24 cursor-pointer transition border-[#444] bg-[#111] hover:border-[#C2886D]"
+                      >
+                        <div className="font-medium">{format}</div>
+                        <button className="bg-[#C2886D] text-black px-3 py-1 rounded-md text-sm">
+                          Use →
+                        </button>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+  
+            {/* Right Column Placeholder (optional phone or loading state can go here) */}
+            <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
+              {(step === 'topic' || step === 'format') && (
+                <div className="text-center text-gray-400 mt-6">
+                  <p>Loading {step === 'topic' ? 'Topic Options' : 'Formats'}...</p>
+                </div>
               )}
-            </AnimatePresence>
+            </div>
           </div>
-
-          {/* Right Column */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center" id="preview-right">
-            {(step === 'topic' || step === 'format') && (
-              <div className="text-center text-gray-400 mt-6">
-                <p>Loading {step === 'topic' ? 'Topic Options' : 'Formats'}...</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Step 3: Script Reveal */}
+                  {/* Step 3: Script Reveal */}
         <AnimatePresence mode="wait">
           {step === 'script' && showScriptBox && !transitioning && (
             <motion.div
@@ -470,9 +461,8 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ✅ Voice Ready confirmation */}
-        <AnimatePresence>
+                {/* ✅ Voice Ready confirmation */}
+                <AnimatePresence>
           {step === 'voice' && voiceReady && !transitioning && (
             <motion.div
               key="voiceready"
@@ -495,7 +485,7 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
               key="genpreview"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               className="mt-4"
             >
@@ -581,9 +571,8 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
             )}
           </div>
         )}
-
-        {/* ✅ Sticky CTA Band */}
-        {step === 'preview' && (
+                {/* ✅ Sticky CTA Band */}
+                {step === 'preview' && (
           <div className="sticky bottom-0 z-30 bg-black border-t border-[#333] px-4 py-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
             <a href="/demo-output">
               <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
@@ -630,4 +619,8 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
       </div>
     </section>
   );
+}
+
+function setDots(arg0: (d: any) => string) {
+  throw new Error('Function not implemented.');
 }

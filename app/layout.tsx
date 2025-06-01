@@ -1,33 +1,26 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { FantasyModeProvider } from "./components/FantasyModeContext";
-import BodyWithFantasyMode from "./components/BodyWithFantasyMode";
+import './globals.css';
+import { Inter } from 'next/font/google';
+import { Metadata } from 'next';
+import { FantasyModeProvider } from './components/FantasyModeContext';
+import BodyWithFantasyMode from './components/BodyWithFantasyMode';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Quietly Rich",
-  description: "Build faceless video brands effortlessly",
+  title: 'QuietlyRich – Faceless Video Scripts & AI Content',
+  description: 'Turn any idea into a scroll-stopping, faceless video script powered by AI. Try it free.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <FantasyModeProvider>
-        <BodyWithFantasyMode>{children}</BodyWithFantasyMode>
-      </FantasyModeProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <FantasyModeProvider>
+          <BodyWithFantasyMode>
+            {children}
+          </BodyWithFantasyMode>
+        </FantasyModeProvider>
+      </body>
     </html>
   );
 }
