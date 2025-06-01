@@ -18,7 +18,7 @@ type Props = {
 
 export default function QuietlyRichLanding({ fantasyMode, setFantasyMode }: Props) {
   return (
-    <div className="bg-black text-white">
+    <div className={fantasyMode ? 'fantasy-mode bg-black text-white' : 'bg-black text-white'}>
       <QuietlyRichLandingHero />
 
       <section className="mt-16">

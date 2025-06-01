@@ -5,7 +5,7 @@ import QuietlyRichLanding from './components/QuietlyRichLanding';
 import { useFantasyMode } from './components/FantasyModeContext';
 
 export default function Home() {
-  const { fantasyMode, setFantasyMode } = useFantasyMode(); // ✅ extract both
+  const { fantasyMode, setFantasyMode } = useFantasyMode(); // ✅ required
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -15,6 +15,6 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+    <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} /> // ✅ pass props
   );
 }
