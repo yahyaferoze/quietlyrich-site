@@ -9,4 +9,4 @@ export default function Home() {
   return (
     <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
   );
-} 
+}
