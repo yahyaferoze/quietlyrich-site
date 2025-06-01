@@ -1,20 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import QuietlyRichLanding from './components/QuietlyRichLanding';
-import { useFantasyMode } from './components/FantasyModeContext';
 
 export default function Home() {
-  const { fantasyMode, setFantasyMode } = useFantasyMode(); // ✅ required
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+  const [fantasyMode, setFantasyMode] = useState(false);
 
   return (
-    <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} /> // ✅ pass props
+    <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
   );
 }
