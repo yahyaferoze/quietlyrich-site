@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import HowItWorksContent from '@/app/components/HowItWorksContent';
+import HowItWorksContent from '@/components/HowItWorksContent';
 
 export default function HowItWorksPage() {
   const [fantasyMode] = useState(false);
