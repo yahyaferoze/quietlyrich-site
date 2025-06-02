@@ -1,6 +1,8 @@
-'use client';
+'use client'; // ✅ Must be at the very top
+
 import React, { useState } from 'react';
-import TryDemo from '@/components/TryDemo';
+import TryDemo from '../components/TryDemo';// ✅ Adjust path only if needed
+
 export default function TryDemoPage() {
   const [fantasyMode, setFantasyMode] = useState(false);
 
