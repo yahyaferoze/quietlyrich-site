@@ -7,9 +7,12 @@ import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar from '../components/ProgressBar';
-import { StepKey } from '../components/ProgressBar';
+import { StepKey } from './ProgressBar';
 
-const [step, setStep] = useState<StepKey>('topic');
+
+const [step, setStep] = useState<StepKey>(StepKey.topic); // works!
+
+
 // Voice context (if needed)
 import { useFantasyMode } from './FantasyModeContext';
 
