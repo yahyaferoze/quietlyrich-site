@@ -28,7 +28,8 @@ export default function QuietlyRichLandingPage({ fantasyMode, setFantasyMode }: 
           {fantasyMode ? 'Exit Fantasy Mode' : 'Try Fantasy Mode'}
         </button>
       </div>
-      <QuietlyRichLandingHero />
+      <QuietlyRichLandingHero fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+    
 
       <section className="mt-16">
         <ResultsProofBarFinal />
