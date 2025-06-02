@@ -6,9 +6,7 @@ import TikTokPhonePreview from './TikTokPhonePreview';
 import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import ProgressBar from '../components/ProgressBar';
-import { StepKey } from './ProgressBar';
-
+import ProgressBar, { StepKey } from '../components/ProgressBar';
 
 const [step, setStep] = useState<StepKey>(StepKey.topic); // works!
 

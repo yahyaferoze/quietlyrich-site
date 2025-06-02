@@ -2,12 +2,32 @@
 
 import React from 'react';
 
-type ProgressBarProps = {
-  currentStep: 'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview';
+// This object is used at runtime (value)
+export const StepKey = {
+  topic: 'topic',
+  format: 'format',
+  script: 'script',
+  voice: 'voice',
+  previewGen: 'previewGen',
+  preview: 'preview',
+} as const;
+
+// This type is used at compile-time (type)
+export type StepKey = keyof typeof StepKey;
+
+export type ProgressBarProps = {
+  currentStep: StepKey;
 };
 
 export default function ProgressBar({ currentStep }: ProgressBarProps) {
-  const steps = ['topic', 'format', 'script', 'voice', 'previewGen', 'preview'];
+  const steps: StepKey[] = [
+    StepKey.topic,
+    StepKey.format,
+    StepKey.script,
+    StepKey.voice,
+    StepKey.previewGen,
+    StepKey.preview,
+  ];
   const currentIndex = steps.indexOf(currentStep);
 
   return (
