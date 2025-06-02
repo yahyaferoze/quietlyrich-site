@@ -1,7 +1,8 @@
-'use client'; // ✅ Must be at the very top
+'use client'; // Must be FIRST!
+export const dynamic = 'force-dynamic';
 
 import React, { useState } from 'react';
-import TryDemo from '../components/TryDemo';// ✅ Adjust path only if needed
+import TryDemo from '../components/TryDemo'; // or adjust relative path if needed
 
 export default function TryDemoPage() {
   const [fantasyMode, setFantasyMode] = useState(false);
@@ -12,3 +13,4 @@ export default function TryDemoPage() {
     </main>
   );
 }
+
