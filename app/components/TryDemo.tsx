@@ -7,13 +7,19 @@ import { topics } from '../lib/scripts';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar from '../components/ProgressBar';
+import { StepKey } from '../components/ProgressBar';
 
+const [step, setStep] = useState<StepKey>('topic');
 // Voice context (if needed)
 import { useFantasyMode } from './FantasyModeContext';
 
 type TryDemoProps = {
   fantasyMode: boolean;
+  setFantasyMode: (value: boolean) => void;
 };
+
+export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
+  // rest of your code...
 
 function LoadingButton({
   onClick,
@@ -56,7 +62,7 @@ function LoadingButton({
   );
 }
 
-export default function TryDemo({ fantasyMode }: TryDemoProps) {
+
   const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
@@ -77,6 +83,14 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
   const previewRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const stepMap = {
+    topic: 1,
+    format: 2,
+    script: 3,
+    voice: 4,
+    previewGen: 5,
+    preview: 5,
+  };
   const voices = [
     { id: 1, name: 'Deep Male Voice' },
     { id: 2, name: 'Natural Female Voice' },
@@ -244,7 +258,7 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
               Try QuietlyRich Demo
             </h2>
             <div className="max-w-xl mx-auto">
-              <ProgressBar currentStep={step} />
+            <ProgressBar currentStep={step} />
             </div>
           </div>
   
