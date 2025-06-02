@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import QuietlyRichLanding from './components/QuietlyRichLanding';
+import QuietlyRichLandingPage from './components/QuietlyRichLandingPage';
 
 export default function Home() {
   const [fantasyMode, setFantasyMode] = useState(false);
 
   return (
-    <QuietlyRichLanding fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+    <QuietlyRichLandingPage fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
   );
 }
