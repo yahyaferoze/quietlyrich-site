@@ -1,8 +1,8 @@
 'use client';
-export const dynamic = 'force-dynamic'; // ✅ Fixes the prerender error
+export const dynamic = 'force-dynamic'; // ✅ prevent Next from server-rendering this
 
 import React, { useState } from 'react';
-import TryDemo from '@/components/TryDemo';// ✅ Confirmed correct from your folder tree
+import TryDemo from '@/components/TryDemo'; // ✅ Use @ path alias to avoid path issues
 
 export default function TryDemoPage() {
   const [fantasyMode, setFantasyMode] = useState(false);
