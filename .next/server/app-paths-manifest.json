@@ -1,9 +1,1 @@
-{
-  "/api/demo-samples/route": "app/api/demo-samples/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/generate-voice/route": "app/api/generate-voice/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/api/generate-script/route": "app/api/generate-script/route.js",
-  "/page": "app/page.js",
-  "/demo-output/page": "app/demo-output/page.js"
-}
+{}
