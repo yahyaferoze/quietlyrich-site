@@ -16,7 +16,7 @@ type Props = {
   setFantasyMode: (value: boolean) => void;
 };
 
-export default function QuietlyRichLanding({ fantasyMode, setFantasyMode }: Props) {
+export default function QuietlyRichLandingPage({ fantasyMode, setFantasyMode }: Props) {
   return (
     <div className={fantasyMode ? 'fantasy-mode bg-black text-white' : 'bg-black text-white'}>
       {/* Example toggle button for Fantasy Mode */}
