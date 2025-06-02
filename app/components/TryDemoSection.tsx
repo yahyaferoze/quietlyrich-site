@@ -5,9 +5,10 @@ import TryDemo from '../components/TryDemo';
 
 type Props = {
   fantasyMode: boolean;
+  setFantasyMode: (value: boolean) => void;
 };
 
-export default function TryDemoSection({ fantasyMode }: Props) {
+export default function TryDemoSection({ fantasyMode, setFantasyMode }: Props) {
   return (
     <section id="try-demo" className="bg-black text-white py-16 border-t border-[#222]">
       <div className="max-w-7xl mx-auto px-6 md:px-10">
@@ -22,7 +23,7 @@ export default function TryDemoSection({ fantasyMode }: Props) {
         </div>
 
         {/* Actual Interactive Demo */}
-        <TryDemo fantasyMode={fantasyMode} />
+        <TryDemo fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
       </div>
     </section>
   );
