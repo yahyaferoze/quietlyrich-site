@@ -1,8 +1,8 @@
 'use client';
-export const dynamic = 'force-dynamic'; // ✅ prevent Next from server-rendering this
+export const dynamic = 'force-dynamic'; // ✅ Prevents static rendering
 
 import React, { useState } from 'react';
-import TryDemo from '@/components/TryDemo'; // ✅ Use @ path alias to avoid path issues
+import TryDemo from '@/components/TryDemo'; // ✅ Use alias if set correctly in tsconfig
 
 export default function TryDemoPage() {
   const [fantasyMode, setFantasyMode] = useState(false);
@@ -13,3 +13,4 @@ export default function TryDemoPage() {
     </main>
   );
 }
+

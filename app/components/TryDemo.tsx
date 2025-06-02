@@ -8,7 +8,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import ProgressBar, { StepKey } from '../components/ProgressBar';
 
-const [step, setStep] = useState<StepKey>(StepKey.topic); // works!
+export const dynamic = 'force-dynamic';
 
 
 // Voice context (if needed)
@@ -22,6 +22,7 @@ type TryDemoProps = {
 export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
   // rest of your code...
 
+const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
 function LoadingButton({
   onClick,
   loading,
@@ -62,10 +63,7 @@ function LoadingButton({
     </motion.button>
   );
 }
-
-
-  const [step, setStep] = useState<'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview'>('topic');
-  const [selectedTopic, setSelectedTopic] = useState('');
+ const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [fullScript, setFullScript] = useState<string>('');
   const [displayedText, setDisplayedText] = useState('');
