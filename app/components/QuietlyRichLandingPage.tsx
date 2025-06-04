@@ -21,7 +21,7 @@ type Props = {
 const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
   return (
     <div className="bg-black text-white">
-      <QuietlyRichLandingHero fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+     <QuietlyRichLandingHero />
 
       <section className="mt-16">
         <ResultsProofBarFinal />

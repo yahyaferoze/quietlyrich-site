@@ -2,26 +2,21 @@
 
 import React from 'react';
 import Link from 'next/link';
-import FantasyToggle from './FantasyToggle'; // ✅ Make sure this path is correct
+import FantasyToggle from './FantasyToggle'; // already uses context
 
-type Props = {
-  fantasyMode: boolean;
-  setFantasyMode: (value: boolean) => void;
-};
-
-export default function QuietlyRichLandingHero({ fantasyMode, setFantasyMode }: Props) {
+export default function QuietlyRichLandingHero() {
   return (
     <section className="relative overflow-hidden px-6 pt-32 pb-24 md:pt-40 md:pb-32 bg-black text-white">
       {/* Glowing background shapes */}
       <div className="absolute w-[700px] h-[700px] bg-[#6A00FF]/20 blur-[200px] rounded-full -top-40 -left-40 z-0 pointer-events-none" />
       <div className="absolute w-[500px] h-[500px] bg-[#C2886D]/20 blur-[160px] rounded-full -bottom-20 -right-20 z-0 pointer-events-none" />
 
-      {/* Fantasy Toggle top right */}
-      <div className="mt-4">
-  <FantasyToggle />
-</div>
+      {/* Fantasy Toggle */}
+      <div className="absolute top-6 right-6 sm:top-8 sm:right-10 z-20">
+        <FantasyToggle />
+      </div>
 
-      {/* Main content */}
+      {/* Main Content */}
       <div className="max-w-6xl mx-auto relative z-10 text-center">
         <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight glow-text">
           Launch a Faceless Brand<br />People Actually Watch
@@ -49,4 +44,3 @@ export default function QuietlyRichLandingHero({ fantasyMode, setFantasyMode }: 
     </section>
   );
 }
-
