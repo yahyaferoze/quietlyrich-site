@@ -5,11 +5,12 @@ import QuietlyRichLandingHero from './QuietlyRichLandingHero';
 import ResultsProofBarFinal from './ResultsProofBarFinal';
 import TestimonialsSectionFixed from './TestimonialsSectionFixed';
 import CompareBarFixed from './CompareBarFixed';
-import PreviewGallery from './PreviewGallery';
+//import PreviewGallery from './PreviewGallery';//
 import PricingSectionFixed from './PricingSectionFixed';
 import FinalCTAAndFooter from './FinalCTAAndFooter';
 import TrustBar from './TrustBar';
 import FAQSection from './FAQSection';
+import VideoPreviewGallery from './VideoPreviewGallery';
 
 type Props = {
   fantasyMode: boolean;
@@ -44,7 +45,7 @@ export default function QuietlyRichLandingPage({ fantasyMode, setFantasyMode }: 
       </section>
 
       <section className="mt-16">
-        <PreviewGallery fantasyMode={fantasyMode} />
+        <VideoPreviewGallery />
       </section>
 
       <section className="mt-16">
