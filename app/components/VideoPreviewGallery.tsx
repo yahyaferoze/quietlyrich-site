@@ -9,7 +9,7 @@ const videos = [
     caption: '"Number 3 will change your life..."',
     views: '2.3M',
     category: 'Finance',
-    videoSrc: '/videos/passive-income.mp4',
+    videoSrc: '/passive-income.mp4',
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const videos = [
     caption: '"These powers are actually terrifying..."',
     views: '1.8M',
     category: 'Anime',
-    videoSrc: '/videos/anime-reality.mp4',
+    videoSrc: '/anime-reality.mp4',
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ const videos = [
     caption: '"Stop doing this immediately..."',
     views: '3.1M',
     category: 'Fitness',
-    videoSrc: '/videos/gym-mistakes.mp4',
+    videoSrc: '/gym-mistakes.mp4',
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ const videos = [
     caption: '"This works on everyone..."',
     views: '4.2M',
     category: 'Psychology',
-    videoSrc: '/videos/psychology-tricks.mp4',
+    videoSrc: '/psychology-tricks.mp4',
   },
   {
     id: 5,
@@ -41,7 +41,7 @@ const videos = [
     caption: '"Scientists are baffled..."',
     views: '1.9M',
     category: 'History',
-    videoSrc: '/videos/ancient-mysteries.mp4',
+    videoSrc: '/ancient-mysteries.mp4',
   },
 ];
 
@@ -56,7 +56,6 @@ export default function VideoPreviewGallery() {
           Real faceless videos going viral right now. Each one created in under 30 seconds.
         </p>
 
-        {/* Scrollable row */}
         <div className="flex overflow-x-auto gap-6 hide-scrollbar justify-center px-1">
           {videos.map((video) => (
             <div
@@ -70,7 +69,7 @@ export default function VideoPreviewGallery() {
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-t-xl"
                 />
                 <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
                   {video.category}
