@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 const videos = [
   {
@@ -10,7 +9,7 @@ const videos = [
     caption: '"Number 3 will change your life..."',
     views: '2.3M',
     category: 'Finance',
-    thumbnail: '/assets/video1.jpg',
+    videoSrc: '/videos/passive-income.mp4',
   },
   {
     id: 2,
@@ -18,7 +17,7 @@ const videos = [
     caption: '"These powers are actually terrifying..."',
     views: '1.8M',
     category: 'Anime',
-    thumbnail: '/assets/video2.jpg',
+    videoSrc: '/videos/anime-reality.mp4',
   },
   {
     id: 3,
@@ -26,7 +25,7 @@ const videos = [
     caption: '"Stop doing this immediately..."',
     views: '3.1M',
     category: 'Fitness',
-    thumbnail: '/assets/video3.jpg',
+    videoSrc: '/videos/gym-mistakes.mp4',
   },
   {
     id: 4,
@@ -34,7 +33,7 @@ const videos = [
     caption: '"This works on everyone..."',
     views: '4.2M',
     category: 'Psychology',
-    thumbnail: '/assets/video4.jpg',
+    videoSrc: '/videos/psychology-tricks.mp4',
   },
   {
     id: 5,
@@ -42,7 +41,7 @@ const videos = [
     caption: '"Scientists are baffled..."',
     views: '1.9M',
     category: 'History',
-    thumbnail: '/assets/video5.jpg',
+    videoSrc: '/videos/ancient-mysteries.mp4',
   },
 ];
 
@@ -57,38 +56,38 @@ export default function VideoPreviewGallery() {
           Real faceless videos going viral right now. Each one created in under 30 seconds.
         </p>
 
-        {/* Scrollable horizontal video row */}
-        <div className="overflow-x-auto">
-          <div className="flex gap-6 w-max px-1 hide-scrollbar">
-            {videos.map((video) => (
-              <div
-                key={video.id}
-                className="w-[220px] h-[390px] bg-[#111] rounded-xl overflow-hidden border border-[#222] shadow-md flex-shrink-0 relative"
-              >
-                <div className="relative w-full h-[300px]">
-                  <Image
-                    src={video.thumbnail}
-                    alt={video.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
-                    {video.category}
-                  </div>
-                  <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-semibold px-2 py-1 rounded">
-                    👁 {video.views}
-                  </div>
+        {/* Scrollable row */}
+        <div className="flex overflow-x-auto gap-6 hide-scrollbar justify-center px-1">
+          {videos.map((video) => (
+            <div
+              key={video.id}
+              className="min-w-[220px] max-w-[240px] bg-[#0f0f0f] rounded-xl overflow-hidden border border-[#222] flex-shrink-0 shadow-md hover:shadow-[#3B82F6]/30 transition"
+            >
+              <div className="relative w-full h-60 bg-black">
+                <video
+                  src={video.videoSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
+                  {video.category}
                 </div>
-                <div className="p-3">
-                  <h3 className="text-sm font-semibold leading-snug mb-1">{video.title}</h3>
-                  <p className="text-xs italic text-gray-400">{video.caption}</p>
+                <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-semibold px-2 py-1 rounded">
+                  👁 {video.views}
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="p-4">
+                <h3 className="text-sm font-semibold leading-snug mb-1">{video.title}</h3>
+                <p className="text-xs italic text-gray-400">{video.caption}</p>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Metrics Row */}
+        {/* Metrics */}
         <div className="flex flex-wrap justify-center gap-8 mt-16 text-center text-sm sm:text-base">
           <div className="text-[#3B82F6] font-bold">
             12M+ <span className="text-white block font-normal">Total Views</span>
