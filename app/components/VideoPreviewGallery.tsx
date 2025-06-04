@@ -1,74 +1,103 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const videos = [
   {
-    title: 'Passive Income Hack 💸',
-    src: '/assets/quietlyrich-homepage-clip-1.mp4',
+    id: 1,
+    title: '5 Passive Income Ideas That Work',
+    caption: '"Number 3 will change your life..."',
+    views: '2.3M',
+    category: 'Finance',
+    thumbnail: '/assets/video1.jpg',
   },
   {
-    title: 'Hidden Anime Details 👀',
-    src: '/assets/quietlyrich-homepage-clip-2.mp4',
+    id: 2,
+    title: 'Anime Characters Who Could End Reality',
+    caption: '"These powers are actually terrifying..."',
+    views: '1.8M',
+    category: 'Anime',
+    thumbnail: '/assets/video2.jpg',
   },
   {
-    title: 'AI Body Transformation 💪',
-    src: '/assets/quietlyrich-homepage-clip-3.mp4',
+    id: 3,
+    title: 'Gym Mistakes Killing Your Gains',
+    caption: '"Stop doing this immediately..."',
+    views: '3.1M',
+    category: 'Fitness',
+    thumbnail: '/assets/video3.jpg',
   },
   {
-    title: 'Productivity Hacks 🚀',
-    src: '/assets/quietlyrich-homepage-clip-4.mp4',
+    id: 4,
+    title: 'Psychology Tricks That Control Minds',
+    caption: '"This works on everyone..."',
+    views: '4.2M',
+    category: 'Psychology',
+    thumbnail: '/assets/video4.jpg',
   },
   {
-    title: 'TikTok Faceless Fitness 🧘',
-    src: '/assets/quietlyrich-homepage-clip-5.mp4',
-  },
-  {
-    title: 'Tech in 30 Seconds ⚙️',
-    src: '/assets/quietlyrich-homepage-clip-6.mp4',
+    id: 5,
+    title: 'Ancient Mysteries Still Unsolved',
+    caption: '"Scientists are baffled..."',
+    views: '1.9M',
+    category: 'History',
+    thumbnail: '/assets/video5.jpg',
   },
 ];
 
 export default function VideoPreviewGallery() {
   return (
-    <section className="bg-black py-20 px-6 md:px-12 border-t border-[#1a1a1a]">
-      <div className="max-w-6xl mx-auto text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold text-[#C2886D] mb-4"
-        >
-          See QuietlyRich in Action
-        </motion.h2>
-
-        <p className="text-gray-400 mb-10 text-lg max-w-2xl mx-auto">
-          Real faceless videos created with QuietlyRich. These convert, captivate, and cost nothing to make.
+    <section className="bg-black text-white py-20 px-6">
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+          Viral Videos Made by <span className="text-[#3B82F6]">QuietlyRich</span>
+        </h2>
+        <p className="text-gray-400 max-w-2xl mx-auto mb-10">
+          Real faceless videos going viral right now. Each one created in under 30 seconds.
         </p>
 
-        <div className="overflow-x-scroll no-scrollbar flex gap-6 pb-2">
-          {videos.map((video, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              viewport={{ once: true }}
-              className="min-w-[240px] max-w-[240px] rounded-xl overflow-hidden shadow-lg shadow-[#C2886D]/10 border border-[#1a1a1a] bg-[#111]"
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          {videos.map((video) => (
+            <div
+              key={video.id}
+              className="bg-[#111] rounded-xl overflow-hidden border border-[#222]"
             >
-              <video
-                src={video.src}
-                playsInline
-                muted
-                autoPlay
-                loop
-                className="w-full h-[430px] object-cover"
-              />
-              <div className="text-sm text-white p-3 font-medium">{video.title}</div>
-            </motion.div>
+              <div className="relative w-full h-60">
+                <Image
+                  src={video.thumbnail}
+                  alt={video.title}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
+                  {video.category}
+                </div>
+                <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-semibold px-2 py-1 rounded">
+                  👁 {video.views}
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="text-sm font-semibold leading-snug mb-1">{video.title}</h3>
+                <p className="text-xs italic text-gray-400">{video.caption}</p>
+              </div>
+            </div>
           ))}
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-8 mt-16 text-center text-sm sm:text-base">
+          <div className="text-[#3B82F6] font-bold">
+            12M+ <span className="text-white block font-normal">Total Views</span>
+          </div>
+          <div className="text-[#3B82F6] font-bold">
+            850K+ <span className="text-white block font-normal">Videos Created</span>
+          </div>
+          <div className="text-[#3B82F6] font-bold">
+            25 <span className="text-white block font-normal">Viral Niches</span>
+          </div>
+          <div className="text-purple-400 font-bold">
+            4.9/5 <span className="text-white block font-normal">Creator Rating</span>
+          </div>
         </div>
       </div>
     </section>
