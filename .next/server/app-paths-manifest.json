@@ -1,0 +1,12 @@
+{
+  "/api/demo-samples/route": "app/api/demo-samples/route.js",
+  "/api/generate-script/route": "app/api/generate-script/route.js",
+  "/api/generate-voice/route": "app/api/generate-voice/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/demo-output/page": "app/demo-output/page.js",
+  "/components/how-it-works /page": "app/components/how-it-works /page.js",
+  "/page": "app/page.js",
+  "/how-it-works /page": "app/how-it-works /page.js",
+  "/components/trydemo/page": "app/components/trydemo/page.js"
+}
