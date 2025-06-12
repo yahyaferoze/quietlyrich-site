@@ -80,11 +80,13 @@ export default function TestimonialsSection() {
                 }}
               />
               <div className="flex items-center gap-4 mb-6 z-10 relative">
-                <img
-                  src={t.avatar}
-                  alt={`${t.name} avatar`}
-                  className="w-16 h-16 rounded-full border-2 border-[#C2886D] bg-[#232042] object-cover shadow-md"
-                />
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#C2886D] via-[#6A00FF] to-white p-1 shadow-xl flex items-center justify-center">
+                  <img
+                    src={t.avatar}
+                    alt={`${t.name} avatar`}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
+                  />
+                </div>
                 <div>
                   <div className="font-semibold text-white text-lg">{t.name}</div>
                   <div className="text-xs md:text-sm text-[#C2886D]">{t.platform}</div>
