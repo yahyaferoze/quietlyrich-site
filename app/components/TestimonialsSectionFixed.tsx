@@ -8,25 +8,25 @@ const testimonials = [
     name: 'Faceless Finance Guy',
     quote: "I used QuietlyRich to automate 20 TikToks a month. Now I’ve got leads coming in daily without recording anything.",
     platform: 'TikTok – 120K Followers',
-    avatar: '/avatar-1.png',
+    avatar: '/assets/assets/avatar1.jpg',
   },
   {
     name: 'Anonymous Fitness Coach',
     quote: "Honestly, this saved me. I was stuck on editing and voiceovers. QuietlyRich made it so fast I batch content weekly now.",
     platform: 'Instagram Reels – 80K Followers',
-    avatar: '/avatar-2.png',
+    avatar: '/assets/assets/avatar2.jpg',
   },
   {
     name: 'Hidden Movie Reviewer',
     quote: "From script to AI voice to preview—this tool made faceless content possible without burning out.",
     platform: 'YouTube Shorts – 60K Subscribers',
-    avatar: '/avatar-3.png',
+    avatar: '/assets/assets/avatar3.jpg',
   },
   {
     name: 'AI Niche Creator',
     quote: "I’ve built an entire faceless brand without ever speaking on camera. QuietlyRich is a weapon.",
     platform: 'TikTok – 200K Followers',
-    avatar: '/avatar-4.png',
+    avatar: '/assets/assets/avatar4.jpg',
   },
 ];
 
