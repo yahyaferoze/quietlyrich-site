@@ -2,21 +2,21 @@
 
 import React from 'react';
 import Link from 'next/link';
-import FantasyToggle from './FantasyToggle'; // already uses context
+import FantasyToggle from './FantasyToggle';
 import { motion } from 'framer-motion';
 
 export default function QuietlyRichLandingHero() {
   return (
-    <section className="relative overflow-hidden px-6 pt-32 pb-28 md:pt-44 md:pb-40 bg-black text-white min-h-[90vh] flex items-center">
-      {/* Animated Glowing background swirls */}
+    <section className="relative overflow-hidden px-6 pt-32 pb-32 md:pt-44 md:pb-48 bg-[#0B0814] text-white min-h-[95vh] flex items-center justify-center">
+      {/* Animated Glowing Abstract Background */}
       <motion.div
-        className="absolute w-[900px] h-[900px] bg-gradient-to-tr from-[#6A00FF]/30 via-[#43009c]/40 to-[#C2886D]/20 blur-[210px] rounded-full -top-48 -left-64 z-0 pointer-events-none"
-        animate={{ scale: [1, 1.06, 1] }}
-        transition={{ repeat: Infinity, duration: 12, ease: "easeInOut" }}
+        className="absolute w-[1000px] h-[1000px] bg-gradient-to-br from-[#6A00FF]/30 via-[#43009C]/40 to-[#C2886D]/20 blur-[200px] rounded-full -top-56 -left-64 z-0 pointer-events-none"
+        animate={{ scale: [1, 1.08, 1] }}
+        transition={{ repeat: Infinity, duration: 14, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute w-[520px] h-[520px] bg-[#C2886D]/30 blur-[180px] rounded-full -bottom-20 -right-24 z-0 pointer-events-none"
-        animate={{ scale: [1, 1.03, 1] }}
+        className="absolute w-[600px] h-[600px] bg-gradient-to-tr from-[#C2886D]/30 via-[#fff]/0 to-[#6A00FF]/15 blur-[180px] rounded-full -bottom-20 -right-32 z-0 pointer-events-none"
+        animate={{ scale: [1, 1.04, 1] }}
         transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
       />
 
@@ -34,8 +34,9 @@ export default function QuietlyRichLandingHero() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.9, ease: "easeOut" }}
         >
-          <span className="inline-block bg-gradient-to-tr from-[#fff] via-[#C2886D] to-[#6A00FF] bg-clip-text text-transparent text-6xl md:text-7xl font-extrabold tracking-tight drop-shadow-xl select-none"
-            style={{ letterSpacing: "0.04em", fontFamily: "serif" }}
+          <span
+            className="inline-block bg-gradient-to-tr from-[#fff] via-[#C2886D] to-[#6A00FF] bg-clip-text text-transparent text-7xl md:text-8xl font-extrabold tracking-tight drop-shadow-xl select-none"
+            style={{ fontFamily: 'serif', letterSpacing: '0.04em' }}
           >
             Quietly<span className="font-serif text-[#C2886D]">Rich</span>
           </span>
@@ -43,40 +44,48 @@ export default function QuietlyRichLandingHero() {
 
         {/* Headline */}
         <motion.h1
-          className="text-3xl md:text-5xl font-serif font-bold mb-6 leading-tight glow-text"
+          className="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight drop-shadow-2xl"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
         >
           Launch a Faceless Brand <br className="hidden md:inline" />
-          <span className="bg-gradient-to-r from-[#C2886D] via-[#6A00FF] to-[#fff] bg-clip-text text-transparent">People Actually Watch</span>
+          <span className="bg-gradient-to-r from-[#C2886D] via-[#6A00FF] to-[#fff] bg-clip-text text-transparent font-serif font-extrabold">People Actually Watch</span>
         </motion.h1>
 
-        {/* Tagline */}
+        {/* Glassmorphic Tagline */}
         <motion.p
-          className="text-gray-300 text-lg md:text-2xl max-w-2xl mx-auto mb-12"
+          className="backdrop-blur-md bg-white/10 border border-[#C2886D]/20 text-gray-200 text-lg md:text-2xl max-w-2xl mx-auto mb-14 rounded-2xl shadow-lg px-6 py-4"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45, duration: 0.7 }}
         >
-          <span className="backdrop-blur px-2 py-0.5 rounded-lg bg-white/5 border border-[#C2886D]/20 shadow-inner">
-            AI scripts it. Voices it. Previews it. You post it. No editing. No burnout.
+          <span className="font-medium">
+            AI scripts it. Voices it. Previews it. <span className="text-[#C2886D]">You post it.</span> No editing. No burnout.
           </span>
         </motion.p>
 
         {/* CTAs */}
         <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
+          className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-10"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.65, duration: 0.7 }}
         >
           <Link
             href="#try-demo"
-            className="bg-gradient-to-tr from-[#C2886D] via-[#fff7f3] to-[#6A00FF] text-black font-semibold px-8 py-4 rounded-2xl shadow-xl text-lg hover:scale-105 hover:shadow-2xl transition-all duration-200 border border-[#C2886D]/60 backdrop-blur glow-text"
-            style={{ boxShadow: '0 0 32px 0 #C2886D44' }}
+            className="relative bg-gradient-to-tr from-[#C2886D] via-[#fff7f3] to-[#6A00FF] text-black font-semibold px-10 py-4 rounded-2xl shadow-2xl text-lg border border-[#C2886D]/60 backdrop-blur-lg transition-all duration-200 hover:scale-105 group"
+            style={{ boxShadow: '0 0 40px 0 #C2886D44' }}
           >
-            Try It Free
+            <span className="relative z-10">Try It Free</span>
+            {/* Animated Shine */}
+            <span className="absolute left-0 top-0 w-full h-full rounded-2xl opacity-0 group-hover:opacity-100 transition duration-700"
+              style={{
+                background: 'linear-gradient(120deg, transparent 20%, #fff7f3 50%, transparent 80%)',
+                filter: 'blur(8px)',
+                animation: 'shine 1.3s linear'
+              }}
+            />
           </Link>
           <Link
             href="#pricing"
@@ -86,16 +95,19 @@ export default function QuietlyRichLandingHero() {
           </Link>
         </motion.div>
 
-        {/* Animated scroll arrow */}
+        {/* Animated Scroll Arrow */}
         <motion.div
-          className="flex justify-center items-center mt-2"
+          className="flex justify-center items-center mt-4"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.7 }}
+          transition={{ delay: 1.1, duration: 0.7 }}
         >
-          <span className="animate-bounce text-[#C2886D] text-3xl drop-shadow-2xl select-none">↓</span>
+          <span className="animate-bounce text-[#C2886D] text-4xl drop-shadow-2xl select-none glow-text">
+            ↓
+          </span>
         </motion.div>
       </div>
+      {/* End main content */}
     </section>
   );
 }
