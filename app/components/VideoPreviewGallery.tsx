@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 
 const videos = [
@@ -47,6 +47,8 @@ const videos = [
 ];
 
 export default function VideoPreviewGallery() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   return (
     <section className="relative bg-gradient-to-br from-[#0B0814] via-[#1e004b] to-[#0B0814] py-24 px-4 overflow-x-hidden">
       {/* Animated glowing abstract background blobs */}
@@ -80,18 +82,39 @@ export default function VideoPreviewGallery() {
         </motion.p>
 
         {/* Snap-scrolling glassy video gallery */}
-        <div className="flex overflow-x-auto gap-7 hide-scrollbar justify-center px-1 snap-x snap-mandatory pb-4">
+        <div
+          className="flex overflow-x-auto gap-8 hide-scrollbar justify-center px-1 snap-x snap-mandatory pb-4"
+          ref={scrollRef}
+        >
           {videos.map((video, i) => (
             <motion.div
               key={video.id}
-              className="min-w-[250px] max-w-[260px] bg-white/10 backdrop-blur-lg border border-[#C2886D]/30 rounded-3xl overflow-hidden flex-shrink-0 shadow-2xl transition relative snap-center"
+              className="min-w-[250px] max-w-[260px] bg-white/10 backdrop-blur-lg border border-[#C2886D]/30 rounded-3xl overflow-hidden flex-shrink-0 shadow-[0_8px_32px_0_rgba(106,0,255,0.17)] relative snap-center transition"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.12 }}
+              transition={{ duration: 0.5, delay: i * 0.13 }}
               viewport={{ once: true }}
             >
+              {/* Animated glow behind centered card */}
+              <motion.div
+                className="absolute inset-0 rounded-3xl z-0 pointer-events-none"
+                initial={{ opacity: 0.7, scale: 0.96 }}
+                animate={{ opacity: [0.7, 1, 0.7], scale: [0.96, 1, 0.96] }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  duration: 3 + i,
+                  delay: i * 0.23,
+                  ease: "easeInOut",
+                }}
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(106,0,255,0.16) 60%, rgba(194,136,109,0.09) 100%)",
+                  filter: "blur(10px)",
+                }}
+              />
               {/* Phone frame effect */}
-              <div className="relative w-full h-64 bg-black rounded-b-3xl rounded-t-3xl overflow-hidden">
+              <div className="relative w-full h-64 bg-black rounded-b-3xl rounded-t-3xl overflow-hidden z-10">
                 <video
                   src={video.videoSrc}
                   autoPlay
@@ -102,15 +125,26 @@ export default function VideoPreviewGallery() {
                   style={{ borderRadius: "1.5rem" }}
                 />
                 {/* Category pill */}
-                <div className="absolute top-2 left-2 bg-gradient-to-tr from-[#6A00FF] via-[#C2886D] to-[#fff] text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold shadow-lg"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #6A00FF 0%, #C2886D 100%)",
+                    color: "#fff",
+                    border: "1px solid #fff3",
+                  }}>
                   {video.category}
                 </div>
                 {/* Views badge */}
-                <div className="absolute top-2 right-2 bg-black/70 text-xs font-semibold px-2 py-1 rounded-full shadow-sm border border-[#C2886D]/30">
+                <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-sm border border-[#C2886D]/30"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #C2886D 0%, #6A00FF 100%)",
+                    color: "#fff",
+                  }}>
                   👁 {video.views}
                 </div>
               </div>
-              <div className="p-4">
+              <div className="p-4 z-10">
                 <h3 className="text-sm font-bold leading-snug mb-1 text-white">{video.title}</h3>
                 <p className="text-xs italic text-[#C2886D]">{video.caption}</p>
               </div>
@@ -118,22 +152,22 @@ export default function VideoPreviewGallery() {
           ))}
         </div>
 
-        {/* Metrics: Glassy, premium cards */}
+        {/* Metrics: Glassy, premium cards with gradient numbers */}
         <div className="flex flex-wrap justify-center gap-8 mt-16 text-center text-base sm:text-lg">
           <div className="backdrop-blur bg-white/5 border border-[#C2886D]/30 rounded-xl px-7 py-4 shadow-md">
-            <span className="text-[#C2886D] font-bold text-2xl">12M+</span>
+            <span className="bg-gradient-to-r from-[#C2886D] via-[#6A00FF] to-white bg-clip-text text-transparent font-bold text-2xl">12M+</span>
             <span className="block text-white mt-1 font-normal text-sm">Total Views</span>
           </div>
           <div className="backdrop-blur bg-white/5 border border-[#6A00FF]/30 rounded-xl px-7 py-4 shadow-md">
-            <span className="text-[#6A00FF] font-bold text-2xl">850K+</span>
+            <span className="bg-gradient-to-r from-[#6A00FF] via-[#C2886D] to-white bg-clip-text text-transparent font-bold text-2xl">850K+</span>
             <span className="block text-white mt-1 font-normal text-sm">Videos Created</span>
           </div>
           <div className="backdrop-blur bg-white/5 border border-[#C2886D]/30 rounded-xl px-7 py-4 shadow-md">
-            <span className="text-[#C2886D] font-bold text-2xl">25</span>
+            <span className="bg-gradient-to-r from-[#C2886D] via-[#6A00FF] to-white bg-clip-text text-transparent font-bold text-2xl">25</span>
             <span className="block text-white mt-1 font-normal text-sm">Viral Niches</span>
           </div>
           <div className="backdrop-blur bg-white/5 border border-[#6A00FF]/30 rounded-xl px-7 py-4 shadow-md">
-            <span className="text-[#6A00FF] font-bold text-2xl">4.9/5</span>
+            <span className="bg-gradient-to-r from-[#6A00FF] via-[#C2886D] to-white bg-clip-text text-transparent font-bold text-2xl">4.9/5</span>
             <span className="block text-white mt-1 font-normal text-sm">Creator Rating</span>
           </div>
         </div>
