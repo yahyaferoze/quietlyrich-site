@@ -36,7 +36,7 @@ export default function QuietlyRichLandingHero() {
         >
           <span
             className="inline-block bg-gradient-to-tr from-[#fff] via-[#C2886D] to-[#6A00FF] bg-clip-text text-transparent text-7xl md:text-8xl font-extrabold tracking-tight drop-shadow-xl select-none"
-            style={{ fontFamily: 'serif', letterSpacing: '0.04em' }}
+            style={{ fontFamily: "'Playfair Display', serif", letterSpacing: '0.04em' }}
           >
             Quietly<span className="font-serif text-[#C2886D]">Rich</span>
           </span>
