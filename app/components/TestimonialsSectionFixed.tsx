@@ -20,7 +20,7 @@ const testimonials = [
     name: 'Hidden Movie Reviewer',
     quote: "From script to AI voice to preview—this tool made faceless content possible without burning out.",
     platform: 'YouTube Shorts – 60K Subscribers',
-    avatar: '/assets/assets/avatar3.jpg',
+    avatar: '/assets/assets/avatar 3.jpg',
   },
   {
     name: 'AI Niche Creator',
