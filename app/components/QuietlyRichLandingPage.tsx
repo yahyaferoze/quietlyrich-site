@@ -12,7 +12,7 @@ import TrustBar from '@/components/TrustBar';
 import TestimonialsSectionFixed from '@/components/TestimonialsSectionFixed';
 import CompareBarFixed from '@/components/CompareBarFixed';
 import ResultsProofBarFinal from '@/components/ResultsProofBarFinal';
-
+import TryDemoIntro from './TryDemoIntro';
 type Props = {
   fantasyMode: boolean;
   setFantasyMode: (val: boolean) => void;
@@ -38,6 +38,10 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
       <section className="mt-16">
         <VideoPreviewGallery />
       </section>
+
+      <TryDemoIntro />   {/* ← Add this line */}
+     
+  
 
       <section className="mt-16">
         <PricingSectionFixed fantasyMode={fantasyMode} />
