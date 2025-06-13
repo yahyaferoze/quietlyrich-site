@@ -1,31 +1,32 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const faqs = [
   {
-    question: "What makes QuietlyRich different from other AI tools?",
-    answer: "QuietlyRich is built for true faceless creation—no camera, no editing, no burnout. It’s the only platform with instant Fantasy Mode for wild, meme, or parody content, plus TikTok-native video previews in seconds.",
+    q: "Do I need to show my face on camera?",
+    a: "Nope! QuietlyRich was built for faceless creators. You can go viral without ever appearing on camera. The AI scripts, voices, and videos do the work for you.",
   },
   {
-    question: "Is my data and content safe?",
-    answer: "Yes! Your scripts and videos are private, encrypted, and never shared without your permission. We take creator privacy and data protection seriously.",
+    q: "What is Fantasy Mode?",
+    a: "Fantasy Mode lets you generate AI content with any celebrity, character, or original persona—instantly. Create podcasts, interviews, or stories starring anyone you can imagine. Only on QuietlyRich.",
   },
   {
-    question: "Can I monetize faceless content?",
-    answer: "Absolutely. Many QuietlyRich creators go viral and monetize via TikTok, YouTube, brand deals, and affiliate links—no need to ever show your face.",
+    q: "Can I monetize videos made with QuietlyRich?",
+    a: "Yes! Every paid plan comes with a full commercial license, so you can use QuietlyRich videos for TikTok, YouTube, Instagram, or your own brand channels.",
   },
   {
-    question: "What is Fantasy Mode?",
-    answer: "Fantasy Mode unlocks parody podcasts, meme news, and wild skits—generate dream content you could never film in real life. Instantly swap between normal and Fantasy at any time.",
+    q: "Is there a free trial?",
+    a: "Yes. Try the demo free with no credit card required. Experience the full flow before you commit.",
   },
   {
-    question: "Can businesses use QuietlyRich?",
-    answer: "Yes! Businesses and agencies use QuietlyRich for automated brand content, client campaigns, and even white-labeled video solutions.",
+    q: "Can I use my own voice?",
+    a: "Absolutely. You can upload and clone your voice for unique, branded content. Or, use any of our viral AI voices.",
   },
   {
-    question: "Do I need any video editing skills?",
-    answer: "Nope. The platform is 100% no-editing, no-design required. Type, click, done.",
+    q: "How fast can I make a video?",
+    a: "Most creators go from idea to TikTok-ready preview in under 30 seconds. Just pick a topic, review your script, choose a voice, and hit preview.",
   },
 ];
 
@@ -33,59 +34,56 @@ export default function FAQSection() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="bg-black text-white py-28 px-6">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C2886D] mb-10 text-center">
-          Frequently Asked Questions
-        </h2>
-        <div className="divide-y divide-[#232323] rounded-2xl bg-[#161616] border border-[#232323] shadow-lg">
-          {faqs.map((faq, idx) => (
-            <div key={idx}>
-              <button
-                className="w-full flex justify-between items-center py-6 px-4 text-left text-lg font-semibold focus:outline-none hover:text-[#C2886D] transition"
-                onClick={() => setOpen(open === idx ? null : idx)}
-                aria-expanded={open === idx}
-                aria-controls={`faq-panel-${idx}`}
-              >
-                <span>{faq.question}</span>
-                <span className="ml-4 text-2xl">
-                  {open === idx ? '−' : '+'}
-                </span>
-              </button>
-              <div
-                id={`faq-panel-${idx}`}
-                className={`overflow-hidden transition-all duration-300 ${open === idx ? 'max-h-40' : 'max-h-0'}`}
-                aria-hidden={open !== idx}
-              >
-                <p className="px-4 pb-6 text-gray-300 text-base">{faq.answer}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Newsletter Opt-in */}
-        <div className="mt-14 text-center">
-          <h3 className="text-2xl font-serif font-bold text-white mb-3">
-            Get Early Tips & Updates
-          </h3>
-          <form className="flex flex-col sm:flex-row gap-3 items-center justify-center mt-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-72 px-5 py-3 rounded-full bg-[#181818] text-white border border-[#232323] focus:border-[#C2886D] outline-none text-base"
-              required
-            />
+    <section className="bg-black text-white py-24 px-4 md:px-0 border-t border-[#1a1a1a]">
+      <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 text-[#C2886D] drop-shadow">
+        Frequently Asked Questions
+      </h2>
+      <div className="max-w-2xl mx-auto space-y-6">
+        {faqs.map((faq, idx) => (
+          <div
+            key={idx}
+            className="border border-[#222] rounded-xl bg-[#101010] overflow-hidden transition hover:border-[#C2886D] group"
+          >
             <button
-              type="submit"
-              className="px-8 py-3 rounded-full bg-[#C2886D] text-white font-medium hover:scale-105 transition"
+              className="w-full flex items-center justify-between px-6 py-5 text-lg font-semibold focus:outline-none text-left group-hover:text-[#C2886D] transition"
+              onClick={() => setOpen(open === idx ? null : idx)}
+              aria-expanded={open === idx}
+              aria-controls={`faq-content-${idx}`}
             >
-              Subscribe
+              <span>{faq.q}</span>
+              <motion.span
+                animate={{ rotate: open === idx ? 90 : 0 }}
+                transition={{ duration: 0.3 }}
+                className="ml-3 text-2xl select-none"
+              >
+                ▶
+              </motion.span>
             </button>
-          </form>
-          <p className="text-gray-500 text-xs mt-2">
-            No spam—just real creator insights.
-          </p>
-        </div>
+            <AnimatePresence initial={false}>
+              {open === idx && (
+                <motion.div
+                  id={`faq-content-${idx}`}
+                  key="content"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="px-6 pb-6 text-gray-300 text-base"
+                >
+                  {faq.a}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </div>
+      <div className="text-center mt-14">
+        <a
+          href="#try-demo"
+          className="inline-block bg-gradient-to-r from-[#C2886D] via-[#6A00FF] to-[#9C4DFF] text-black font-bold py-3 px-8 rounded-xl shadow-xl transition hover:scale-105"
+        >
+          Still have questions? Try the demo now →
+        </a>
       </div>
     </section>
   );
