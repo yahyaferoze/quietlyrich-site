@@ -2,18 +2,19 @@
 import React, { FC } from 'react';
 
 import QuietlyRichLandingHero from '@/components/QuietlyRichLandingHero';
+import ResultsProofBarFinal from '@/components/ResultsProofBarFinal';
+import VoiceFeatureGrid from './VoiceFeatureGrid';
 import HowItWorksContent from '@/components/HowItWorksContent';
-import VideoPreviewGallery from '@/components/VideoPreviewGallery';
+import TryDemoIntro from './TryDemoIntro';
 import TryDemoSection from '@/components/TryDemoSection';
+import VideoPreviewGallery from '@/components/VideoPreviewGallery';
+import TestimonialsSectionFixed from '@/components/TestimonialsSectionFixed';
+import CompareBarFixed from '@/components/CompareBarFixed';
+import TrustBar from '@/components/TrustBar';
 import PricingSectionFixed from '@/components/PricingSectionFixed';
 import FAQSection from '@/components/FAQSection';
 import FinalCTAAndFooter from '@/components/FinalCTAAndFooter';
-import TrustBar from '@/components/TrustBar';
-import TestimonialsSectionFixed from '@/components/TestimonialsSectionFixed';
-import CompareBarFixed from '@/components/CompareBarFixed';
-import ResultsProofBarFinal from '@/components/ResultsProofBarFinal';
-import TryDemoIntro from './TryDemoIntro';
-import VoiceFeatureGrid from './VoiceFeatureGrid';
+
 type Props = {
   fantasyMode: boolean;
   setFantasyMode: (val: boolean) => void;
@@ -22,58 +23,66 @@ type Props = {
 const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
   return (
     <div className="bg-black text-white">
-     <QuietlyRichLandingHero />
+      {/* HERO SECTION */}
+      <QuietlyRichLandingHero />
 
-      <section className="mt-16">
+      {/* FAST SOCIAL PROOF / CREDIBILITY BAR */}
+      <section className="mt-10">
         <ResultsProofBarFinal />
       </section>
 
+      {/* KEY FEATURE GRID */}
       <section className="mt-16">
-        <TestimonialsSectionFixed />
+        <VoiceFeatureGrid fantasyMode={fantasyMode} />
       </section>
 
+      {/* HOW IT WORKS */}
       <section className="mt-16">
-        <CompareBarFixed />
+        <HowItWorksContent fantasyMode={fantasyMode} />
       </section>
 
+      {/* TRY DEMO INTRO + SECTION */}
+      <section className="mt-16">
+        <TryDemoIntro />
+        <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+      </section>
+
+      {/* PREVIEW GALLERY */}
       <section className="mt-16">
         <VideoPreviewGallery />
       </section>
 
-      <TryDemoIntro />   {/* ← Add this line */}
-     
-  
-
+      {/* TESTIMONIALS */}
       <section className="mt-16">
-        <PricingSectionFixed fantasyMode={fantasyMode} />
+        <TestimonialsSectionFixed />
       </section>
 
+      {/* COMPARE TABLE */}
       <section className="mt-16">
-        <FAQSection />
+        <CompareBarFixed />
       </section>
 
+      {/* BRAND/TRUST BAR */}
       <section className="mt-16">
         <TrustBar />
       </section>
 
+      {/* PRICING */}
       <section className="mt-16">
-        <HowItWorksContent fantasyMode={fantasyMode} />
-      </section>
-      <section className="mt-16">
-        <FinalCTAAndFooter />
-      </section>
-      <section className="mt-16">
-        <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+        <PricingSectionFixed fantasyMode={fantasyMode} />
       </section>
 
+      {/* FAQ */}
+      <section className="mt-16">
+        <FAQSection />
+      </section>
+
+      {/* FINAL CTA + FOOTER */}
       <section className="mt-16">
         <FinalCTAAndFooter />
       </section>
-      
     </div>
-    
   );
-
 };
 
 export default QuietlyRichLandingPage;
