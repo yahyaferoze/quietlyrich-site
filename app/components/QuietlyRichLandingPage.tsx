@@ -13,6 +13,7 @@ import TestimonialsSectionFixed from '@/components/TestimonialsSectionFixed';
 import CompareBarFixed from '@/components/CompareBarFixed';
 import ResultsProofBarFinal from '@/components/ResultsProofBarFinal';
 import TryDemoIntro from './TryDemoIntro';
+import VoiceFeatureGrid from './VoiceFeatureGrid';
 type Props = {
   fantasyMode: boolean;
   setFantasyMode: (val: boolean) => void;
@@ -58,7 +59,9 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
       <section className="mt-16">
         <HowItWorksContent fantasyMode={fantasyMode} />
       </section>
-
+      <section className="mt-16">
+        <FinalCTAAndFooter />
+      </section>
       <section className="mt-16">
         <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
       </section>
@@ -66,8 +69,11 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
       <section className="mt-16">
         <FinalCTAAndFooter />
       </section>
+      
     </div>
+    
   );
+
 };
 
 export default QuietlyRichLandingPage;
