@@ -95,34 +95,34 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
     },
   };
 
+  // --- Only scroll after animation is done! ---
   const scrollToAnchor = (id: string, offset: number = -40) => {
-    const el = document.getElementById(id);
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.pageYOffset + offset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.pageYOffset + offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 350); // Wait for animation to finish!
   };
 
-  // ✅ SMOOTH: scroll first, then animate voice picker in
+  // --- Step functions ---
+
   const generateVoice = async () => {
     setTransitioning(true);
     setShowScriptBox(false);
-
-    scrollToAnchor('step-anchor', -180); // scroll up first
-
     setTimeout(() => {
       const url = voiceMap[selectedTopic]?.[selectedFormat]?.[selectedVoice];
       if (url) {
         setAudioUrl(url);
         setStep('voice');
         setVoiceReady(true);
-
         setTimeout(() => setShowPreviewButton(true), 200);
       } else {
         setError('❌ Voice file not found for this combination.');
       }
-
       setTransitioning(false);
+      scrollToAnchor('step-anchor', -180);
     }, 500);
   };
 
@@ -130,19 +130,15 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
     setStep('previewGen');
     setShowPreviewPhone(false);
 
-    setTimeout(() => {
-      setStep('preview');
-    }, 1000);
+    setTimeout(() => setStep('preview'), 800);
 
-    setTimeout(() => {
-      setShowPreviewPhone(true);
-    }, 1400);
+    setTimeout(() => setShowPreviewPhone(true), 1100);
 
     setTimeout(() => {
       if (previewRef.current) {
         previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 1600);
+    }, 1500);
   };
 
   const parseScriptToBlocks = (script: string): { type: string; text: string }[] => {
@@ -171,7 +167,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
       setSelectedTopic(matchedTopic);
       setError('');
       setStep('format');
-      scrollToAnchor('step-anchor');
+      setTimeout(() => scrollToAnchor('step-anchor'), 300);
     } else {
       setError('❌ This topic is not available in the demo. Upgrade to unlock full access!');
     }
@@ -199,31 +195,32 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
       setVoiceReady(false);
       setShowPreviewButton(true);
       setLoading(false);
-      scrollToAnchor('step-anchor');
+      setTimeout(() => scrollToAnchor('step-anchor'), 350);
     }, 800);
   };
 
+  // --- Typing animation: requestAnimationFrame loop for smoothness! ---
   useEffect(() => {
     if (typing && fullScript) {
-      let index = 0;
       setShowScriptBox(true);
       setDisplayedText('');
-      (async () => {
-        while (index < fullScript.length) {
-          setDisplayedText(prev => prev + fullScript[index]);
-          if (fullScript[index] === '\n' && fullScript[index + 1] === '\n') {
-            await new Promise(r => setTimeout(r, 300));
-          } else {
-            await new Promise(r => setTimeout(r, 18));
+      let index = 0;
+      let frame: number;
+      const type = () => {
+        setDisplayedText(prev => prev + fullScript[index]);
+        index++;
+        if (index < fullScript.length) {
+          frame = window.requestAnimationFrame(type);
+        } else {
+          setTyping(false);
+          const el = document.getElementById('voice-actions');
+          if (window.innerWidth < 768 && el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-          index++;
         }
-        setTyping(false);
-        const el = document.getElementById('voice-actions');
-        if (window.innerWidth < 768 && el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      })();
+      };
+      frame = window.requestAnimationFrame(type);
+      return () => window.cancelAnimationFrame(frame);
     }
   }, [typing, fullScript]);
 
@@ -245,10 +242,10 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
         </p>
 
         {/* Two-Column Layout */}
-        <div className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
+        <motion.div layout className="flex flex-col lg:flex-row gap-12 md:gap-20 items-start">
           {/* Left Column */}
           <div className="w-full lg:w-1/2">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {step === 'topic' && (
                 <motion.form
                   key="topic"
@@ -256,6 +253,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.4 }}
                   className="space-y-4"
                 >
                   <span className="text-sm text-gray-500 mb-1 block">
@@ -296,6 +294,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
                   className="space-y-4"
                 >
                   <span className="text-sm text-gray-500 mb-1 block">
@@ -330,17 +329,17 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Step 3: Script Reveal */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           {step === 'script' && showScriptBox && !transitioning && (
             <motion.div
               key="script"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.45 }}
               className="flex flex-col mt-4 mb-2"
             >
               <span className="text-sm text-gray-500 mb-1 block">
@@ -365,7 +364,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
         </AnimatePresence>
 
         {/* Step 4: Voice Picker */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {step === 'voice' && !transitioning && (
             <motion.div
               key="voicepicker"
@@ -438,7 +437,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
         </AnimatePresence>
 
         {/* Generate Voice CTA */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {step === 'script' && showScriptBox && !transitioning && (
             <motion.div
               key="genvoice"
@@ -455,7 +454,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
           )}
         </AnimatePresence>
         {/* ✅ Voice Ready confirmation */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {step === 'voice' && voiceReady && !transitioning && (
             <motion.div
               key="voiceready"
@@ -472,7 +471,7 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
         </AnimatePresence>
 
         {/* 🎬 Generate Video Preview CTA */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {step === 'voice' && showPreviewButton && !transitioning && (
             <motion.div
               key="genpreview"
@@ -502,113 +501,128 @@ export default function TryDemo({ fantasyMode, setFantasyMode }: TryDemoProps) {
         )}
 
         {/* Step 5: Final Preview */}
-        {step === 'preview' && (
-          <div
-            ref={previewRef}
-            className="relative w-full flex flex-col items-center mt-10 mb-10"
-          >
+        <AnimatePresence initial={false}>
+          {step === 'preview' && (
             <motion.div
-              initial={{ opacity: 0, y: -6 }}
+              ref={previewRef}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
+              exit={{ opacity: 0, y: 30 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+              className="relative w-full flex flex-col items-center mt-10 mb-10"
             >
-              🎬 Your Brand. In Motion.
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="mb-4 text-sm text-[#C2886D] font-semibold tracking-wide text-center"
+              >
+                🎬 Your Brand. In Motion.
+              </motion.div>
 
-            {/* Glow Aura Behind Preview */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
+              {/* Glow Aura Behind Preview */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl rounded-full bg-[#C2886D] opacity-20 animate-pulse w-[300px] h-[450px] z-0" />
 
-            <AnimatePresence>
-              {showPreviewPhone && (
-                <motion.div
-                  key="phone"
-                  layoutId="tiktok-preview"
-                  initial={{ opacity: 0, y: 80, scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 40 }}
-                  transition={{ duration: 1.2, ease: 'easeOut' }}
-                  className="relative z-10 shadow-xl shadow-[#C2886D]/10"
-                >
-                  <TikTokPhonePreview
-                    script={parseScriptToBlocks(fullScript)}
-                    audioUrl={audioUrl}
-                  />
+              <AnimatePresence initial={false}>
+                {showPreviewPhone && (
+                  <motion.div
+                    key="phone"
+                    layoutId="tiktok-preview"
+                    initial={{ opacity: 0, y: 80, scale: 0.92 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 40 }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
+                    className="relative z-10 shadow-xl shadow-[#C2886D]/10"
+                  >
+                    <TikTokPhonePreview
+                      script={parseScriptToBlocks(fullScript)}
+                      audioUrl={audioUrl}
+                    />
 
-                  {audioUrl && (
-                    <button
-                      onClick={() => {
-                        const audio = document.getElementById('preview-audio') as HTMLAudioElement;
-                        if (audio) {
-                          setIsPlaying(true);
-                          audio.currentTime = 0;
-                          audio.play();
-                          audio.onended = () => setIsPlaying(false);
-                        }
-                      }}
-                      className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition animate-pulse"
-                    >
-                      {isPlaying ? '🔁 Playing...' : '🔊 Play Voice'}
-                    </button>
-                  )}
+                    {audioUrl && (
+                      <button
+                        onClick={() => {
+                          const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+                          if (audio) {
+                            setIsPlaying(true);
+                            audio.currentTime = 0;
+                            audio.play();
+                            audio.onended = () => setIsPlaying(false);
+                          }
+                        }}
+                        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[#C2886D] text-black font-bold py-2 px-4 text-sm rounded-full shadow-md hover:scale-105 transition animate-pulse"
+                      >
+                        {isPlaying ? '🔁 Playing...' : '🔊 Play Voice'}
+                      </button>
+                    )}
 
-                  <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
-                    Made with Quietly Rich
-                  </div>
-                </motion.div>
+                    <div className="absolute bottom-2 right-2 text-[10px] text-white opacity-30">
+                      Made with Quietly Rich
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {audioUrl && (
+                <audio id="preview-audio" src={audioUrl} className="hidden" preload="auto" />
               )}
-            </AnimatePresence>
-
-            {audioUrl && (
-              <audio id="preview-audio" src={audioUrl} className="hidden" preload="auto" />
-            )}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
         {/* ✅ Sticky CTA Band */}
-        {step === 'preview' && (
-          <div className="sticky bottom-0 z-30 bg-black border-t border-[#333] px-4 py-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
-            <a href="/demo-output">
-              <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
-                🎉 See Your Full Brand Kit →
-              </button>
-            </a>
-            <a href="/upgrade">
-              <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
-                🚀 Upgrade & Unlock More
-              </button>
-            </a>
-            <button
-              onClick={() => {
-                const audio = document.getElementById('preview-audio') as HTMLAudioElement;
-                if (audio) {
-                  audio.currentTime = 0;
-                  audio.play();
-                  setIsPlaying(true);
-                  audio.onended = () => setIsPlaying(false);
-                }
-              }}
-              className="text-xs text-gray-400 hover:text-white underline"
+        <AnimatePresence initial={false}>
+          {step === 'preview' && (
+            <motion.div
+              key="ctaband"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 60 }}
+              transition={{ duration: 0.7 }}
+              className="sticky bottom-0 z-30 bg-black border-t border-[#333] px-4 py-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center"
             >
-              🔁 Replay Voice
-            </button>
-            <button
-              onClick={() => {
-                setStep('topic');
-                setSelectedTopic('');
-                setSelectedFormat('');
-                setDisplayedText('');
-                setFullScript('');
-                setVoiceReady(false);
-                setAudioUrl('');
-                setIsPlaying(false);
-                scrollToAnchor('step-anchor', -180);
-              }}
-              className="text-xs text-gray-500 hover:text-white underline"
-            >
-              🔄 Start Again
-            </button>
-          </div>
-        )}
+              <a href="/demo-output">
+                <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
+                  🎉 See Your Full Brand Kit →
+                </button>
+              </a>
+              <a href="/upgrade">
+                <button className="bg-[#C2886D] text-black font-bold px-6 py-3 rounded-lg hover:bg-[#b3745b] transition w-full sm:w-auto">
+                  🚀 Upgrade & Unlock More
+                </button>
+              </a>
+              <button
+                onClick={() => {
+                  const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+                  if (audio) {
+                    audio.currentTime = 0;
+                    audio.play();
+                    setIsPlaying(true);
+                    audio.onended = () => setIsPlaying(false);
+                  }
+                }}
+                className="text-xs text-gray-400 hover:text-white underline"
+              >
+                🔁 Replay Voice
+              </button>
+              <button
+                onClick={() => {
+                  setStep('topic');
+                  setSelectedTopic('');
+                  setSelectedFormat('');
+                  setDisplayedText('');
+                  setFullScript('');
+                  setVoiceReady(false);
+                  setAudioUrl('');
+                  setIsPlaying(false);
+                  setTimeout(() => scrollToAnchor('step-anchor', -180), 350);
+                }}
+                className="text-xs text-gray-500 hover:text-white underline"
+              >
+                🔄 Start Again
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
