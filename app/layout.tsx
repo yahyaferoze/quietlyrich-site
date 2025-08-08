@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'Turn any idea into a scroll-stopping, faceless video script powered by AI. Try it free.',
 };
 
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -20,8 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <BodyWithFantasyMode>
             {/* ✅ Global Navigation */}
             <nav className="text-center py-4 border-b border-[#222] mb-6">
-              <Link href="/trydemo" className="text-[#C2886D] mx-4 underline">Try Demo</Link>
-              <Link href="/how-it-works" className="text-[#C2886D] mx-4 underline">How It Works</Link>
+            <Link href="#how-it-works" className="text-[#C2886D] mx-4 underline">How It Works</Link>
+            <Link href="#try-demo" className="text-[#C2886D] mx-4 underline">Try Demo</Link>
             </nav>
 
             {/* Main App */}

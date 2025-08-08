@@ -1,84 +1,53 @@
-'use client';
+// components/FakePreview.tsx
+import React from "react";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+interface FakePreviewProps {
+  script: string;
+  isFantasyMode?: boolean;
+}
 
-export default function FakePreview({ script, audioUrl }: { script: string; audioUrl?: string }) {
-  const [currentLine, setCurrentLine] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+const previewStyles = {
+  normal: "bg-neutral-900 border border-neutral-700 shadow-xl",
+  fantasy:
+    "bg-gradient-to-br from-fuchsia-900 via-purple-800 to-indigo-900 border-2 border-fuchsia-400 shadow-[0_0_30px_10px_rgba(136,0,255,0.3)] animate-glow",
+};
 
-  const scriptLines = script?.split(/\n+/).filter(line => line.trim()) || [];
-
-  const handlePlay = () => {
-    if (!audioUrl || scriptLines.length === 0) return;
-
-    const audio = new Audio(audioUrl);
-    audioRef.current = audio;
-    setCurrentLine(0);
-    setIsPlaying(true);
-    setIsLoadingAudio(true);
-
-    audio.onloadeddata = () => {
-      setIsLoadingAudio(false);
-      audio.play().catch(err => {
-        console.error("Playback error:", err);
-        setIsPlaying(false);
-      });
-
-      const duration = audio.duration || 6;
-      const interval = duration / scriptLines.length;
-
-      let index = 0;
-      intervalRef.current = setInterval(() => {
-        setCurrentLine(index);
-        index++;
-        if (index >= scriptLines.length) {
-          clearInterval(intervalRef.current!);
-        }
-      }, interval * 1000);
-    };
-  };
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-    };
-  }, []);
+export default function FakePreview({
+  script,
+  isFantasyMode = false,
+}: FakePreviewProps) {
+  const lines = script
+    .split(/\n+/)
+    .filter((line) => line.trim())
+    .map((line, i) => (
+      <span
+        key={i}
+        className={`block mb-2 text-lg md:text-xl ${
+          isFantasyMode
+            ? "text-fuchsia-300 font-semibold tracking-wide animate-pulse"
+            : "text-neutral-100"
+        }`}
+      >
+        {line}
+      </span>
+    ));
 
   return (
-    <div className="bg-[#111] border border-[#333] rounded-md p-4 max-h-[240px] overflow-y-auto text-left">
-      <div className="space-y-2">
-        {scriptLines.map((line, index) => (
-          <motion.p
-            key={index}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: index === currentLine ? 1 : 0.4, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className={`transition-opacity duration-300 ${index === currentLine ? 'text-white' : 'text-gray-400'}`}
-          >
-            {line}
-          </motion.p>
-        ))}
+    <div
+      className={`rounded-2xl p-6 w-full max-w-md mx-auto min-h-[200px] ${
+        isFantasyMode ? previewStyles.fantasy : previewStyles.normal
+      } transition-all duration-500`}
+      aria-label="AI Video Preview"
+    >
+      <div className="flex flex-col justify-center items-center h-full w-full min-h-[150px]">
+        {lines.length ? (
+          lines
+        ) : (
+          <span className="text-neutral-500 italic">
+            Video script preview will appear here.
+          </span>
+        )}
       </div>
-
-      {audioUrl && (
-        <button
-          onClick={handlePlay}
-          disabled={isLoadingAudio}
-          className={`mt-4 w-full py-2 rounded-md font-semibold ${
-            isLoadingAudio ? "bg-gray-500 cursor-not-allowed" : "bg-[#C2886D] text-black"
-          }`}
-        >
-          {isLoadingAudio ? "🔄 Loading..." : "▶️ Play Voice Preview"}
-        </button>
-      )}
     </div>
   );
 }

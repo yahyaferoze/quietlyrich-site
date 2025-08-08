@@ -1,31 +1,45 @@
-'use client';
+// components/FantasyModeContext.tsx
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-type FantasyModeContextType = {
+interface FantasyModeContextType {
   fantasyMode: boolean;
-  setFantasyMode: (value: boolean) => void;
+  setFantasyMode: (active: boolean) => void;
   toggleFantasyMode: () => void;
-};
+}
 
 const FantasyModeContext = createContext<FantasyModeContextType | undefined>(undefined);
 
-export function FantasyModeProvider({ children }: { children: ReactNode }) {
-  const [fantasyMode, setFantasyMode] = useState(false);
+export const FantasyModeProvider = ({ children }: { children: ReactNode }) => {
+  const [fantasyMode, setFantasyModeState] = useState(false);
 
-  const toggleFantasyMode = () => setFantasyMode((v) => !v);
+  // Persist Fantasy Mode across sessions
+  useEffect(() => {
+    const stored = window?.localStorage?.getItem("fantasyMode");
+    if (stored === "true") setFantasyModeState(true);
+  }, []);
+
+  useEffect(() => {
+    window?.localStorage?.setItem("fantasyMode", fantasyMode ? "true" : "false");
+    if (fantasyMode) {
+      document.body.classList.add("fantasy-mode");
+    } else {
+      document.body.classList.remove("fantasy-mode");
+    }
+  }, [fantasyMode]);
+
+  const setFantasyMode = (active: boolean) => setFantasyModeState(active);
+
+  const toggleFantasyMode = () => setFantasyModeState((prev) => !prev);
 
   return (
     <FantasyModeContext.Provider value={{ fantasyMode, setFantasyMode, toggleFantasyMode }}>
       {children}
     </FantasyModeContext.Provider>
   );
-}
+};
 
-export function useFantasyMode() {
+export const useFantasyMode = (): FantasyModeContextType => {
   const context = useContext(FantasyModeContext);
-  if (!context) {
-    throw new Error('useFantasyMode must be used within a FantasyModeProvider');
-  }
+  if (!context) throw new Error("useFantasyMode must be used within a FantasyModeProvider");
   return context;
-}
+};

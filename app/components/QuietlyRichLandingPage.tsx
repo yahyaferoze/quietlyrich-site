@@ -1,4 +1,5 @@
 'use client';
+
 import React, { FC } from 'react';
 
 import QuietlyRichLandingHero from '@/components/QuietlyRichLandingHero';
@@ -9,11 +10,13 @@ import TryDemoIntro from './TryDemoIntro';
 import TryDemoSection from '@/components/TryDemoSection';
 import VideoPreviewGallery from '@/components/VideoPreviewGallery';
 import TestimonialsSectionFixed from '@/components/TestimonialsSectionFixed';
-import CompareBarFixed from '@/components/CompareBarFixed';
-import TrustBar from '@/components/TrustBar';
+// ❌ removed CompareBarFixed / TrustBar (replaced by the new combined section)
+// import CompareBarFixed from '@/components/CompareBarFixed';
+// import TrustBar from '@/components/TrustBar';
 import PricingSectionFixed from '@/components/PricingSectionFixed';
 import FAQSection from '@/components/FAQSection';
 import FinalCTAAndFooter from '@/components/FinalCTAAndFooter';
+import TrustAndCompare3DSection from '@/components/TrustAndCompare3DSection';
 
 type Props = {
   fantasyMode: boolean;
@@ -24,7 +27,10 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
   return (
     <div className="bg-black text-white">
       {/* HERO SECTION */}
-      <QuietlyRichLandingHero fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+      <QuietlyRichLandingHero
+        fantasyMode={fantasyMode}
+        setFantasyMode={setFantasyMode}
+      />
 
       {/* FAST SOCIAL PROOF / CREDIBILITY BAR */}
       <section className="mt-10">
@@ -44,7 +50,10 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
       {/* TRY DEMO INTRO + SECTION */}
       <section className="mt-16">
         <TryDemoIntro />
-        <TryDemoSection fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
+        <TryDemoSection
+          fantasyMode={fantasyMode}
+          setFantasyMode={setFantasyMode}
+        />
       </section>
 
       {/* PREVIEW GALLERY */}
@@ -57,18 +66,13 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
         <TestimonialsSectionFixed />
       </section>
 
-      {/* COMPARE TABLE */}
-      <section className="mt-16">
-        <CompareBarFixed />
-      </section>
-
-      {/* BRAND/TRUST BAR */}
-      <section className="mt-16">
-        <TrustBar />
+      {/* 🔄 NEW: TRUST + COMPARE (replaces TrustBar + CompareBarFixed) */}
+      <section className="mt-16" id="trust-compare">
+        <TrustAndCompare3DSection />
       </section>
 
       {/* PRICING */}
-      <section className="mt-16">
+      <section className="mt-16" id="pricing">
         <PricingSectionFixed fantasyMode={fantasyMode} />
       </section>
 
