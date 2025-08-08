@@ -24,7 +24,7 @@ const QuietlyRichLandingPage: FC<Props> = ({ fantasyMode, setFantasyMode }) => {
   return (
     <div className="bg-black text-white">
       {/* HERO SECTION */}
-      <QuietlyRichLandingHero />
+      <QuietlyRichLandingHero fantasyMode={fantasyMode} setFantasyMode={setFantasyMode} />
 
       {/* FAST SOCIAL PROOF / CREDIBILITY BAR */}
       <section className="mt-10">
