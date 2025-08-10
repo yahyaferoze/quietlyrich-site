@@ -62,6 +62,44 @@ function LoadingButton({
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Aliases + demo voice assets (no API credits needed)                 */
+/* ------------------------------------------------------------------ */
+
+const TOPIC_ALIASES: Record<string, string> = {
+  'fitness': 'fitness at home',
+  'home workout': 'fitness at home',
+  'budget eating': 'healthy eating on a budget', // graceful alias
+  'healthy eating': 'healthy eating on a budget',
+  'focus': 'focus tips',
+  'focus tips': 'focus tips',
+  'fitness at home': 'fitness at home',
+};
+
+const VOICE_MAP: Record<string, Record<string, Record<string, string>>> = {
+  'fitness at home': {
+    'Hook Video': {
+      'Deep Male Voice': '/fitnessmale.mp3',
+      'Natural Female Voice': '/fitnessfemale.mp3',
+    },
+    'Value Drop': {
+      'Deep Male Voice': '/fitnessmalevd.mp3',
+      'Natural Female Voice': '/fitnessfemalevd.mp3',
+    },
+  },
+  // You can point fantasy demo to an existing asset so it never 404s:
+  'fantasy mode demo': {
+    'Hook Video': {
+      'Deep Male Voice': '/fitnessmale.mp3',
+      'Natural Female Voice': '/fitnessfemale.mp3',
+    },
+    'Value Drop': {
+      'Deep Male Voice': '/fitnessmalevd.mp3',
+      'Natural Female Voice': '/fitnessfemalevd.mp3',
+    },
+  },
+};
+
 export default function TryDemo({ fantasyMode }: TryDemoProps) {
   type Step = 'topic' | 'format' | 'script' | 'voice' | 'previewGen' | 'preview';
   const [step, setStep] = useState<Step>('topic');
@@ -101,20 +139,7 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
     []
   );
 
-  const VOICE_MAP: Record<string, Record<string, Record<string, string>>> = {
-    'fitness at home': {
-      'Hook Video': {
-        'Deep Male Voice': '/fitnessmale.mp3',
-        'Natural Female Voice': '/fitnessfemale.mp3',
-      },
-      'Value Drop': {
-        'Deep Male Voice': '/fitnessmalevd.mp3',
-        'Natural Female Voice': '/fitnessfemalevd.mp3',
-      },
-    },
-  };
-
-  // central timeout/raf cleanup
+  // central timeout cleanup
   const timers = useRef<number[]>([]);
   const addTimer = (id: number) => timers.current.push(id);
   useEffect(() => {
@@ -137,21 +162,38 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
     []
   );
 
+  /* ------------------------------- Helpers ------------------------------ */
+
+  const normalizeTopic = useCallback((raw: string) => {
+    const cleaned = raw.toLowerCase().trim();
+    if (TOPIC_ALIASES[cleaned]) return TOPIC_ALIASES[cleaned];
+    return cleaned;
+  }, []);
+
+  const availableTopicsLower = useMemo(() => Object.keys(topics).map(t => t.toLowerCase()), []);
+
+  const findClosestTopics = useCallback((q: string) => {
+    const lowerQ = q.toLowerCase().trim();
+    if (!lowerQ) return [];
+    // simple contains + prefix priority
+    const c = availableTopicsLower
+      .filter(t => t.includes(lowerQ) || t.startsWith(lowerQ.slice(0, 3)))
+      .slice(0, 4);
+    return c.length ? c : availableTopicsLower.slice(0, 3);
+  }, [availableTopicsLower]);
+
   /* ------------------------------- Handlers ------------------------------ */
 
   const handleTopicSubmit = useCallback(
     (e?: React.FormEvent) => {
       e?.preventDefault?.();
-      const input = selectedTopic.toLowerCase().trim();
+      const normalized = normalizeTopic(selectedTopic);
       const available = Object.keys(topics);
 
-      // case-insensitive includes; also suggest nearest 3 if no match
-      const matched = available.find((t) => t.toLowerCase().includes(input));
+      // find direct match (case-insensitive)
+      const matched = available.find((t) => t.toLowerCase() === normalized);
       if (!matched) {
-        const near = available
-          .map((t) => t.toLowerCase())
-          .filter((t) => t.includes(input.slice(0, 3)))
-          .slice(0, 3);
+        const near = findClosestTopics(normalized);
         setSuggestions(near);
         setError('❌ Topic not available in the demo. Try one of the suggestions below.');
         return;
@@ -163,7 +205,7 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
       setStep('format');
       scrollToAnchor('step-anchor');
     },
-    [selectedTopic, scrollToAnchor]
+    [selectedTopic, normalizeTopic, findClosestTopics, scrollToAnchor]
   );
 
   const handleFormatSelect = useCallback(
@@ -190,9 +232,9 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
         setShowPreviewButton(true);
         setLoading(false);
         scrollToAnchor('step-anchor');
-        // focus the script textarea for keyboard users
+        // accessibility: focus the textarea
         window.setTimeout(() => textareaRef.current?.focus(), 50);
-      }, shouldReduceMotion ? 200 : 600);
+      }, shouldReduceMotion ? 150 : 550);
       addTimer(t);
     },
     [selectedTopic, shouldReduceMotion, scrollToAnchor]
@@ -222,7 +264,7 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
       );
       setTransitioning(false);
       scrollToAnchor('step-anchor', -180);
-    }, shouldReduceMotion ? 150 : 400);
+    }, shouldReduceMotion ? 120 : 380);
     addTimer(t);
   }, [selectedFormat, selectedTopic, selectedVoice, shouldReduceMotion, scrollToAnchor]);
 
@@ -378,6 +420,34 @@ export default function TryDemo({ fantasyMode }: TryDemoProps) {
                         {s}
                       </button>
                     ))}
+                  </div>
+
+                  {/* Inline fantasy-mode entry (demo-safe) */}
+                  <div className="mt-3 rounded-lg border border-[#2c2c2c] bg-[#0f0f0f] p-3 text-sm">
+                    <div className="font-semibold text-[#C2886D] mb-1">✨ Try Fantasy Mode (Demo)</div>
+                    <p className="text-white/70 mb-2">
+                      Generate a preview with celebrity/character style voices — no login needed.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {['Hook Video', 'Value Drop'].map(fmt => (
+                        <button
+                          key={fmt}
+                          type="button"
+                          onClick={() => {
+                            // Route to our safe demo topic
+                            setSelectedTopic('fantasy mode demo');
+                            setError('');
+                            setSuggestions([]);
+                            setStep('format');
+                            // immediately choose format for faster flow
+                            setTimeout(() => handleFormatSelect(fmt), 20);
+                          }}
+                          className="text-xs bg-[#111] border border-[#333] rounded-md py-2 px-3 hover:border-[#C2886D] transition"
+                        >
+                          {fmt} (demo)
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <LoadingButton onClick={() => handleTopicSubmit()} loading={loading} ariaLabel="Search Topics">
